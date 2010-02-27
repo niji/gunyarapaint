@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450" xmlns:ns1="org.libspark.gunyarapaint.controls.*">
+    <ns1:PenDetailControl id="penDetail" x="0" y="0" height="410">
+    </ns1:PenDetailControl>
+    <mx:Script>
+        <![CDATA[
+        public function get penDetailControl():PenDetailControl
+        {
+            return penDetail;
+        }
+        
+        public function get dataForPost():Object
+        {
+            return [penDetail.dataForPost]; // TODO: 現在は１１1パレットのみだけど、配列化する
+        }
+        
+        public function cancelTool():void
+        {
+            penDetail.cancelTool();
+        }
+        
+        public function set delegate(value:IDelegate):void
+        {
+            /*
+            penDetail.logger = l;
+            if (_logger.baseInfo) {
+                var a:Array = _logger.baseInfo['pen_details'];
+                if (a) {
+                    penDetail.baseImgInfo = a[0];
+                    /*
+                    for (var i:uint = 0; i < a.length; i++) {
+                    penDetail[i].baseImgInfo = a[i];
+                    }
+                }
+            }
+            */
+        }
+        
+        public function changePen(mode:uint, color:uint, alpha:Number, thickness:uint):void
+        {
+            penDetail.changePen(mode, color, alpha, thickness);
+        }
+    ]]>
+    </mx:Script>
+</mx:TitleWindow>
