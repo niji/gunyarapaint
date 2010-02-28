@@ -8,5 +8,6 @@ package org.libspark.gunyarapaint.controls
         function get recorder():Recorder;
         function get module():IDrawable;
         function get supportedBlendModes():Array;
+        function set module(value:IDrawable):void;
     }
 }

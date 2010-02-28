@@ -1,9 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="108" height="410" 
-           creationComplete="init()"
-           >
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="108" height="410">
     <mx:Script source="PenDetailControlScript.as">
     </mx:Script>
+    <mx:states>
+        <mx:State name="dropper">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{alphaSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="true"/>
+        </mx:State>
+        <mx:State name="floodFill">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+        </mx:State>
+        <mx:State name="handtool">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{alphaSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="true"/>
+        </mx:State>
+        <mx:State name="pixel">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="true"/>
+        </mx:State>
+        <mx:State name="freeHand"/>
+        <mx:State name="line"/>
+        <mx:State name="circle"/>
+        <mx:State name="eraser">
+            <mx:SetProperty target="{eraserButton}" name="selected" value="true"/>
+            <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+        </mx:State>
+    </mx:states>
     
     <!-- preview -->
     <mx:Label x="3" y="10" text="ペンの状態" width="53.5"/>
@@ -13,11 +65,11 @@
     <!-- thickness -->
     <mx:Label x="3" y="28" text="太"/>
     <mx:HSlider x="16" y="28" width="87" minimum="1" maximum="30" snapInterval="1" height="12" value="3" id="thicknessSlider" change="thicknessSliderHandler(event)"/>
-    <mx:Button x="2" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="changeThickness(1);"/>
-    <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="changeThickness(3)"/>
-    <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="changeThickness(10);"/>
-    <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="changeThickness(20);"/>
-    <mx:Button x="86" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="changeThickness(30);"/>
+    <mx:Button x="2" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="thickness = 1"/>
+    <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="thickness = 3"/>
+    <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="thickness = 10"/>
+    <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="thickness = 20"/>
+    <mx:Button x="86" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="thickness = 30"/>
     
     <!-- color palette -->
     <mx:Grid id="paletteGrid" x="15" y="73" borderStyle="none" borderColor="#000000" borderThickness="1" horizontalGap="4" verticalGap="3">
@@ -92,21 +144,21 @@
     <!-- rgb -->
     <mx:Label x="3" y="304" text="R"/>
     <mx:Label x="1" y="313" text="{colRSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
-    <mx:HSlider id ="colRSlider" x="20" y="301" width="87" minimum="0" maximum="255" snapInterval="1" change="colRSliderHandler(event)"/>
+    <mx:HSlider id ="colRSlider" x="20" y="301" width="87" minimum="0" maximum="255" snapInterval="1" change="colorSliderHandler(event, 'red')"/>
     <mx:Label x="3" y="319" text="G"/>
     <mx:Label x="1" y="328" text="{colGSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
-    <mx:HSlider id ="colGSlider" x="20" y="316" width="87" minimum="0" maximum="255" snapInterval="1" change="colGSliderHandler(event)"/>
+    <mx:HSlider id ="colGSlider" x="20" y="316" width="87" minimum="0" maximum="255" snapInterval="1" change="colorSliderHandler(event, 'green')"/>
     <mx:Label x="3" y="334" text="B"/>
     <mx:Label x="1" y="343" text="{colBSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
-    <mx:HSlider id ="colBSlider" x="20" y="331" width="87" minimum="0" maximum="255" snapInterval="1" change="colBSliderHandler(event)"/>
+    <mx:HSlider id ="colBSlider" x="20" y="331" width="87" minimum="0" maximum="255" snapInterval="1" change="colorSliderHandler(event, 'blue')"/>
     
     <!-- line method/blend mode -->
     <mx:ComboBox id="penModeComboBox" x="6" y="356" width="96" change="penModeComboBoxHandler(event)">
         <mx:ArrayCollection>
-            <mx:Object label="手書き" data="" />
-            <mx:Object label="直線" data="" />
-            <mx:Object label="円" data="" />
-            <mx:Object label="ペイント" data="" />
+            <mx:Object label="手書き" data="{DrawModuleFactory.FREE_HAND}" />
+            <mx:Object label="直線" data="{DrawModuleFactory.LINE}" />
+            <mx:Object label="円" data="{DrawModuleFactory.CIRCLE}" />
+            <mx:Object label="ペイント" data="{DrawModuleFactory.FLOOD_FILL}" />
             <!--
             <mx:Object label="スポイト" data="" />
             <mx:Object label="四角" data="" />
@@ -118,14 +170,13 @@
     <mx:ComboBox id="blendModeComboBox" x="6" y="381" width="97" change="blendModeComboBoxHandler(event)">
     </mx:ComboBox>
     
-    <!-- palette select animation -->
-    <mx:Resize id="selectPaletteEffect" widthFrom="24" widthTo="24"
-               heightFrom="20" heightTo="20"
-               easingFunction="{Bounce.easeOut}" />
-    
     <mx:Script>
         <![CDATA[
             import mx.effects.easing.Bounce;
         ]]>
     </mx:Script>
+    <!-- palette select animation -->
+    <mx:Resize id="selectPaletteEffect" widthFrom="24" widthTo="24"
+               heightFrom="20" heightTo="20"
+               easingFunction="{Bounce.easeOut}" />
 </mx:Canvas>

@@ -11,12 +11,12 @@
         
         public function get dataForPost():Object
         {
-            return [penDetail.dataForPost]; // TODO: 現在は１１1パレットのみだけど、配列化する
+            return [penDetail.palettes]; // TODO: 現在は１１1パレットのみだけど、配列化する
         }
         
         public function cancelTool():void
         {
-            penDetail.cancelTool();
+            penDetail.cancel();
         }
         
         public function set delegate(value:IDelegate):void
@@ -36,7 +36,7 @@
             */
         }
         
-        public function changePen(mode:uint, color:uint, alpha:Number, thickness:uint):void
+        public function changePen(mode:String, color:uint, alpha:Number, thickness:uint):void
         {
             penDetail.changePen(mode, color, alpha, thickness);
         }

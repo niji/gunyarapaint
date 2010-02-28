@@ -1,20 +1,34 @@
 import mx.collections.ArrayCollection;
 import mx.events.DragEvent;
-import mx.events.FlexEvent;
 import mx.events.ListEvent;
 import mx.events.SliderEvent;
 
+import org.libspark.gunyarapaint.framework.LayerBitmap;
 import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
 import org.libspark.gunyarapaint.framework.Painter;
 import org.libspark.gunyarapaint.utils.ComponentResizer;
+import org.libspark.gunyarapaint.controls.IDelegate;
 
 private var m_delegate:IDelegate;
 
-private function init():void
+public function change():void
 {
-    layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
-    ComponentResizer.addResize(this, new Point(144, 230));
-    enabled = false;
+    // TODO
+    // layerDataGrid.dataProvider = _logger.layerArray.layersForDataProvider;
+    var painter:Painter = m_delegate.recorder.painter;
+    var layers:LayerBitmapCollection = painter.layers;
+    var layer:LayerBitmap = layers.at(layers.currentIndex);
+    var currentLayerBlendMode:String = layer.blendMode;
+    layerDataGrid.selectedIndex = layer.index;
+    alphaSlider.value = layer.alpha;
+    var ac:ArrayCollection = blendModeComboBox.dataProvider as ArrayCollection;
+    var length:uint = ac.length;
+    for (var i:uint = 0; i < length; i++) {
+        if (ac.getItemAt(i).data == currentLayerBlendMode) {
+            blendModeComboBox.selectedIndex = i;
+            return;
+        }
+    }
 }
 
 public function set delegate(value:IDelegate):void
@@ -26,15 +40,22 @@ public function set delegate(value:IDelegate):void
     var painter:Painter = value.recorder.painter;
     var layers:LayerBitmapCollection = painter.layers;
     var currentLayerIndex:uint = layers.currentIndex;
-    var currentLayerBlendMode:String = painter.currentLayerBlendMode;
+    var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
     var blendModes:Object = blendModeComboBox.dataProvider;
     var blendModeLength:uint = blendModes.length;
-    layerDataGrid.selectedIndex = currentIndex;
+    layerDataGrid.selectedIndex = currentLayerIndex;
     alphaSlider.value = layers.at(currentLayerIndex).alpha;
     for (var i:uint = 0; i < blendModeLength; i++) {
         if (blendModes[i].data == currentLayerBlendMode)
             blendModeComboBox.selectedIndex = i;
     }
+}
+
+private function init():void
+{
+    layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
+    ComponentResizer.addResize(this, new Point(144, 230));
+    enabled = false;
 }
 
 private function itemClickHandler(evt:ListEvent):void
@@ -44,30 +65,6 @@ private function itemClickHandler(evt:ListEvent):void
 
 private function itemDoubleClickHandler(evt:ListEvent):void
 {
-}
-
-public function changeLayer():void
-{
-    // TODO
-    // layerDataGrid.dataProvider = _logger.layerArray.layersForDataProvider;
-    var painter:Painter = value.recorder.painter;
-    var layers:LayerBitmapCollection = painter.layers;
-    var currentLayerBlendMode:String = painter.currentLayerBlendMode;
-    var layers:LayerBitmapCollection = value.recorder.painter.layers;
-    var layer:LayerBitmap = layers.at(layers.currentIndex);
-    layerDataGrid.selectedIndex = layer.index;
-    
-    var painter:Painter = value.recorder.painter;
-    alphaSlider.value = layer.alpha;
-    
-    var ac:ArrayCollection = blendModeComboBox.dataProvider as ArrayCollection;
-    var length:uint = ac.length;
-    for (var i:uint = 0; i < length; i++) {
-        if (ac.getItemAt(i).data == currentLayerBlendMode) {
-            blendModeComboBox.selectedIndex = i;
-            return;
-        }
-    }
 }
 
 private function newLayerHandler(evt:Event):void
@@ -109,7 +106,7 @@ private function dragCompleteHandler(evt:DragEvent):void
 {
     var a:Array = (layerDataGrid.dataProvider as ArrayCollection).toArray().reverse();
     var length:uint = a.length;
-    var layers:LayerBitmapCollection = value.recorder.painter.layers;
+    var layers:LayerBitmapCollection = m_delegate.recorder.painter.layers;
     for (var i:uint = 0; i < length; i++) {
         var from:uint = a[i].index;
         var to:uint = layers.at(i).index;

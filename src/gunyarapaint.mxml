@@ -37,7 +37,7 @@
             <mx:text></mx:text>
         </mx:TextArea>
         <mx:Button id="rotateResetButton" y="63" label="角度" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="rotateResetButtonHandler(event)"/>
-        <mx:Button id="zoomResetButton" y="81" label="拡大" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="zoomResetButtonHandlerzoomResetButtonHandler(event)"/>
+        <mx:Button id="zoomResetButton" y="81" label="拡大" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="zoomResetButtonHandler(event)"/>
         <mx:Button id="horizontalMirrorButton" x="117" y="128" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.horizontalMirror(0xff)"/>
         <mx:Button id="verticalMirrorButton" x="245" y="128" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.verticalMirror(0xff)"/>
         <mx:HSlider id="canvasRotate" y="62" width="152" minimum="-180" maximum="180" snapInterval="5" value="0"  right="49" showDataTip="false" change="canvasRotateHandler(event)" thumbDrag="canvasRotateHandler(event)"/>

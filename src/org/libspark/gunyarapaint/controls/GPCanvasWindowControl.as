@@ -74,6 +74,28 @@ package org.libspark.gunyarapaint.controls
                 transform.matrix = new Matrix(1, 0, 0, 1, m.tx, m.ty);
         }
         
+        public function scrollCanvas(x:Number, y:Number):void
+        {
+            canvasX = x;
+            canvasY = y;
+            moveCanvas();
+        }
+        
+        public function get canvasScrollPosition():Point
+        {
+            return new Point(canvasX, canvasY);
+        }
+        
+        public function get canvasScale():Number
+        {
+            return _canvasScale;
+        }
+        
+        public function set statusText(value:String):void
+        {
+            status = value;
+        }
+        
         public function set delegate(value:IDelegate):void
         {    
             _contentContainer = new Container();
@@ -164,13 +186,6 @@ package org.libspark.gunyarapaint.controls
             moveCanvas();
         }
         
-        public function scrollCanvas(x:Number, y:Number):void
-        {
-            canvasX = x;
-            canvasY = y;
-            moveCanvas();
-        }
-        
         private function set backgroundColor(c:uint):void
         {
             setStyle('backgroundColor', c);      
@@ -233,21 +248,6 @@ package org.libspark.gunyarapaint.controls
             // 整数化して、shape->bitmapのズレをなくす
             x = int(x);
             y = int(y);
-        }
-        
-        public function get canvasScrollPosition():Point
-        {
-            return new Point(canvasX, canvasY);
-        }
-        
-        public function get canvasScale():Number
-        {
-            return _canvasScale;
-        }
-        
-        public function set statusText(value:String):void
-        {
-            status = value;
         }
     }
 }

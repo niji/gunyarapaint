@@ -9,7 +9,6 @@ import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
 import mx.controls.Alert;
-import mx.core.UIComponent;
 import mx.core.UITextField;
 import mx.events.FlexEvent;
 import mx.events.ListEvent;
@@ -19,8 +18,9 @@ import mx.managers.PopUpManager;
 
 import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
 import org.libspark.gunyarapaint.framework.Recorder;
-import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
+import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
 import org.libspark.gunyarapaint.framework.modules.IDrawable;
+import org.libspark.nicopedia.Com;
 
 private var m_recorder:Recorder;
 private var m_module:IDrawable;
@@ -33,7 +33,7 @@ private var baseHeight:uint = 0;
 private var oekakiId:uint;
 private var redirectUrl:String;
 
-private var _logger:GPLogger;
+//private var _logger:GPLogger;
 
 private const ALERT_TITLE:String = 'お絵カキコ';
 private const MAX_CANVAS_WIDTH:uint = 500;
@@ -55,6 +55,11 @@ public function get recorder():Recorder
 public function get module():IDrawable
 {
     return m_module;
+}
+
+public function set module(value:IDrawable):void
+{
+    m_module = value;
 }
 
 public function get supportedBlendModes():Array
@@ -83,7 +88,7 @@ public function init():void
         parameters['canvasWidth'] = 417;
         parameters['canvasHeight'] = 317;
         // debug buttons
-        logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
+        //logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
         logPlayButton.visible = true;
         checkPngButton.visible = true;
     }
@@ -143,9 +148,9 @@ public function init():void
         } else {
             return;
         }
-        recorder = new Recorder();
-        recorder.prepare(width, height, undoBufferSize);
-        module = new FreeHandModule(recorder);
+        m_recorder = new Recorder();
+        m_recorder.prepare(width, height, undoBufferSize);
+        m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
         //_logger = GPLogger.createForDraw(width, height, undoBufferSize, null, null);
         relocateComponents();
     }
@@ -196,7 +201,7 @@ private function mouseUpHandler(evt:MouseEvent):void
 
 private function set allEnabled(value:Boolean):void
 {
-    this.enabled = value;
+    enabled = value;
     gpCanvasWindow.enabled = value;
     penDetailWindow.enabled = value;
     gpLayerWindow.enabled = value;
@@ -204,7 +209,7 @@ private function set allEnabled(value:Boolean):void
 
 private function relocateComponents():void
 {
-    toolCanvas.x = (this.width - toolCanvas.width) / 2;
+    toolCanvas.x = (width - toolCanvas.width) / 2;
     allEnabled = true;
 }
 
@@ -235,11 +240,13 @@ private function getBaseImgInfoHandler(com:Com):void
 
 private function baseImgToCanvas(width:uint, height:uint, undoBufferSize:uint, baseInfo:Object):void
 {
+    /*
     _logger = GPLogger.createForDraw(width, height, undoBufferSize,
         baseImg, baseInfo);
     gpCanvasWindow.logger = _logger;
+    */
     relocateComponents();
-    this.enabled = true;  
+    enabled = true;  
 }
 
 private function canvasZoomHandler(evt:SliderEvent):void
@@ -289,23 +296,24 @@ private function canvasRotateValueHandler(evt:Event):void
 
 private function additionalNumberStepperHandler(evt:NumericStepperEvent):void
 {
-    _logger.eventSetAdditionalNumber(evt.value);
+    //_logger.eventSetAdditionalNumber(evt.value);
 }
 
 private function additionalBoxCheckBoxHandler(evt:Event):void
 {
-    _logger.eventSetAdditionalBox(evt.target.selected);
+    //_logger.eventSetAdditionalBox(evt.target.selected);
 }
 
 private function additionalSkewCheckBoxHandler(evt:Event):void
 {
-    _logger.eventSetAdditionalSkew(evt.target.selected);
+    //_logger.eventSetAdditionalSkew(evt.target.selected);
 }
 
 // 20090906-haku2 ins start
 // 補助線種類の変更
 private function additionalTypeComboBoxHandler(evt:ListEvent):void
 {
+    /*
     var n:Number = additionalNumberStepper.value;
     additionalNumberStepper.value = _logger.additionalNumBk;
     _logger.additionalNumBk = n;
@@ -318,6 +326,7 @@ private function additionalTypeComboBoxHandler(evt:ListEvent):void
         additionalNumberStepper.maximum = 80;
     }
     _logger.eventSetAdditionalNumber(additionalNumberStepper.value);
+    */
 }
 
 // 20090906-haku2 ins end
@@ -356,7 +365,7 @@ private function commCompleteHandler(com:Com):void
         Alert.show('何かしらのエラーが起きました…再投稿お願いいたします。', ALERT_TITLE);
     }
     allEnabled = true;
-    extChangeAlertOnUnload(true);
+    alertOnUnload(true);
 }
 
 private function postOekakiButtonHandler(evt:Event):void
@@ -369,13 +378,14 @@ private function postOekakiButtonHandler(evt:Event):void
         Alert.show('書き込みが空です。', ALERT_TITLE);
         return;
     }
-    if (_logger.logCount == 0) {
+    // TODO:
+    if (0 == 0) {
         Alert.show('絵が描かれていません。お絵かきしてください。', ALERT_TITLE);
         return;
     }
     try {
         allEnabled = false;
-        extChangeAlertOnUnload(false);
+        alertOnUnload(false);
         var com:Com = new Com();
         com.postOekaki(this,
             parameters['postUrl'],
@@ -386,12 +396,12 @@ private function postOekakiButtonHandler(evt:Event):void
             messageTextArea.text,
             watchlistCheckBox.selected,
             oekakiId,
-            _logger.dataForPost,
+            new ByteArray(), //_logger.dataForPost,
             commCompleteHandler
         );
     } catch (e:Error) {
         allEnabled = true;
-        extChangeAlertOnUnload(true);
+        alertOnUnload(true);
         Alert.show(e.message, ALERT_TITLE);
     }
 }
@@ -429,25 +439,23 @@ private function setZoom(v:Number):void
     // 20090909-haku2 ins end
 }
 
-private function checkShortCutControl():Boolean
+private function get isShortCut():Boolean
 {
-    var fo:InteractiveObject = stage.focus;
-    return (fo is mx.core.UITextField);
+    return stage.focus is mx.core.UITextField;
 }
 
 private function shortCutKeyDownHandler(evt:KeyboardEvent):void
 {
-    if (checkShortCutControl()) {
+    if (isShortCut)
         return;
-    }
     switch (evt.keyCode) {
         case Keyboard.CONTROL:
-            penDetailWindow.penDetail.setTool(GPPen.PEN_MODE_DROPPER, null, true);
+            penDetailWindow.penDetail.pen = DrawModuleFactory.DROPPER;
             break;
         case Keyboard.SHIFT:
             break;
         case Keyboard.SPACE:
-            penDetailWindow.penDetail.setTool(GPPen.PEN_MODE_HANDTOOL, null, true);
+            penDetailWindow.penDetail.pen = ""; // handtool
             break;
         case 48: // 0
         case 96: // ten-key 0
@@ -459,33 +467,33 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
             break;
         case 65: // a
             // Aキーの状態 = 押下中
-            _logger.key_A = true;
+            m_module.keyA = true;
             break;
         case 73: // i
-            this.windowsResetButtonHandler(null);
+            windowsResetButtonHandler(null);
             break;
         case 77: // m
-            this.horizontalMirrorButtonHandler(null);
+            m_module.horizontalMirror(0xff);
             break;
         case 81: // q
             // Qキーの状態 = 押下中
-            _logger.key_Q = true;
+            m_module.keyQ = true;
             break;
         case 82: // r
             // Rキーの状態 = 押下中
-            _logger.key_R = true;
+            m_module.shouldStartAfterDrawing = true;
             break;
         // 20090905-haku2 ins start
         case 84: // t
             // Tキーの状態 = 押下中
-            _logger.key_T = true;
+            m_module.shouldStartBeforeDrawing = true;
             break;
         // 20090905-haku2 ins end
         case 89: // y
-            _logger.eventRedo();
+            m_module.redo();
             break;
         case 90: // z
-            _logger.eventUndo();
+            m_module.undo();
             break;
         case 107: // ten key +
             // +
@@ -496,10 +504,9 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
             setZoom(canvasZoom.value - 1);
             break;
         case 187:
-            if (evt.shiftKey) {
+            if (evt.shiftKey)
                 // +
                 setZoom(canvasZoom.value + 1);
-            }
             break;
         case 189:
             // -
@@ -514,9 +521,8 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
         case 55: // 7
         case 56: // 8
         case 57: // 9
-            if (!evt.shiftKey) { // 念のため SHIFTキー対応 (テンキーのほうは放置)
-                penDetailWindow.penDetail.setPenSize(evt.keyCode - 48);
-            }
+            if (!evt.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
+                penDetailWindow.penDetail.thickness = evt.keyCode - 48;
             break;
         case 97: // ten-key 1
         case 98: // ten-key 2
@@ -527,12 +533,11 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
         case 103: // ten-key 7
         case 104: // ten-key 8
         case 105: // ten-key 9
-            penDetailWindow.penDetail.setPenSize(evt.keyCode - 96);
+            penDetailWindow.penDetail.thickness = evt.keyCode - 96;
             break;
         case 45: // INS
-            if (!evt.shiftKey) {
+            if (!evt.shiftKey)
                 setRotate(0);
-            }
             break;
         default:
             // Alert('' + evt.keyCode);
@@ -542,32 +547,31 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
 
 private function shortCutKeyUpHandler(evt:KeyboardEvent):void
 {
-    if (checkShortCutControl()) {
+    if (isShortCut)
         return;
-    }
     switch (evt.keyCode) {
         case Keyboard.CONTROL:
-            penDetailWindow.penDetail.resetPenTool();
+            penDetailWindow.penDetail.reset();
             break;
         case Keyboard.SPACE:
-            penDetailWindow.penDetail.resetPenTool();
+            penDetailWindow.penDetail.reset();
             break;
         case 65: // a
             // Aキーの状態 = 解放
-            _logger.key_A = false;
+            m_module.keyA = false;
             break;
         case 81: // q
             // Qキーの状態 = 解放
-            _logger.key_Q = false;
+            m_module.keyQ = false;
             break;
         case 82: // r
             // Rキーの状態 = 解放
-            _logger.key_R = false;
+            m_module.shouldStartAfterDrawing = false;
             break;
         // 20090905-haku2 ins start
         case 84: // t
             // Tキーの状態 = 解放
-            _logger.key_T = false;
+            m_module.shouldStartBeforeDrawing = false;
             break;
         // 20090905-haku2 ins end
         return;
@@ -576,6 +580,7 @@ private function shortCutKeyUpHandler(evt:KeyboardEvent):void
 
 /* for debug */
 
+/*
 private var _debugLogger:GPLogger;
 private function playLogHandler(evt:FlexEvent):void
 {
@@ -587,13 +592,14 @@ private function playLogHandler(evt:FlexEvent):void
     tui.graphics.beginFill(0xFFFFFF);
     tui.graphics.drawRect(0, 0, _debugLogger.canvasWidth, _debugLogger.canvasHeight);
     tui.addChild(_debugLogger.layerArray.view);
-    this.addChild(tui);
+    addChild(tui);
     
-    // this.rawChildren.addChild(_debugLogger.layerArray.view);
+    // rawChildren.addChild(_debugLogger.layerArray.view);
     _debugLogger.play(1000, function ():void {});
 }
+*/
 
-private function extChangeAlertOnUnload(b:Boolean):void
+private function alertOnUnload(b:Boolean):void
 {
     if (ExternalInterface.available) {
         try {
