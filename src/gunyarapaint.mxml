@@ -5,7 +5,6 @@
     layout="absolute" width="100%" height="100%"
     creationComplete="init()"
     applicationComplete="appComplete()"
-    resize="relocateComponents()"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
     implements="org.libspark.gunyarapaint.controls.IDelegate"
@@ -60,8 +59,8 @@
         <mx:Button id="checkPngButton" y="105" label="同一check" visible="false" right="10"/>
         <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0"></mx:ComboBox>
     </mx:Canvas>
-    <gpcontrol:PenDetailWindowControl id="penDetailWindow" x="9" y="163" layout="absolute" title="ペン" height="450" delegate="{this}" />
-    <gpcontrol:GPCanvasWindowControl id="gpCanvasWindow" x="145" y="163" width="379" height="410" layout="absolute" title="キャンバス" delegate="{this}" />
+    <gpcontrol:PenDetailWindowControl id="penDetailWindow" x="9" y="163" layout="absolute" title="ペン" height="450" />
+    <gpcontrol:GPCanvasWindowControl id="gpCanvasWindow" x="145" y="163" width="379" height="410" layout="absolute" title="キャンバス" />
     <gpcontrol:GPLayerWindowControl x="532" y="163" layout="absolute" title="レイヤー" id="gpLayerWindow" height="312" />
     <mx:Label id="versionLabel" text="ver.2009090902" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

@@ -151,7 +151,7 @@ public function init():void
         m_recorder = new Recorder();
         m_recorder.prepare(width, height, undoBufferSize);
         m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
-        //_logger = GPLogger.createForDraw(width, height, undoBufferSize, null, null);
+        gpCanvasWindow.delegate = penDetailWindow.delegate = this;
         relocateComponents();
     }
 }
@@ -296,17 +296,17 @@ private function canvasRotateValueHandler(evt:Event):void
 
 private function additionalNumberStepperHandler(evt:NumericStepperEvent):void
 {
-    //_logger.eventSetAdditionalNumber(evt.value);
+    gpCanvasWindow.auxBitmap.length = evt.value;
 }
 
 private function additionalBoxCheckBoxHandler(evt:Event):void
 {
-    //_logger.eventSetAdditionalBox(evt.target.selected);
+    gpCanvasWindow.auxBitmap.boxVisible = evt.target.selected;
 }
 
 private function additionalSkewCheckBoxHandler(evt:Event):void
 {
-    //_logger.eventSetAdditionalSkew(evt.target.selected);
+    gpCanvasWindow.auxBitmap.skewVisible = evt.target.selected;
 }
 
 // 20090906-haku2 ins start
@@ -335,14 +335,16 @@ public function changeUndoRedoHandler(undoCount:uint, redoCount:uint):void
     if (undoCount > 0) {
         undoButton.label = 'アンドゥ (' + undoCount + ')';
         undoButton.enabled = true;
-    } else {
+    }
+    else {
         undoButton.label = 'アンドゥ';
         undoButton.enabled = false;
     }
     if (redoCount > 0) {
         redoButton.label = 'リドゥ (' + redoCount + ')';
         redoButton.enabled = true;
-    } else {
+    }
+    else {
         redoButton.label = 'リドゥ';
         redoButton.enabled = false;
     }

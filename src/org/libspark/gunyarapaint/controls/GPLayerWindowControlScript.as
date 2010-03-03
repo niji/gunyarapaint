@@ -36,7 +36,7 @@ public function set delegate(value:IDelegate):void
     m_delegate = value;
     blendModeComboBox.dataProvider = value.supportedBlendModes;
     enabled = true;
-    changeLayer();
+    change();
     var painter:Painter = value.recorder.painter;
     var layers:LayerBitmapCollection = painter.layers;
     var currentLayerIndex:uint = layers.currentIndex;
