@@ -3,6 +3,7 @@
     xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:gpcontrol="org.libspark.gunyarapaint.controls.*"
     layout="absolute" width="100%" height="100%"
+    preinitialize="preinit()"
     creationComplete="init()"
     applicationComplete="appComplete()"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
@@ -51,8 +52,8 @@
         <mx:CheckBox id="additionalBoxCheckBox" y="2" label="縦横" right="8" fontSize="9" height="18" change="additionalBoxCheckBoxHandler(event)"/>
         <mx:CheckBox id="additionalSkewCheckBox" y="18" label="斜め" right="9" fontSize="9" height="18" change="additionalSkewCheckBoxHandler(event)"/>
         <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
-        <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="recorder.undo()"/>
-        <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="recorder.redo()"/>
+        <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="m_recorder.undo()"/>
+        <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="m_recorder.redo()"/>
         <mx:Button id="windowsResetButton" x="10" y="128" label="ウィンドウ初期状態" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="windowsResetButtonHandler(event)"/>
         <mx:Button id="passwordButton" x="373" y="128" label="ふっかつのじゅもん" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" enabled="false" buttonDown="passwordButtonHandler(event)"/>
         <mx:Button id="logPlayButton" y="105" label="ログプレイ" visible="false" right="99"/>

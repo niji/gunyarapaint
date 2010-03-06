@@ -1,23 +1,23 @@
 package org.libspark.gunyarapaint.controls
 {
-    import mx.controls.CheckBox;
-    import mx.events.FlexEvent;
     import flash.events.Event;
     import flash.events.MouseEvent;
+    
+    import mx.controls.CheckBox;
     import mx.controls.dataGridClasses.DataGridListData;
+    import mx.events.FlexEvent;
     
     public class CheckBoxEditor extends CheckBox
     {
-        private var _ownerData:Object;
-        private var _text:String;
+        private var m_ownerData:Object;
+        private var m_text:String;
         
         override public function set data(value:Object):void
         {
-            _ownerData = value;
-            if (_ownerData) {
+            m_ownerData = value;
+            if (m_ownerData) {
                 var col:DataGridListData = DataGridListData(listData);
-                selected = (_ownerData[col.dataField] == 'on');
-                
+                selected = (m_ownerData[col.dataField] == 'on');
                 updateCheckText();
                 dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
             }
@@ -25,7 +25,7 @@ package org.libspark.gunyarapaint.controls
         
         override public function get data():Object
         {
-            return _ownerData;
+            return m_ownerData;
         }
         
         public function set text(value:String):void
@@ -35,14 +35,14 @@ package org.libspark.gunyarapaint.controls
         
         public function get text():String
         {
-            return _text;
+            return m_text;
         }
         
         override protected function clickHandler(event:MouseEvent):void
         {
             super.clickHandler(event);
             var col:DataGridListData = DataGridListData(listData);
-            _ownerData[col.dataField] = selected ? 'on' : 'off';
+            m_ownerData[col.dataField] = selected ? 'on' : 'off';
             var toggleEvent:Event = new Event("describeChange");
             owner.dispatchEvent(toggleEvent);
             updateCheckText();
@@ -50,7 +50,7 @@ package org.libspark.gunyarapaint.controls
         
         private function updateCheckText():void
         {
-            _text = selected ? 'on' : 'off';
+            m_text = selected ? 'on' : 'off';
         }
     }
 }

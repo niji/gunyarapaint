@@ -16,6 +16,12 @@ import mx.events.NumericStepperEvent;
 import mx.events.SliderEvent;
 import mx.managers.PopUpManager;
 
+import org.libspark.gunyarapaint.framework.Pen;
+import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+import org.libspark.gunyarapaint.framework.Painter;
+import org.libspark.gunyarapaint.framework.Logger;
+import org.libspark.gunyarapaint.framework.events.CommandEvent;
+import org.libspark.gunyarapaint.framework.events.UndoEvent;
 import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
 import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
@@ -47,9 +53,9 @@ private var initPenDetailWindowPos:Point;
 private var initGPLayerWindowPos:Point;
 private var initCanvasWindowSize:Point;
 
-public function get recorder():Recorder
+public function setModule(value:String):void
 {
-    return m_recorder;
+    m_module = DrawModuleFactory.create(value, m_recorder);
 }
 
 public function get module():IDrawable
@@ -57,24 +63,42 @@ public function get module():IDrawable
     return m_module;
 }
 
-public function set module(value:IDrawable):void
-{
-    m_module = value;
-}
-
 public function get supportedBlendModes():Array
 {
     return blendModes.toArray();
 }
 
-public function init():void
+public function get layers():LayerBitmapCollection
 {
-    var width:uint = 0;
-    var height:uint = 0;
-    var undoBufferSize:uint = 0;
-    
+    return m_recorder.painter.layers;
+}
+
+public function get pen():Pen
+{
+    return m_recorder.painter.pen;
+}
+
+public function get canvasWidth():uint
+{
+    return m_recorder.width;
+}
+
+public function get canvasHeight():uint
+{
+    return m_recorder.height;
+}
+
+public function get canvasView():Sprite
+{
+    return m_recorder.painter.view;
+}
+
+private function preinit():void
+{
+    var width:int = 0;
+    var height:int = 0;
+    var undoBufferSize:int = 0;
     if (DEBUG) {
-        versionLabel.text += 'debug';
         /*
         parameters['oekakiId'] = 23724;
         parameters['baseImgUrl'] = 'http://dic.nicovideo.jp/oekaki_layers/23724';
@@ -87,8 +111,36 @@ public function init():void
         parameters['undoBufferSize'] = 16;
         parameters['canvasWidth'] = 417;
         parameters['canvasHeight'] = 317;
+    }
+    width = int(parameters['canvasWidth']);
+    height = int(parameters['canvasHeight']);
+    undoBufferSize = int(parameters['undoBufferSize']);
+    m_recorder = new Recorder(new Logger(new ByteArray()));
+    m_recorder.prepare(width, height, undoBufferSize);
+    m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
+    
+    m_recorder.addEventListener(CommandEvent.COMMITTED, commitHandler);
+    m_recorder.addEventListener(UndoEvent.UNDO, changeUndoRedoHandler);
+    m_recorder.addEventListener(UndoEvent.REDO, changeUndoRedoHandler);
+    m_recorder.addEventListener(UndoEvent.PUSH, changeUndoRedoHandler);
+    //gpCanvasWindow.delegate = penDetailWindow.delegate = this;
+}
+
+private function commitHandler(event:CommandEvent):void
+{
+    trace(event.command);
+}
+
+public function init():void
+{
+    var width:uint = 0;
+    var height:uint = 0;
+    var undoBufferSize:uint = 0;
+    
+    if (DEBUG) {
         // debug buttons
         //logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
+        versionLabel.text += 'debug';
         logPlayButton.visible = true;
         checkPngButton.visible = true;
     }
@@ -148,10 +200,6 @@ public function init():void
         } else {
             return;
         }
-        m_recorder = new Recorder();
-        m_recorder.prepare(width, height, undoBufferSize);
-        m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
-        gpCanvasWindow.delegate = penDetailWindow.delegate = this;
         relocateComponents();
     }
 }
@@ -330,22 +378,24 @@ private function additionalTypeComboBoxHandler(evt:ListEvent):void
 }
 
 // 20090906-haku2 ins end
-public function changeUndoRedoHandler(undoCount:uint, redoCount:uint):void
+private function changeUndoRedoHandler(event:UndoEvent):void
 {
+    var undoCount:int = event.undoCount;
+    undoButton.label = 'アンドゥ ';
     if (undoCount > 0) {
-        undoButton.label = 'アンドゥ (' + undoCount + ')';
+        undoButton.label += '(' + undoCount + ')';
         undoButton.enabled = true;
     }
     else {
-        undoButton.label = 'アンドゥ';
         undoButton.enabled = false;
     }
+    var redoCount:int = event.redoCount;
+    redoButton.label = 'リドゥ ';
     if (redoCount > 0) {
-        redoButton.label = 'リドゥ (' + redoCount + ')';
+        redoButton.label += '(' + redoCount + ')';
         redoButton.enabled = true;
     }
     else {
-        redoButton.label = 'リドゥ';
         redoButton.enabled = false;
     }
 }
@@ -452,12 +502,12 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
         return;
     switch (evt.keyCode) {
         case Keyboard.CONTROL:
-            penDetailWindow.penDetail.pen = DrawModuleFactory.DROPPER;
+            penDetailWindow.pen = DrawModuleFactory.DROPPER;
             break;
         case Keyboard.SHIFT:
             break;
         case Keyboard.SPACE:
-            penDetailWindow.penDetail.pen = ""; // handtool
+            penDetailWindow.pen = ""; // handtool
             break;
         case 48: // 0
         case 96: // ten-key 0
@@ -524,7 +574,7 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
         case 56: // 8
         case 57: // 9
             if (!evt.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
-                penDetailWindow.penDetail.thickness = evt.keyCode - 48;
+                penDetailWindow.thickness = evt.keyCode - 48;
             break;
         case 97: // ten-key 1
         case 98: // ten-key 2
@@ -535,7 +585,7 @@ private function shortCutKeyDownHandler(evt:KeyboardEvent):void
         case 103: // ten-key 7
         case 104: // ten-key 8
         case 105: // ten-key 9
-            penDetailWindow.penDetail.thickness = evt.keyCode - 96;
+            penDetailWindow.thickness = evt.keyCode - 96;
             break;
         case 45: // INS
             if (!evt.shiftKey)
@@ -553,10 +603,10 @@ private function shortCutKeyUpHandler(evt:KeyboardEvent):void
         return;
     switch (evt.keyCode) {
         case Keyboard.CONTROL:
-            penDetailWindow.penDetail.reset();
+            penDetailWindow.reset();
             break;
         case Keyboard.SPACE:
-            penDetailWindow.penDetail.reset();
+            penDetailWindow.reset();
             break;
         case 65: // a
             // Aキーの状態 = 解放
@@ -579,27 +629,6 @@ private function shortCutKeyUpHandler(evt:KeyboardEvent):void
         return;
     }
 }
-
-/* for debug */
-
-/*
-private var _debugLogger:GPLogger;
-private function playLogHandler(evt:FlexEvent):void
-{
-    var lb:ByteArray = _logger.compressedLog;
-    lb.uncompress();
-    _debugLogger = GPLogger.createFromByteArray(lb, false, null, null);
-    
-    var tui:UIComponent = new UIComponent();
-    tui.graphics.beginFill(0xFFFFFF);
-    tui.graphics.drawRect(0, 0, _debugLogger.canvasWidth, _debugLogger.canvasHeight);
-    tui.addChild(_debugLogger.layerArray.view);
-    addChild(tui);
-    
-    // rawChildren.addChild(_debugLogger.layerArray.view);
-    _debugLogger.play(1000, function ():void {});
-}
-*/
 
 private function alertOnUnload(b:Boolean):void
 {

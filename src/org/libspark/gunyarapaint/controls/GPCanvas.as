@@ -1,12 +1,10 @@
 package org.libspark.gunyarapaint.controls
 {
-    import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     
     import mx.core.UIComponent;
     
-    import org.libspark.gunyarapaint.controls.IDelegate;
     import org.libspark.gunyarapaint.framework.AuxBitmap;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
     
@@ -17,13 +15,13 @@ package org.libspark.gunyarapaint.controls
         
         public function GPCanvas(delegate:IDelegate)
         {
-            var rect:Rectangle = new Rectangle(0, 0, delegate.recorder.width, delegate.recorder.height);
+            var rect:Rectangle = new Rectangle(0, 0, delegate.canvasWidth, delegate.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_aux = new AuxBitmap(rect);
             m_delegate = delegate;
             
             addChild(transparent);
-            addChild(delegate.recorder.painter.view);
+            addChild(delegate.canvasView);
             addChild(m_aux);
             
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
@@ -41,7 +39,7 @@ package org.libspark.gunyarapaint.controls
         private function mouseDownHandler(evt:MouseEvent):void
         {
             m_delegate.module.start(evt.localX, evt.localY);
-            m_delegate.recorder.painter.view.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+            m_delegate.canvasView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
         }
         
         private function mouseMoveHandler(evt:MouseEvent):void
@@ -51,7 +49,7 @@ package org.libspark.gunyarapaint.controls
         
         private function mouseUpHandler(evt:MouseEvent):void
         {
-            m_delegate.recorder.painter.view.removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
+            m_delegate.canvasView.removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
             m_delegate.module.stop(evt.localX, evt.localY);
         }
         

@@ -1,24 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 width="144" height="312"
-                creationComplete="init()"
+                creationComplete="onCreateComplete()"
                 xmlns:ns1="org.libspark.gunyarapaint.controls.*"
                 >
-    <mx:Script source="GPLayerWindowControlScript.as">
+    <mx:Script>
+        <![CDATA[
+            import mx.collections.ArrayCollection;
+            import mx.controls.Alert;
+            import mx.core.Application;
+            import mx.events.DragEvent;
+            import mx.events.ListEvent;
+            import mx.events.SliderEvent;
+            
+            import org.libspark.gunyarapaint.framework.LayerBitmap;
+            import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+            import org.libspark.gunyarapaint.framework.Painter;
+            import org.libspark.gunyarapaint.utils.ComponentResizer;
+            import org.libspark.gunyarapaint.controls.IDelegate;
+            
+            public function update():void
+            {
+                var layers:LayerBitmapCollection = IDelegate(Application.application).layers;
+                var layer:LayerBitmap = layers.at(layers.currentIndex);
+                var currentLayerBlendMode:String = layer.blendMode;
+                layerDataGrid.dataProvider = layers.toDataProvider();
+                layerDataGrid.selectedIndex = layer.index;
+                alphaSlider.value = layer.alpha;
+                var ac:ArrayCollection = blendModeComboBox.dataProvider as ArrayCollection;
+                var length:uint = ac.length;
+                for (var i:uint = 0; i < length; i++) {
+                    if (ac.getItemAt(i).data == currentLayerBlendMode) {
+                        blendModeComboBox.selectedIndex = i;
+                        return;
+                    }
+                }
+            }
+            
+            private function onCreateComplete():void
+            {
+                var delegate:IDelegate = IDelegate(Application.application);
+                blendModeComboBox.dataProvider = delegate.supportedBlendModes;
+                enabled = true;
+                update();
+                
+                var layers:LayerBitmapCollection = delegate.layers;
+                var currentLayerIndex:uint = layers.currentIndex;
+                var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
+                var blendModes:Object = blendModeComboBox.dataProvider;
+                var blendModeLength:uint = blendModes.length;
+                layerDataGrid.selectedIndex = currentLayerIndex;
+                alphaSlider.value = layers.at(currentLayerIndex).alpha;
+                for (var i:uint = 0; i < blendModeLength; i++) {
+                    if (blendModes[i].data == currentLayerBlendMode)
+                        blendModeComboBox.selectedIndex = i;
+                }
+                layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
+                ComponentResizer.addResize(this, new Point(144, 230));
+                enabled = false;
+            }
+            
+            private function onClickLayer(evt:ListEvent):void
+            {
+                IDelegate(Application.application).module.layerIndex = evt.currentTarget.selectedItem.index;
+            }
+            
+            private function onCreateLayer(evt:Event):void
+            {
+                IDelegate(Application.application).module.createLayer();
+                update();
+            }
+            
+            private function onCopyLayer(evt:Event):void
+            {
+                IDelegate(Application.application).module.copyLayer();
+                update();
+            }
+            
+            private function onRemoveLayer(evt:Event):void
+            {
+                try {
+                    IDelegate(Application.application).module.removeLayer();
+                    update();
+                } catch (e:Error) {
+                    Alert.show(e.message, e.name);
+                }
+            }
+            
+            private function onMergeLayers(evt:Event):void
+            {
+                try {
+                    IDelegate(Application.application).module.mergeLayers();
+                    update();
+                } catch (e:Error) {
+                    Alert.show(e.message, e.name);
+                }
+            }
+            
+            private function itemCheckChangeHandler(evt:Event):void
+            {
+                // do nothing...
+            }
+            
+            private function onChangeAlphaSlider(evt:SliderEvent):void
+            {
+                IDelegate(Application.application).module.layerAlpha = evt.value;
+            }
+            
+            private function onSelectBlendMode(evt:ListEvent):void
+            {
+                IDelegate(Application.application).module.layerBlendMode = String(evt.currentTarget.value);
+            }
+            
+            private function onDragComplete(evt:DragEvent):void
+            {
+                var delegate:IDelegate = IDelegate(Application.application);
+                var a:Array = (layerDataGrid.dataProvider as ArrayCollection).toArray().reverse();
+                var length:uint = a.length;
+                var layers:LayerBitmapCollection = delegate.layers;
+                for (var i:uint = 0; i < length; i++) {
+                    var from:uint = a[i].index;
+                    var to:uint = layers.at(i).index;
+                    if (a[i].index != to) {
+                        delegate.module.swapLayers(from, to);
+                        break;
+                    }
+                }
+            }
+        ]]>
     </mx:Script>
-    <ns1:GPLayerDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true" itemClick="itemClickHandler(event)" itemDoubleClick="itemDoubleClickHandler(event)" dragComplete="dragCompleteHandler(event)">
+    <ns1:GPLayerDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
+                         itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)">
         <ns1:columns>
-            <mx:DataGridColumn editable="false" headerText="目" dataField="showCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/>
-            <mx:DataGridColumn editable="false" headerText="ロ" dataField="lockCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/>
             <!--mx:DataGridColumn headerText="マ" dataField="maskCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/-->
             <mx:DataGridColumn editable="true" headerText="レイヤ名" dataField="name"/>
         </ns1:columns>
     </ns1:GPLayerDataGrid>
-    <mx:Button x="6" y="246" id="newLayerButton" label="新" width="22" paddingLeft="0" paddingRight="0" buttonDown="newLayerHandler(event)"/>
-    <mx:Button x="36" y="246" id="copyLayerButton" label="複" width="22" paddingLeft="0" paddingRight="0" buttonDown="copyLayerHandler(event)"/>
-    <mx:Button x="66" y="246" id="deleteLayerButton" label="削" width="22" paddingLeft="0" paddingRight="0" buttonDown="deleteLayerHandler(event)"/>
-    <mx:Button x="96" y="246" id="mergeLayerButton" label="統" width="22" paddingLeft="0" paddingRight="0" buttonDown="mergeLayerHandler(event)"/>
-    <mx:ComboBox id="blendModeComboBox" x="0" y="0" width="124" change="blendModeComboBoxHandler(event)"></mx:ComboBox>
+    <mx:Button x="6" y="246" id="newLayerButton" label="新" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCreateLayer(event)"/>
+    <mx:Button x="36" y="246" id="copyLayerButton" label="複" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCopyLayer(event)"/>
+    <mx:Button x="66" y="246" id="deleteLayerButton" label="削" width="22" paddingLeft="0" paddingRight="0" buttonDown="onRemoveLayer(event)"/>
+    <mx:Button x="96" y="246" id="mergeLayerButton" label="統" width="22" paddingLeft="0" paddingRight="0" buttonDown="onMergeLayers(event)"/>
+    <mx:ComboBox id="blendModeComboBox" x="0" y="0" width="124" change="onSelectBlendMode(event)"></mx:ComboBox>
     <mx:Label x="5" y="23" text="透"/>
-    <mx:HSlider id="alphaSlider" x="18" y="20" width="99" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="alphaSliderHandler(event)"/>
+    <mx:HSlider id="alphaSlider" x="18" y="20" width="99" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="onChangeAlphaSlider(event)"/>
 </mx:TitleWindow>
