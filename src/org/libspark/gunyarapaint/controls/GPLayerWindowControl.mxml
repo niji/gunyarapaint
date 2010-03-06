@@ -62,7 +62,10 @@
             
             private function onClickLayer(evt:ListEvent):void
             {
-                IDelegate(Application.application).module.layerIndex = evt.currentTarget.selectedItem.index;
+                var delegate:IDelegate = IDelegate(Application.application);
+                var layer:LayerBitmap = LayerBitmap(evt.currentTarget.selectedItem);
+                if (delegate.layers.currentIndex != layer.index)
+                    delegate.module.layerIndex = layer.index;
             }
             
             private function onCreateLayer(evt:Event):void

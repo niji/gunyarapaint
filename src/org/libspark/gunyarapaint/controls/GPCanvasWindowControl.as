@@ -17,22 +17,9 @@ package org.libspark.gunyarapaint.controls
     
     import org.libspark.gunyarapaint.framework.AuxBitmap;
     import org.libspark.gunyarapaint.framework.Pen;
-    import org.libspark.gunyarapaint.utils.ComponentResizer;
     
     public class GPCanvasWindowControl extends TitleWindow
     {
-        private var m_canvasContainer:Container; // GPCanvasを直接格納するコンテナ
-        private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
-        
-        private var m_hScrollBar:HScrollBar; // 横スクロールバー
-        private var m_vScrollBar:VScrollBar; // 縦スクロールバー
-        private var m_canvasX:Number, m_canvasY:Number; // キャンバスのスクロール位置
-        private var m_canvasScale:Number; // キャンバスの倍率
-        private var m_preDegree:int; // 前の回転角度
-        private var m_scrollDragStartPoint:Point;
-        
-        private var m_canvas:GPCanvas;
-        
         public function GPCanvasWindowControl()
         {
             m_contentContainer = new Container();
@@ -105,9 +92,28 @@ package org.libspark.gunyarapaint.controls
             return m_canvasScale;
         }
         
-        public function get auxBitmap():AuxBitmap
+        public function set auxBoxVisible(value:Boolean):void
         {
-            return m_canvas.auxBitmap;
+            m_canvas.auxBoxVisible = value;
+            m_canvas.updateAuxViews();
+        }
+        
+        public function set auxSkewVisible(value:Boolean):void
+        {
+            m_canvas.auxSkewVisible = value;
+            m_canvas.updateAuxViews();
+        }
+        
+        public function set auxDivideCount(value:uint):void
+        {
+            m_canvas.auxDivideCount = value;
+            m_canvas.updateAuxViews();
+        }
+        
+        public function set enableAuxPixel(value:Boolean):void
+        {
+            m_canvas.enableAuxPixel = value;
+            m_canvas.updateAuxViews();
         }
         
         public function set statusText(value:String):void
@@ -134,11 +140,11 @@ package org.libspark.gunyarapaint.controls
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
+            m_resizable = new ResizableComponent(this, new Point(100, 100));
             
             resizeContainer();
             moveCanvas();
             
-            ComponentResizer.addResize(this, new Point(100, 100));
             addEventListener(ResizeEvent.RESIZE, onResize);
             removeEventListener(FlexEvent.CREATION_COMPLETE, onCreationComplete);
         }
@@ -166,9 +172,9 @@ package org.libspark.gunyarapaint.controls
             if (e.eventPhase == flash.events.EventPhase.AT_TARGET) {
                 var pen:Pen = IDelegate(Application.application).pen;
                 setStyle("backgroundColor", pen.color);
-                auxBitmap.lineColor = pen.color;
-                auxBitmap.lineAlpha = pen.alpha;
-                auxBitmap.validate();
+                m_canvas.auxLineColor = pen.color;
+                m_canvas.auxLineAlpha = pen.alpha;
+                m_canvas.updateAuxViews();
             }
         }
         
@@ -234,5 +240,16 @@ package org.libspark.gunyarapaint.controls
             m_canvasContainer.move((clientWidth - m_canvasContainer.width) / 2,
                 (clientHeight - m_canvasContainer.height) / 2);
         }
+        
+        private var m_canvasContainer:Container; // GPCanvasを直接格納するコンテナ
+        private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
+        private var m_hScrollBar:HScrollBar; // 横スクロールバー
+        private var m_vScrollBar:VScrollBar; // 縦スクロールバー
+        private var m_canvasX:Number, m_canvasY:Number; // キャンバスのスクロール位置
+        private var m_canvasScale:Number; // キャンバスの倍率
+        private var m_preDegree:int; // 前の回転角度
+        private var m_scrollDragStartPoint:Point;
+        private var m_resizable:ResizableComponent;
+        private var m_canvas:GPCanvas;
     }
 }

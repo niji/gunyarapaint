@@ -19,7 +19,6 @@ import mx.managers.PopUpManager;
 import org.libspark.gunyarapaint.framework.Pen;
 import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
 import org.libspark.gunyarapaint.framework.Painter;
-import org.libspark.gunyarapaint.framework.Logger;
 import org.libspark.gunyarapaint.framework.events.CommandEvent;
 import org.libspark.gunyarapaint.framework.events.UndoEvent;
 import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
@@ -115,7 +114,7 @@ private function preinit():void
     width = int(parameters['canvasWidth']);
     height = int(parameters['canvasHeight']);
     undoBufferSize = int(parameters['undoBufferSize']);
-    m_recorder = new Recorder(new Logger(new ByteArray()));
+    m_recorder = new Recorder(new ByteArray());
     m_recorder.prepare(width, height, undoBufferSize);
     m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
     
@@ -128,7 +127,7 @@ private function preinit():void
 
 private function commitHandler(event:CommandEvent):void
 {
-    trace(event.command);
+    //trace(event.command);
 }
 
 public function init():void
@@ -149,12 +148,6 @@ public function init():void
     gpCanvasWindow.enabled = false;
     penDetailWindow.enabled = false;
     gpLayerWindow.enabled = false;
-    
-    // 補助線モード選択コンボ初期化
-    additionalTypeComboBox.dataProvider = [
-        {label: '分割', data: 0},
-        {label: 'px単位', data: 1}];
-    additionalTypeComboBox.addEventListener(ListEvent.CHANGE, additionalTypeComboBoxHandler);
     
     // ポップアップさせて、そいつらの初期位置を覚える
     PopUpManager.addPopUp(gpCanvasWindow, this);
@@ -344,37 +337,34 @@ private function canvasRotateValueHandler(evt:Event):void
 
 private function additionalNumberStepperHandler(evt:NumericStepperEvent):void
 {
-    gpCanvasWindow.auxBitmap.length = evt.value;
+    gpCanvasWindow.auxDivideCount = uint(evt.value);
 }
 
 private function additionalBoxCheckBoxHandler(evt:Event):void
 {
-    gpCanvasWindow.auxBitmap.boxVisible = evt.target.selected;
+    gpCanvasWindow.auxBoxVisible = evt.target.selected;
 }
 
 private function additionalSkewCheckBoxHandler(evt:Event):void
 {
-    gpCanvasWindow.auxBitmap.skewVisible = evt.target.selected;
+    gpCanvasWindow.auxSkewVisible = evt.target.selected;
 }
 
 // 20090906-haku2 ins start
 // 補助線種類の変更
 private function additionalTypeComboBoxHandler(evt:ListEvent):void
 {
-    /*
     var n:Number = additionalNumberStepper.value;
-    additionalNumberStepper.value = _logger.additionalNumBk;
-    _logger.additionalNumBk = n;
-    _logger.additionalType = additionalTypeComboBox.selectedIndex;
-    if (_logger.additionalType == 0) {
+    if (evt.currentTarget.value == 0) {
         additionalNumberStepper.minimum = 2;
         additionalNumberStepper.maximum = 16;
-    } else {
+        gpCanvasWindow.enableAuxPixel = false;
+    }
+    else {
         additionalNumberStepper.minimum = 4;
         additionalNumberStepper.maximum = 80;
+        gpCanvasWindow.enableAuxPixel = true;
     }
-    _logger.eventSetAdditionalNumber(additionalNumberStepper.value);
-    */
 }
 
 // 20090906-haku2 ins end

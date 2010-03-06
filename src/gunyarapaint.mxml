@@ -58,7 +58,12 @@
         <mx:Button id="passwordButton" x="373" y="128" label="ふっかつのじゅもん" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" enabled="false" buttonDown="passwordButtonHandler(event)"/>
         <mx:Button id="logPlayButton" y="105" label="ログプレイ" visible="false" right="99"/>
         <mx:Button id="checkPngButton" y="105" label="同一check" visible="false" right="10"/>
-        <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0"></mx:ComboBox>
+        <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0" change="additionalTypeComboBoxHandler(event)">
+            <mx:ArrayCollection id="auxTypes">
+                <mx:Object label="分割" data="0" />
+                <mx:Object label="px単位" data="1" />
+            </mx:ArrayCollection>
+        </mx:ComboBox>
     </mx:Canvas>
     <gpcontrol:PenDetailWindowControl id="penDetailWindow" x="9" y="163" layout="absolute" title="ペン" height="450" />
     <gpcontrol:GPCanvasWindowControl id="gpCanvasWindow" x="145" y="163" width="379" height="410" layout="absolute" title="キャンバス" />

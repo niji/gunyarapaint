@@ -17,7 +17,7 @@ package org.libspark.gunyarapaint.controls
             m_ownerData = value;
             if (m_ownerData) {
                 var col:DataGridListData = DataGridListData(listData);
-                selected = (m_ownerData[col.dataField] == 'on');
+                selected = m_ownerData[col.dataField];
                 updateCheckText();
                 dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
             }
@@ -42,7 +42,7 @@ package org.libspark.gunyarapaint.controls
         {
             super.clickHandler(event);
             var col:DataGridListData = DataGridListData(listData);
-            m_ownerData[col.dataField] = selected ? 'on' : 'off';
+            m_ownerData[col.dataField] = selected;
             var toggleEvent:Event = new Event("describeChange");
             owner.dispatchEvent(toggleEvent);
             updateCheckText();
