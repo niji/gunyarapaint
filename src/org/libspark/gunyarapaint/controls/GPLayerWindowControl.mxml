@@ -17,11 +17,11 @@
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.utils.ComponentResizer;
-            import org.libspark.gunyarapaint.controls.IDelegate;
+            import org.libspark.gunyarapaint.framework.ui.IApplication;
             
             public function update():void
             {
-                var layers:LayerBitmapCollection = IDelegate(Application.application).layers;
+                var layers:LayerBitmapCollection = IApplication(Application.application).layers;
                 var layer:LayerBitmap = layers.at(layers.currentIndex);
                 var currentLayerBlendMode:String = layer.blendMode;
                 layerDataGrid.dataProvider = layers.toDataProvider();
@@ -39,12 +39,12 @@
             
             private function onCreateComplete():void
             {
-                var delegate:IDelegate = IDelegate(Application.application);
-                blendModeComboBox.dataProvider = delegate.supportedBlendModes;
+                var application:IApplication = IApplication(Application.application);
+                blendModeComboBox.dataProvider = application.supportedBlendModes;
                 enabled = true;
                 update();
                 
-                var layers:LayerBitmapCollection = delegate.layers;
+                var layers:LayerBitmapCollection = application.layers;
                 var currentLayerIndex:uint = layers.currentIndex;
                 var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
                 var blendModes:Object = blendModeComboBox.dataProvider;
@@ -62,28 +62,28 @@
             
             private function onClickLayer(evt:ListEvent):void
             {
-                var delegate:IDelegate = IDelegate(Application.application);
+                var application:IApplication = IApplication(Application.application);
                 var layer:LayerBitmap = LayerBitmap(evt.currentTarget.selectedItem);
-                if (delegate.layers.currentIndex != layer.index)
-                    delegate.module.layerIndex = layer.index;
+                if (application.layers.currentIndex != layer.index)
+                    application.module.layerIndex = layer.index;
             }
             
             private function onCreateLayer(evt:Event):void
             {
-                IDelegate(Application.application).module.createLayer();
+                IApplication(Application.application).module.createLayer();
                 update();
             }
             
             private function onCopyLayer(evt:Event):void
             {
-                IDelegate(Application.application).module.copyLayer();
+                IApplication(Application.application).module.copyLayer();
                 update();
             }
             
             private function onRemoveLayer(evt:Event):void
             {
                 try {
-                    IDelegate(Application.application).module.removeLayer();
+                    IApplication(Application.application).module.removeLayer();
                     update();
                 } catch (e:Error) {
                     Alert.show(e.message, e.name);
@@ -93,7 +93,7 @@
             private function onMergeLayers(evt:Event):void
             {
                 try {
-                    IDelegate(Application.application).module.mergeLayers();
+                    IApplication(Application.application).module.mergeLayers();
                     update();
                 } catch (e:Error) {
                     Alert.show(e.message, e.name);
@@ -107,25 +107,25 @@
             
             private function onChangeAlphaSlider(evt:SliderEvent):void
             {
-                IDelegate(Application.application).module.layerAlpha = evt.value;
+                IApplication(Application.application).module.layerAlpha = evt.value;
             }
             
             private function onSelectBlendMode(evt:ListEvent):void
             {
-                IDelegate(Application.application).module.layerBlendMode = String(evt.currentTarget.value);
+                IApplication(Application.application).module.layerBlendMode = String(evt.currentTarget.value);
             }
             
             private function onDragComplete(evt:DragEvent):void
             {
-                var delegate:IDelegate = IDelegate(Application.application);
+                var application:IApplication = IApplication(Application.application);
                 var a:Array = (layerDataGrid.dataProvider as ArrayCollection).toArray().reverse();
                 var length:uint = a.length;
-                var layers:LayerBitmapCollection = delegate.layers;
+                var layers:LayerBitmapCollection = application.layers;
                 for (var i:uint = 0; i < length; i++) {
                     var from:uint = a[i].index;
                     var to:uint = layers.at(i).index;
                     if (a[i].index != to) {
-                        delegate.module.swapLayers(from, to);
+                        application.module.swapLayers(from, to);
                         break;
                     }
                 }

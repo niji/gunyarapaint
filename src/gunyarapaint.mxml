@@ -3,12 +3,13 @@
     xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:gpcontrol="org.libspark.gunyarapaint.controls.*"
     layout="absolute" width="100%" height="100%"
-    preinitialize="preinit()"
-    creationComplete="init()"
-    applicationComplete="appComplete()"
+    preinitialize="onPreinitialize(event)"
+    creationComplete="onCreationComplete(event)"
+    applicationComplete="onApplicationComplete(event)"
+    removedFromStage="onRemove(event)"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
-    implements="org.libspark.gunyarapaint.controls.IDelegate"
+    implements="org.libspark.gunyarapaint.framework.ui.IApplication"
     alpha="1.0">
     <mx:Script source="gunyarapaint.as">
     </mx:Script>

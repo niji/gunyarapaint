@@ -1,5 +1,7 @@
 package org.libspark.gunyarapaint.controls
 {
+    import flash.display.Sprite;
+    import flash.events.Event;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     
@@ -9,31 +11,27 @@ package org.libspark.gunyarapaint.controls
     import org.libspark.gunyarapaint.framework.AuxLineView;
     import org.libspark.gunyarapaint.framework.AuxPixelView;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
+    import org.libspark.gunyarapaint.framework.ui.IApplication;
     
     internal class GPCanvas extends UIComponent
     {
-        private var m_auxLine:AuxLineView;
-        private var m_auxPixel:AuxPixelView;
-        private var m_delegate:IDelegate;
-        
-        public function GPCanvas(delegate:IDelegate)
+        public function GPCanvas(application:IApplication)
         {
-            var rect:Rectangle = new Rectangle(0, 0, delegate.canvasWidth, delegate.canvasHeight);
+            var rect:Rectangle = new Rectangle(0, 0, application.canvasWidth, application.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_auxLine = new AuxLineView(rect);
             m_auxPixel = new AuxPixelView(rect);
-            m_delegate = delegate;
+            m_application = application;
             m_auxLine.visible = true;
             m_auxPixel.visible = false;
             
             addChild(transparent);
-            addChild(delegate.canvasView);
+            addChild(application.canvasView);
             addChild(m_auxLine);
             addChild(m_auxPixel);
-            
-            addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-            addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
-            addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+            addEventListener(Event.REMOVED, onRemove);
+            addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             
             super();
         }
@@ -75,30 +73,52 @@ package org.libspark.gunyarapaint.controls
             m_auxPixel.visible = value ? true : false;
         }
         
-        private function mouseDownHandler(evt:MouseEvent):void
+        private function onRemove(event:Event):void
         {
+            removeMouseEvents(m_application.canvasView);
+            removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            removeEventListener(Event.REMOVED, onRemove);
+        }
+        
+        private function onMouseDown(event:MouseEvent):void
+        {
+            var cv:Sprite = m_application.canvasView;
             try {
-                m_delegate.module.start(evt.localX, evt.localY);
-                m_delegate.canvasView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+                m_application.module.start(event.localX, event.localY);
+                cv.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+                cv.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
+                removeMouseEvents(cv);
                 Alert.show(e.message, e.name);
             }
         }
         
-        private function mouseMoveHandler(evt:MouseEvent):void
+        private function onMouseMove(event:MouseEvent):void
         {
-            m_delegate.module.move(evt.localX, evt.localY);
+            m_application.module.move(event.localX, event.localY);
         }
         
-        private function mouseUpHandler(evt:MouseEvent):void
+        private function onMouseUp(event:MouseEvent):void
         {
-            m_delegate.canvasView.removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
-            m_delegate.module.stop(evt.localX, evt.localY);
+            removeMouseEvents(m_application.canvasView);
+            m_application.module.stop(event.localX, event.localY);
         }
         
-        private function mouseOutHandler(evt:MouseEvent):void
+        private function onMouseOut(event:MouseEvent):void
         {
-            m_delegate.module.interrupt(evt.localX, evt.localY);
+            removeMouseEvents(m_application.canvasView);
+            m_application.module.interrupt(event.localX, event.localY);
         }
+        
+        private function removeMouseEvents(cv:Sprite):void
+        {
+            cv.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            cv.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+        }
+        
+        private var m_auxLine:AuxLineView;
+        private var m_auxPixel:AuxPixelView;
+        private var m_application:IApplication;
     }
 }
