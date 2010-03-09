@@ -4,13 +4,18 @@
         <![CDATA[
             import mx.containers.GridItem;
             import mx.core.Application;
+            import mx.core.IFlexDisplayObject;
             import mx.effects.easing.Bounce;
+            import mx.events.CloseEvent;
             import mx.events.FlexEvent;
             import mx.events.ListEvent;
             import mx.events.SliderEvent;
+            import mx.managers.PopUpManager;
             
             import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
+            import org.sepy.controls.SColorPicker;
+            import org.sepy.events.SPickerEvent;
             
             private var m_palette:GridItem;
             
@@ -51,21 +56,20 @@
                 return [palettes]; // TODO: 現在は１１1パレットのみだけど、配列化する
             }
             
-            /*
             public function set application(value:IApplication):void
             {
-            penDetail.logger = l;
-            if (_logger.baseInfo) {
-            var a:Array = _logger.baseInfo['pen_details'];
-            if (a) {
-            penDetail.baseImgInfo = a[0];
-            for (var i:uint = 0; i < a.length; i++) {
-            penDetail[i].baseImgInfo = a[i];
+                /*
+                if (_logger.baseInfo) {
+                var a:Array = _logger.baseInfo['pen_details'];
+                if (a) {
+                penDetail.baseImgInfo = a[0];
+                for (var i:uint = 0; i < a.length; i++) {
+                penDetail[i].baseImgInfo = a[i];
+                }
+                }
+                }
+                */
             }
-            }
-            }
-            }
-            */
             
             public function get palettes():Object
             {
@@ -143,7 +147,6 @@
             
             private function onClickColorPicker(evt:FlexEvent):void
             {
-                /*
                 // FIXME: お絵かきのログにパレット変更も反映したい
                 var picker:SColorPicker = new SColorPicker();
                 picker.selectedColor = m_palette.getStyle('backgroundColor');
@@ -154,36 +157,32 @@
                 // picker.add_swatch = true;
                 // picker.picker_enabled = true;
                 
-                picker.addEventListener(CloseEvent.CLOSE, function(event:CloseEvent):void { PopUpManager.removePopUp(IFlexDisplayObject(event.target)); } );
-                picker.addEventListener(SPickerEvent.CHANGING, pickerHandler);
-                picker.addEventListener(SPickerEvent.SWATCH_ADD, pickerHandler);
-                picker.addEventListener(Event.CHANGE, pickerHandler);
+                picker.addEventListener(CloseEvent.CLOSE, onClosePicker);
+                picker.addEventListener(SPickerEvent.CHANGING, onPicker);
+                picker.addEventListener(SPickerEvent.SWATCH_ADD, onPicker);
+                picker.addEventListener(Event.CHANGE, onPicker);
                 
                 PopUpManager.addPopUp(picker, Application.application as DisplayObject, true);
                 PopUpManager.centerPopUp(picker);
-                */
+            }
+            
+            private function onClosePicker(evt:CloseEvent):void
+            {
+                PopUpManager.removePopUp(IFlexDisplayObject(evt.target));
             }
             
             private function onPicker(evt:Event):void
             {
-                /*
-                if (evt.type == SPickerEvent.CHANGING) { // avoid bug of component
+                if (evt.type != SPickerEvent.CHANGING &&
+                    evt.type != SPickerEvent.SWATCH_ADD &&
+                    evt.type == Event.CHANGE) {
+                    currentColor = SColorPicker(evt.target).selectedColor;
+                    PopUpManager.removePopUp(IFlexDisplayObject(evt.target));
                 }
-                else if (evt.type == SPickerEvent.SWATCH_ADD) {
-                }
-                else if (evt.type == Event.CHANGE) {
-                var color:uint = SColorPicker(evt.target).selectedColor;
-                m_application.module.color = color;
-                m_palette.setStyle("backgroundColor", color);
-                setColRGBSlider(color); // 20090905-haku2 ins
-                PopUpManager.removePopUp(IFlexDisplayObject(evt.target));
-                }
-                */
             }
             
             private function onSelectHandTool(evt:Event):void
             {
-                trace(Button(evt.currentTarget).selected);
                 if (Button(evt.currentTarget).selected)
                     currentState = "none";
                 else
