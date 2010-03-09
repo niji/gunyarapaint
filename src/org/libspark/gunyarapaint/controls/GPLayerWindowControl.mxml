@@ -15,7 +15,6 @@
             
             import org.libspark.gunyarapaint.framework.LayerBitmap;
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
-            import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.utils.ComponentResizer;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             

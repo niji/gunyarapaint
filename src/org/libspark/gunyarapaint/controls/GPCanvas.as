@@ -29,7 +29,7 @@ package org.libspark.gunyarapaint.controls
             addChild(application.canvasView);
             addChild(m_auxLine);
             addChild(m_auxPixel);
-            addEventListener(Event.REMOVED, onRemove);
+            addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             

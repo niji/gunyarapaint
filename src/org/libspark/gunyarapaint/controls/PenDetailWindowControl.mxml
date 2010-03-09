@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450" xmlns:ns1="org.libspark.gunyarapaint.controls.*">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450" xmlns:ns1="org.libspark.gunyarapaint.controls.*" initialize="onInitialize()">
     <mx:Script>
         <![CDATA[
             import mx.containers.GridItem;
@@ -12,7 +12,7 @@
             import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             
-            private var m_gridItemPalette:GridItem;
+            private var m_palette:GridItem;
             
             // Ctrlとかのショートカットキーで変わったペンToolを戻す
             public function reset():void
@@ -44,24 +44,6 @@
                 dotButton.selected = false;
                 var application:IApplication = IApplication(Application.application);
                 application.setModule(String(blendModeComboBox.value));
-            }
-            
-            public function drawPreview(color:uint, alpha:Number, thickness:uint):void
-            {
-                var g:Graphics = previewCanvas.graphics;
-                g.clear();
-                g.beginFill(color, alpha);
-                g.drawCircle((previewCanvas.width) / 2, (previewCanvas.height) / 2, thickness / 2);
-                g.endFill();
-            }
-            
-            // TODO:整理する
-            public function changePen(mode:String, color:uint, alpha:Number, thickness:uint):void
-            {
-                m_gridItemPalette.setStyle('backgroundColor', color);
-                setColorRGBSlider(color);
-                drawPreview(color, alpha, thickness);
-                currentState = mode;
             }
             
             public function get dataForPost():Object
@@ -111,9 +93,28 @@
                     IApplication(Application.application).setModule(currentState);
             }
             
-            public function set thickness(t:uint):void
+            public function set currentColor(value:uint):void
             {
-                IApplication(Application.application).module.thickness = thicknessSlider.value = t;
+                m_palette.setStyle("backgroundColor", value);
+                IApplication(Application.application).module.color = m_color = value;
+                drawPreview();
+                colBSlider.value = value % 256;
+                value >>>= 8;
+                colGSlider.value = value % 256;
+                value >>>= 8;
+                colRSlider.value = value % 256;
+            }
+            
+            public function set currentAlpha(value:Number):void
+            {
+                IApplication(Application.application).module.alpha = m_alpha = alphaSlider.value = value;
+                drawPreview();
+            }
+            
+            public function set currentThickness(value:uint):void
+            {
+                IApplication(Application.application).module.thickness = m_thickness = thicknessSlider.value = value;
+                drawPreview();
             }
             
             private function onInitialize():void
@@ -121,21 +122,23 @@
                 blendModeComboBox.dataProvider = IApplication(Application.application).supportedBlendModes;
                 onClickPalette(1);
                 // 初期値と設定値が一緒なのでイベントが飛んでこない、明示的に呼んであげる
-                drawPreview(0x000000, 1, 3);
+                currentColor = 0;
+                currentAlpha = 1;
+                currentThickness = 1;
+                drawPreview();
             }
             
             private function onClickPalette(index:uint):void
             {
                 var palette:GridItem = this["gridItemPalette" + index];
-                if (m_gridItemPalette) {
-                    m_gridItemPalette.setStyle("borderThickness", 1);
-                    m_gridItemPalette.setStyle("borderColor", 0xb7babc);
+                if (m_palette) {
+                    m_palette.setStyle("borderThickness", 1);
+                    m_palette.setStyle("borderColor", 0xb7babc);
                 }
                 palette.setStyle("borderThickness", 3);
                 palette.setStyle("borderColor", 0x000000);
-                m_gridItemPalette = palette;
-                IApplication(Application.application).module.color = m_gridItemPalette.getStyle("backgroundColor");
-                setColorRGBSlider(m_gridItemPalette.getStyle("backgroundColor")); // 20090905-haku2 ins
+                m_palette = palette;
+                currentColor = m_palette.getStyle("backgroundColor");
             }
             
             private function onClickColorPicker(evt:FlexEvent):void
@@ -143,7 +146,7 @@
                 /*
                 // FIXME: お絵かきのログにパレット変更も反映したい
                 var picker:SColorPicker = new SColorPicker();
-                picker.selectedColor = m_gridItemPalette.getStyle('backgroundColor');
+                picker.selectedColor = m_palette.getStyle('backgroundColor');
                 picker.title = "パレットに入れる色を選んでください。";
                 
                 // display the 'x' close button
@@ -171,7 +174,7 @@
                 else if (evt.type == Event.CHANGE) {
                 var color:uint = SColorPicker(evt.target).selectedColor;
                 m_application.module.color = color;
-                m_gridItemPalette.setStyle("backgroundColor", color);
+                m_palette.setStyle("backgroundColor", color);
                 setColRGBSlider(color); // 20090905-haku2 ins
                 PopUpManager.removePopUp(IFlexDisplayObject(evt.target));
                 }
@@ -226,49 +229,41 @@
                 IApplication(Application.application).module.blendMode = String(evt.currentTarget.value);
             }
             
-            private function onChangeThicknessSlider(evt:SliderEvent):void
-            {
-                IApplication(Application.application).module.thickness = evt.value;
-            }
-            
-            // 選択した色をRGBスライダに反映
-            private function setColorRGBSlider(color:uint):void
-            {
-                colBSlider.value = color % 256;
-                color >>>= 8;
-                colGSlider.value = color % 256;
-                color >>>= 8;
-                colRSlider.value = color % 256;
-            }
-            
             private function onChangeColorSlider(evt:SliderEvent, mode:String):void
             {
-                var color:uint = 0;
+                var c:uint = 0;
                 switch (mode) {
                     case "red":
-                        color += evt.value * 65536;
-                        color += colGSlider.value * 256;
-                        color += colBSlider.value;
+                        c += evt.value * 65536;
+                        c += colGSlider.value * 256;
+                        c += colBSlider.value;
                         break;
                     case "green":
-                        color += colRSlider.value * 65536;
-                        color += evt.value * 256;
-                        color += colBSlider.value;
+                        c += colRSlider.value * 65536;
+                        c += evt.value * 256;
+                        c += colBSlider.value;
                         break;
                     case "blue":
-                        color += colRSlider.value * 65536;
-                        color += colGSlider.value * 256;
-                        color += evt.value;
+                        c += colRSlider.value * 65536;
+                        c += colGSlider.value * 256;
+                        c += evt.value;
                         break;
                 }
-                IApplication(Application.application).module.color = color;
-                m_gridItemPalette.setStyle('backgroundColor', color);
+                currentColor = c;
             }
             
-            private function onChangeAlphaSlider(evt:SliderEvent):void
+            private function drawPreview():void
             {
-                IApplication(Application.application).module.alpha = evt.value;
+                var g:Graphics = previewCanvas.graphics;
+                g.clear();
+                g.beginFill(m_color, m_alpha);
+                g.drawCircle(previewCanvas.width / 2, previewCanvas.height / 2, m_thickness / 2);
+                g.endFill();
             }
+            
+            private var m_color:uint;
+            private var m_alpha:Number;
+            private var m_thickness:uint;
         ]]>
     </mx:Script>
     
@@ -364,7 +359,7 @@
         </mx:State>
     </mx:states>
     
-    <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="108" height="410" initialize="onInitialize()">
+    <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="108" height="410">
         
         <!-- preview -->
         <mx:Label x="3" y="10" text="ペンの状態" width="53.5"/>
@@ -373,12 +368,12 @@
         
         <!-- thickness -->
         <mx:Label x="3" y="28" text="太"/>
-        <mx:HSlider x="16" y="28" width="87" minimum="1" maximum="30" snapInterval="1" height="12" value="3" id="thicknessSlider" change="onChangeThicknessSlider(event)"/>
-        <mx:Button x="2" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="thickness = 1"/>
-        <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="thickness = 3"/>
-        <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="thickness = 10"/>
-        <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="thickness = 20"/>
-        <mx:Button x="86" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="thickness = 30"/>
+        <mx:HSlider x="16" y="28" width="87" minimum="1" maximum="30" snapInterval="1" height="12" value="3" id="thicknessSlider" change="currentThickness = event.value"/>
+        <mx:Button x="2" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="currentThickness = 1"/>
+        <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="currentThickness = 3"/>
+        <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="currentThickness = 10"/>
+        <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="currentThickness = 20"/>
+        <mx:Button x="86" y="47" label="極" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="currentThickness = 30"/>
         
         <!-- color palette -->
         <mx:Grid id="paletteGrid" x="15" y="73" borderStyle="none" borderColor="#000000" borderThickness="1" horizontalGap="4" verticalGap="3">
@@ -450,7 +445,7 @@
         <!-- alpha -->
         <mx:Label x="3" y="285" text="透"/>
         <mx:Label x="1" y="295" text="{alphaSlider.value}" width="28" enabled="false" fontSize="8"/>
-        <mx:HSlider id ="alphaSlider" x="20" y="282" width="87" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="onChangeAlphaSlider(event)"/>
+        <mx:HSlider id ="alphaSlider" x="20" y="282" width="87" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="currentAlpha = event.value"/>
         
         <!-- rgb -->
         <mx:Label x="3" y="304" text="R"/>

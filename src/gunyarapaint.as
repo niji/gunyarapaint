@@ -1,6 +1,5 @@
 private const DEBUG:Boolean = true;
 
-import flash.display.InteractiveObject;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.geom.Matrix;
@@ -16,13 +15,12 @@ import mx.events.NumericStepperEvent;
 import mx.events.SliderEvent;
 import mx.managers.PopUpManager;
 
-import org.libspark.gunyarapaint.framework.Pen;
+import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
 import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
-import org.libspark.gunyarapaint.framework.Painter;
+import org.libspark.gunyarapaint.framework.Pen;
+import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.events.CommandEvent;
 import org.libspark.gunyarapaint.framework.events.UndoEvent;
-import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
-import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
 import org.libspark.gunyarapaint.framework.modules.IDrawable;
 import org.libspark.nicopedia.Com;
@@ -70,12 +68,12 @@ public function get supportedBlendModes():Array
 
 public function get layers():LayerBitmapCollection
 {
-    return m_recorder.painter.layers;
+    return m_recorder.layers;
 }
 
 public function get pen():Pen
 {
-    return m_recorder.painter.pen;
+    return m_recorder.pen;
 }
 
 public function get canvasWidth():uint
@@ -90,7 +88,7 @@ public function get canvasHeight():uint
 
 public function get canvasView():Sprite
 {
-    return m_recorder.painter.view;
+    return m_recorder.view;
 }
 
 // ふっかつのじゅもんからの復活
@@ -125,8 +123,7 @@ private function onPreinitialize(event:FlexEvent):void
     height = int(parameters['canvasHeight']);
     undoBufferSize = int(parameters['undoBufferSize']);
     
-    m_recorder = new Recorder(new ByteArray());
-    m_recorder.prepare(width, height, undoBufferSize);
+    m_recorder = Recorder.create(width, height, undoBufferSize);
     m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
     m_commit = 0;
     
@@ -340,7 +337,7 @@ private function onKeyDown(evt:KeyboardEvent):void
         case 56: // 8
         case 57: // 9
             if (!evt.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
-                penDetailWindow.thickness = evt.keyCode - 48;
+                penDetailWindow.currentThickness = evt.keyCode - 48;
             break;
         case 97: // ten-key 1
         case 98: // ten-key 2
@@ -351,7 +348,7 @@ private function onKeyDown(evt:KeyboardEvent):void
         case 103: // ten-key 7
         case 104: // ten-key 8
         case 105: // ten-key 9
-            penDetailWindow.thickness = evt.keyCode - 96;
+            penDetailWindow.currentThickness = evt.keyCode - 96;
             break;
         case 45: // INS
             if (!evt.shiftKey)
