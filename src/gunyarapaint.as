@@ -22,10 +22,13 @@ import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.events.CommandEvent;
 import org.libspark.gunyarapaint.framework.events.UndoEvent;
 import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
+import org.libspark.gunyarapaint.framework.modules.DropperModule;
+import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
 import org.libspark.gunyarapaint.framework.modules.IDrawable;
 import org.libspark.nicopedia.Com;
 
 private var m_recorder:Recorder;
+private var m_factory:DrawModuleFactory;
 private var m_module:IDrawable;
 private var m_commit:uint;
 
@@ -53,7 +56,7 @@ private var initCanvasWindowSize:Point;
 
 public function setModule(value:String):void
 {
-    m_module = DrawModuleFactory.create(value, m_recorder);
+    m_module = m_factory.create(value);
 }
 
 public function get module():IDrawable
@@ -124,7 +127,8 @@ private function onPreinitialize(event:FlexEvent):void
     undoBufferSize = int(parameters['undoBufferSize']);
     
     m_recorder = Recorder.create(width, height, undoBufferSize);
-    m_module = DrawModuleFactory.create(DrawModuleFactory.FREE_HAND, m_recorder);
+    m_factory = new DrawModuleFactory(m_recorder);
+    m_module = m_factory.create(FreeHandModule.FREE_HAND);
     m_commit = 0;
     
     m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
@@ -265,7 +269,7 @@ private function onKeyDown(evt:KeyboardEvent):void
         return;
     switch (evt.keyCode) {
         case Keyboard.CONTROL:
-            penDetailWindow.pen = DrawModuleFactory.DROPPER;
+            penDetailWindow.pen = DropperModule.DROPPER;
             break;
         case Keyboard.SHIFT:
             break;
