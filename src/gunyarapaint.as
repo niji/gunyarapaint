@@ -15,6 +15,7 @@ import mx.events.NumericStepperEvent;
 import mx.events.SliderEvent;
 import mx.managers.PopUpManager;
 
+import org.libspark.gunyarapaint.controls.MovingCanvasModule;
 import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
 import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
 import org.libspark.gunyarapaint.framework.Pen;
@@ -56,7 +57,7 @@ private var initCanvasWindowSize:Point;
 
 public function setModule(value:String):void
 {
-    m_module = m_factory.create(value);
+    m_module = m_factory.getModule(value);
 }
 
 public function get module():IDrawable
@@ -128,13 +129,14 @@ private function onPreinitialize(event:FlexEvent):void
     
     m_recorder = Recorder.create(width, height, undoBufferSize);
     m_factory = new DrawModuleFactory(m_recorder);
-    m_module = m_factory.create(FreeHandModule.FREE_HAND);
+    m_module = m_factory.getModule(FreeHandModule.FREE_HAND);
     m_commit = 0;
     
     m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
     m_recorder.addEventListener(UndoEvent.UNDO, onChangeUndo);
     m_recorder.addEventListener(UndoEvent.REDO, onChangeUndo);
     m_recorder.addEventListener(UndoEvent.PUSH, onChangeUndo);
+    m_factory.add(new MovingCanvasModule(m_recorder, gpCanvasWindow));
 }
 
 private function onCommit(event:CommandEvent):void

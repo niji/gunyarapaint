@@ -34,7 +34,7 @@
                     pen = DropperModule.DROPPER;
                 }
                 else if (handtoolButton.selected) {
-                    currentState = "handtool";
+                    currentState = MovingCanvasModule.MOVING_CANVAS;
                 }
                 else if (eraserButton.selected) {
                     pen = EraserModule.ERASER;
@@ -101,8 +101,7 @@
             public function set pen(mode:String):void
             {
                 currentState = mode;
-                if (mode != "handtool")
-                    IApplication(Application.application).setModule(currentState);
+                IApplication(Application.application).setModule(currentState);
             }
             
             public function set currentColor(value:uint):void
@@ -196,7 +195,7 @@
                 if (Button(evt.currentTarget).selected)
                     currentState = "none";
                 else
-                    pen = "handtool";
+                    pen = MovingCanvasModule.MOVING_CANVAS;
             }
             
             private function onSelectDropper(evt:Event):void
@@ -304,7 +303,7 @@
             <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
             <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
         </mx:State>
-        <mx:State name="handtool">
+        <mx:State name="movingCanvas">
             <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
             <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
             <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>

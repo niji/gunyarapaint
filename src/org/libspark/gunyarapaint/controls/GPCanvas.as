@@ -16,7 +16,7 @@ package org.libspark.gunyarapaint.controls
     internal class GPCanvas extends UIComponent
     {
         public function GPCanvas(application:IApplication)
-        {   
+        {
             var rect:Rectangle = new Rectangle(0, 0, application.canvasWidth, application.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_auxLine = new AuxLineView(rect);
