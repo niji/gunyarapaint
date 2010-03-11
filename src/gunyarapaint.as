@@ -22,15 +22,15 @@ import org.libspark.gunyarapaint.framework.Pen;
 import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.events.CommandEvent;
 import org.libspark.gunyarapaint.framework.events.UndoEvent;
-import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
+import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
 import org.libspark.gunyarapaint.framework.modules.DropperModule;
 import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
-import org.libspark.gunyarapaint.framework.modules.IDrawable;
+import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
 import org.libspark.nicopedia.Com;
 
 private var m_recorder:Recorder;
-private var m_factory:DrawModuleFactory;
-private var m_module:IDrawable;
+private var m_context:CanvasModuleContext;
+private var m_module:ICanvasModule;
 private var m_commit:uint;
 
 private var basex:uint = 0;
@@ -57,10 +57,10 @@ private var initCanvasWindowSize:Point;
 
 public function setModule(value:String):void
 {
-    m_module = m_factory.getModule(value);
+    m_module = m_context.getModule(value);
 }
 
-public function get module():IDrawable
+public function get module():ICanvasModule
 {
     return m_module;
 }
@@ -128,15 +128,15 @@ private function onPreinitialize(event:FlexEvent):void
     undoBufferSize = int(parameters['undoBufferSize']);
     
     m_recorder = Recorder.create(width, height, undoBufferSize);
-    m_factory = new DrawModuleFactory(m_recorder);
-    m_module = m_factory.getModule(FreeHandModule.FREE_HAND);
+    m_context = new CanvasModuleContext(m_recorder);
+    m_module = m_context.getModule(FreeHandModule.FREE_HAND);
     m_commit = 0;
     
     m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
     m_recorder.addEventListener(UndoEvent.UNDO, onChangeUndo);
     m_recorder.addEventListener(UndoEvent.REDO, onChangeUndo);
     m_recorder.addEventListener(UndoEvent.PUSH, onChangeUndo);
-    m_factory.add(new MovingCanvasModule(m_recorder, gpCanvasWindow));
+    m_context.add(new MovingCanvasModule(m_recorder, gpCanvasWindow));
 }
 
 private function onCommit(event:CommandEvent):void

@@ -1,10 +1,10 @@
 package org.libspark.gunyarapaint.controls
 {
     import org.libspark.gunyarapaint.framework.Recorder;
-    import org.libspark.gunyarapaint.framework.modules.IDrawable;
-    import org.libspark.gunyarapaint.framework.modules.DrawModule;
+    import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
+    import org.libspark.gunyarapaint.framework.modules.CanvasModule;
     
-    public final class MovingCanvasModule extends DrawModule implements IDrawable
+    public final class MovingCanvasModule extends CanvasModule implements ICanvasModule
     {
         public static const MOVING_CANVAS:String = "movingCanvas";
         

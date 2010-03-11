@@ -14,9 +14,8 @@
             
             import org.libspark.gunyarapaint.framework.Pen;
             import org.libspark.gunyarapaint.framework.modules.CircleModule;
-            import org.libspark.gunyarapaint.framework.modules.DrawModuleFactory;
+            import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
             import org.libspark.gunyarapaint.framework.modules.DropperModule;
-            import org.libspark.gunyarapaint.framework.modules.EraserModule;
             import org.libspark.gunyarapaint.framework.modules.FloodFillModule;
             import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
             import org.libspark.gunyarapaint.framework.modules.LineModule;
@@ -37,7 +36,7 @@
                     currentState = MovingCanvasModule.MOVING_CANVAS;
                 }
                 else if (eraserButton.selected) {
-                    pen = EraserModule.ERASER;
+                    pen = LineModule.LINE;
                     IApplication(Application.application).module.blendMode = BlendMode.ERASE;
                 }
                 else if (dotButton.selected) {
@@ -211,7 +210,7 @@
                 if (Button(evt.currentTarget).selected)
                     currentState = "none";
                 else {
-                    pen = EraserModule.ERASER;
+                    pen = LineModule.LINE;
                     IApplication(Application.application).module.blendMode = BlendMode.ERASE;
                 }
             }
