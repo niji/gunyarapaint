@@ -127,7 +127,8 @@ private function onPreinitialize(event:FlexEvent):void
     height = int(parameters['canvasHeight']);
     undoBufferSize = int(parameters['undoBufferSize']);
     
-    m_recorder = Recorder.create(width, height, undoBufferSize);
+    var bytes:ByteArray = new ByteArray();
+    m_recorder = Recorder.create(bytes, width, height, undoBufferSize);
     m_context = new CanvasModuleContext(m_recorder);
     m_module = m_context.getModule(FreeHandModule.FREE_HAND);
     m_commit = 0;
@@ -136,7 +137,6 @@ private function onPreinitialize(event:FlexEvent):void
     m_recorder.addEventListener(UndoEvent.UNDO, onChangeUndo);
     m_recorder.addEventListener(UndoEvent.REDO, onChangeUndo);
     m_recorder.addEventListener(UndoEvent.PUSH, onChangeUndo);
-    m_context.add(new MovingCanvasModule(m_recorder, gpCanvasWindow));
 }
 
 private function onCommit(event:CommandEvent):void
@@ -210,6 +210,8 @@ private function onCreationComplete(event:FlexEvent):void
         }
         relocateComponents();
     }
+    m_context.add(new MovingCanvasModule(m_recorder, gpCanvasWindow));
+    m_module = m_context.getModule(MovingCanvasModule.MOVING_CANVAS);
 }
 
 private function onApplicationComplete(event:FlexEvent):void
