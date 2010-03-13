@@ -209,7 +209,7 @@
             private function onSelectEraser(evt:Event):void
             {
                 if (Button(evt.currentTarget).selected) {
-                    pen = LineModule.LINE;
+                    pen = FreeHandModule.FREE_HAND;
                     currentState = "eraser";
                     IApplication(Application.application).module.blendMode = BlendMode.ERASE;
                 }
