@@ -31,7 +31,6 @@ package org.libspark.gunyarapaint.controls
             addChild(m_auxPixel);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-            addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             
             super();
         }
@@ -76,9 +75,7 @@ package org.libspark.gunyarapaint.controls
         private function onRemove(event:Event):void
         {
             removeMouseEvents(m_application.canvasView);
-            removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-            removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-            removeEventListener(Event.REMOVED, onRemove);
+            removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
         }
         
         private function onMouseDown(event:MouseEvent):void
@@ -87,6 +84,7 @@ package org.libspark.gunyarapaint.controls
             try {
                 m_application.module.start(event.localX, event.localY);
                 cv.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+                cv.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                 cv.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
                 removeMouseEvents(cv);
@@ -114,6 +112,7 @@ package org.libspark.gunyarapaint.controls
         private function removeMouseEvents(cv:Sprite):void
         {
             cv.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            cv.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             cv.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
         }
         
