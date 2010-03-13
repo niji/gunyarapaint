@@ -29,6 +29,7 @@
             // Ctrlとかのショートカットキーで変わったペンToolを戻す
             public function reset():void
             {
+                var app:IApplication = IApplication(Application.application);
                 if (dropperButton.selected) {
                     pen = DropperModule.DROPPER;
                 }
@@ -37,14 +38,14 @@
                 }
                 else if (eraserButton.selected) {
                     pen = LineModule.LINE;
-                    IApplication(Application.application).module.blendMode = BlendMode.ERASE;
+                    app.module.blendMode = BlendMode.ERASE;
                 }
                 else if (dotButton.selected) {
                     pen = PixelModule.PIXEL;
                 }
                 else {
                     pen = String(blendModeComboBox.value);
-                    IApplication(Application.application).module.blendMode = String(blendModeComboBox.value);
+                    app.module.blendMode = String(blendModeComboBox.value);
                 }
             }
             
@@ -54,8 +55,8 @@
                 handtoolButton.selected = false;
                 eraserButton.selected = false;
                 dotButton.selected = false;
-                var application:IApplication = IApplication(Application.application);
-                application.setModule(String(blendModeComboBox.value));
+                var app:IApplication = IApplication(Application.application);
+                app.setModule(String(penModeComboBox.value));
             }
             
             public function get dataForPost():Object
@@ -192,35 +193,37 @@
             private function onSelectHandTool(evt:Event):void
             {
                 if (Button(evt.currentTarget).selected)
-                    currentState = "none";
-                else
                     pen = MovingCanvasModule.MOVING_CANVAS;
+                else
+                    setDefaultPen();
             }
             
             private function onSelectDropper(evt:Event):void
             {
                 if (Button(evt.currentTarget).selected)
-                    currentState = "none";
-                else
                     pen = DropperModule.DROPPER;
+                else
+                    setDefaultPen();
             }
             
             private function onSelectEraser(evt:Event):void
             {
-                if (Button(evt.currentTarget).selected)
-                    currentState = "none";
-                else {
+                if (Button(evt.currentTarget).selected) {
                     pen = LineModule.LINE;
+                    currentState = "eraser";
                     IApplication(Application.application).module.blendMode = BlendMode.ERASE;
+                }
+                else {
+                    setDefaultPen();
                 }
             }
             
             private function onSelectDot(evt:Event):void
             {
                 if (Button(evt.currentTarget).selected)
-                    currentState = "none";
-                else
                     pen = PixelModule.PIXEL;
+                else
+                    setDefaultPen();
             }
             
             private function onSelectPen(evt:ListEvent):void
@@ -266,6 +269,12 @@
                 g.beginFill(m_color, m_alpha);
                 g.drawCircle(previewCanvas.width / 2, previewCanvas.height / 2, m_thickness / 2);
                 g.endFill();
+            }
+            
+            private function setDefaultPen():void
+            {
+                pen = String(penModeComboBox.value);
+                IApplication(Application.application).module.blendMode = String(blendModeComboBox.value);
             }
             
             private var m_color:uint;

@@ -1,5 +1,6 @@
 private const DEBUG:Boolean = true;
 
+import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.geom.Matrix;
@@ -58,6 +59,8 @@ private var initCanvasWindowSize:Point;
 public function setModule(value:String):void
 {
     m_module = m_context.getModule(value);
+    if (m_module == null)
+        throw new IllegalOperationError();
 }
 
 public function get module():ICanvasModule
@@ -218,8 +221,8 @@ private function onApplicationComplete(event:FlexEvent):void
 {
     stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);  
     stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);  
-    stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-    stage.addEventListener(MouseEvent.MOUSE_OUT, onMouseUp); // これを入れるとマズい。
+    //stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+    //stage.addEventListener(MouseEvent.MOUSE_OUT, onMouseUp); // これを入れるとマズい。
 }
 
 private function onRemove(event:Event):void
