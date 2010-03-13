@@ -214,7 +214,6 @@ private function onCreationComplete(event:FlexEvent):void
         relocateComponents();
     }
     m_context.add(new MovingCanvasModule(m_recorder, gpCanvasWindow));
-    m_module = m_context.getModule(MovingCanvasModule.MOVING_CANVAS);
 }
 
 private function onApplicationComplete(event:FlexEvent):void
