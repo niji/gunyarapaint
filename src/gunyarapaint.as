@@ -60,7 +60,8 @@ public function setModule(value:String):void
 {
     m_module = m_context.getModule(value);
     if (m_module == null)
-        throw new IllegalOperationError();
+        throw new IllegalOperationError(value
+            + " is not the ICanvasModule implemented module");
 }
 
 public function get module():ICanvasModule
@@ -144,7 +145,7 @@ private function onPreinitialize(event:FlexEvent):void
 
 private function onCommit(event:CommandEvent):void
 {
-    //trace(event.command);
+    trace(event.command);
     m_commit++;
 }
 
@@ -280,7 +281,7 @@ private function onKeyDown(evt:KeyboardEvent):void
         case Keyboard.SHIFT:
             break;
         case Keyboard.SPACE:
-            penDetailWindow.pen = ""; // handtool
+            penDetailWindow.pen = MovingCanvasModule.MOVING_CANVAS;
             break;
         case 48: // 0
         case 96: // ten-key 0
@@ -295,7 +296,7 @@ private function onKeyDown(evt:KeyboardEvent):void
             m_module.keyA = true;
             break;
         case 73: // i
-            windowsResetButtonHandler(null);
+            resetWindowsPosition();
             break;
         case 77: // m
             m_module.horizontalMirror(0xff);
@@ -403,18 +404,89 @@ private function onKeyUp(evt:KeyboardEvent):void
     }
 }
 
-private function windowsResetButtonHandler(evt:FlexEvent):void
+private function resetWindowsPosition():void
 {
     gpCanvasWindow.rotate(0);
-    
     gpCanvasWindow.transform.matrix = new Matrix(1, 0, 0, 1, initCanvasWindowPos.x, initCanvasWindowPos.y);
     penDetailWindow.move(initPenDetailWindowPos.x, initPenDetailWindowPos.y);
     gpLayerWindow.move(initGPLayerWindowPos.x, initGPLayerWindowPos.y);
     gpCanvasWindow.width = initCanvasWindowSize.x;
     gpCanvasWindow.height = initCanvasWindowSize.y;
-    
     setRotate(0);
     setZoom(1);
+}
+
+// 数値入力で拡大率指定
+private function onChangeCanvasZoom(evt:Event):void
+{
+    var value:Number = Number(canvasZoomValue.text);
+    if (value <= 0) {
+        value = 1;
+    }
+    else if (value >= 100) {
+        value /= 100;
+    }
+    else {
+        value = -(100 / value) + 2;
+    }
+    setZoom(value);
+}
+
+// 数値入力でキャンバス回転角度指定
+private function onChangeCanvasRotate(evt:Event):void
+{
+    setRotate(Number(canvasRotateValue.text));
+}
+
+private function setRotate(value:Number):void
+{
+    canvasRotate.value = value;
+    canvasRotateValue.text = String(-canvasRotate.value); // 20090909-haku2 ins キャンバス回転角度をテキストボックスに反映
+    gpCanvasWindow.rotate(canvasRotate.value);
+}
+
+private function setZoom(value:Number):void
+{
+    var n:Number = value;
+    if (n < 1)
+        n = 1.0 / (-value + 2);
+    n *= 10000;
+    canvasZoom.value = value;
+    gpCanvasWindow.zoom(value);  
+    // 拡大率をテキストボックスに反映
+    canvasZoomValue.text = String(Math.round(n) / 100);
+}
+
+private function onChangeAuxDivideCount(evt:NumericStepperEvent):void
+{
+    gpCanvasWindow.auxDivideCount = uint(evt.value);
+}
+
+private function onChangeAuxBoxVisible(evt:Event):void
+{
+    gpCanvasWindow.auxBoxVisible = evt.target.selected;
+}
+
+private function onChangeAuxSkewVisible(evt:Event):void
+{
+    gpCanvasWindow.auxSkewVisible = evt.target.selected;
+}
+
+// 20090906-haku2 ins start
+// 補助線種類の変更
+private function onChangeAuxType(evt:ListEvent):void
+{
+    var n:Number = additionalNumberStepper.value;
+    if (evt.currentTarget.value == 0) {
+        additionalNumberStepper.minimum = 2;
+        additionalNumberStepper.maximum = 16;
+        gpCanvasWindow.enableAuxPixel = false;
+    }
+    else {
+        additionalNumberStepper.minimum = 4;
+        additionalNumberStepper.maximum = 80;
+        gpCanvasWindow.enableAuxPixel = true;
+    }
 }
 
 private function passwordButtonHandler(evt:FlexEvent):void
@@ -467,94 +539,12 @@ private function baseImgToCanvas(width:uint, height:uint, undoBufferSize:uint, b
 {
     /*
     _logger = GPLogger.createForDraw(width, height, undoBufferSize,
-        baseImg, baseInfo);
+    baseImg, baseInfo);
     gpCanvasWindow.logger = _logger;
     */
     relocateComponents();
     enabled = true;  
 }
-
-private function canvasZoomHandler(evt:SliderEvent):void
-{
-    // 20090905-haku2 ins start
-    // 拡大率をテキストボックスに反映
-    if (evt.value >= 1) {
-        canvasZoomValue.text = String(Math.round(evt.value * 10000)/100);
-    }
-    else {
-        canvasZoomValue.text = String(Math.round((1.0 / (-evt.value + 2)) * 10000)/100);
-    }
-    // 20090905-haku2 ins end
-    gpCanvasWindow.zoom(evt.value);
-}
-// 20090909-haku2 upd start
-
-// 数値入力で拡大率指定
-private function canvasZoomValueHandler(evt:Event):void
-{
-    var rm:Number = Number(canvasZoomValue.text);
-    if (rm <= 0) {
-        rm = 1;
-    }
-    else if (rm >= 100) {
-        rm /= 100;
-    }
-    else {
-        rm = -(100 / rm) + 2;
-    }
-    canvasZoom.value = rm;
-    gpCanvasWindow.zoom(canvasZoom.value);
-}
-// 20090909-haku2 upd end
-
-private function canvasRotateHandler(evt:SliderEvent):void
-{
-    canvasRotateValue.text = String(-evt.value); // 20090905-haku2 ins キャンバス回転角度をテキストボックスに反映
-    gpCanvasWindow.rotate(evt.value);
-}
-
-// 20090909-haku2 upd start
-// 数値入力でキャンバス回転角度指定
-private function canvasRotateValueHandler(evt:Event):void
-{
-    canvasRotate.value = Number(canvasRotateValue.text);
-    gpCanvasWindow.rotate(canvasRotate.value);
-}
-// 20090909-haku2 upd end
-
-private function additionalNumberStepperHandler(evt:NumericStepperEvent):void
-{
-    gpCanvasWindow.auxDivideCount = uint(evt.value);
-}
-
-private function additionalBoxCheckBoxHandler(evt:Event):void
-{
-    gpCanvasWindow.auxBoxVisible = evt.target.selected;
-}
-
-private function additionalSkewCheckBoxHandler(evt:Event):void
-{
-    gpCanvasWindow.auxSkewVisible = evt.target.selected;
-}
-
-// 20090906-haku2 ins start
-// 補助線種類の変更
-private function additionalTypeComboBoxHandler(evt:ListEvent):void
-{
-    var n:Number = additionalNumberStepper.value;
-    if (evt.currentTarget.value == 0) {
-        additionalNumberStepper.minimum = 2;
-        additionalNumberStepper.maximum = 16;
-        gpCanvasWindow.enableAuxPixel = false;
-    }
-    else {
-        additionalNumberStepper.minimum = 4;
-        additionalNumberStepper.maximum = 80;
-        gpCanvasWindow.enableAuxPixel = true;
-    }
-}
-
-// 20090906-haku2 ins end
 
 private function commCompleteHandler(com:Com):void
 {
@@ -610,39 +600,6 @@ private function postOekakiButtonHandler(evt:Event):void
             Alert.show(e.message, ALERT_TITLE);
         }
     }
-}
-
-private function rotateResetButtonHandler(evt:Event):void
-{
-    setRotate(0);
-    canvasRotateValue.text = "0"; // 20090905-haku2 ins 数値入力をリセット
-}
-
-private function zoomResetButtonHandler(evt:Event):void
-{
-    setZoom(1);
-    canvasZoomValue.text = "100"; // 20090905-haku2 ins 数値入力をリセット
-}
-
-private function setRotate(v:Number):void
-{
-    canvasRotate.value = v;
-    canvasRotateValue.text = String(-canvasRotate.value); // 20090909-haku2 ins キャンバス回転角度をテキストボックスに反映
-    gpCanvasWindow.rotate(canvasRotate.value);
-}
-
-private function setZoom(v:Number):void
-{
-    canvasZoom.value = v;
-    gpCanvasWindow.zoom(canvasZoom.value);  
-    // 20090909-haku2 ins start
-    // 拡大率をテキストボックスに反映
-    if (canvasZoom.value >= 1) {
-        canvasZoomValue.text = String(Math.round(canvasZoom.value * 10000)/100);
-    } else {
-        canvasZoomValue.text = String(Math.round((1.0 / (-canvasZoom.value + 2)) * 10000)/100);
-    }
-    // 20090909-haku2 ins end
 }
 
 private function alertOnUnload(b:Boolean):void
