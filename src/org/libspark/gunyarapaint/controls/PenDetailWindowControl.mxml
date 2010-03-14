@@ -13,6 +13,7 @@
             import mx.managers.PopUpManager;
             
             import org.libspark.gunyarapaint.framework.Pen;
+            import org.libspark.gunyarapaint.framework.events.PenEvent;
             import org.libspark.gunyarapaint.framework.modules.CircleModule;
             import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
             import org.libspark.gunyarapaint.framework.modules.DropperModule;
@@ -106,39 +107,60 @@
             
             public function set currentColor(value:uint):void
             {
-                m_palette.setStyle("backgroundColor", value);
-                IApplication(Application.application).module.color = m_color = value;
-                drawPreview();
+                IApplication(Application.application).module.color = value;
+            }
+            
+            public function set currentAlpha(value:Number):void
+            {
+                IApplication(Application.application).module.alpha = value;
+            }
+            
+            public function set currentThickness(value:uint):void
+            {
+                IApplication(Application.application).module.thickness = value;
+            }
+            
+            private function onChangeAlpha(event:PenEvent):void
+            {
+                var pen:Pen = IApplication(Application.application).pen;
+                var value:Number = pen.alpha;
+                alphaSlider.value = value;
+                drawPreview(pen.thickness, pen.color, value);
+            }
+            
+            private function onChangeColor(event:PenEvent):void
+            {
+                var pen:Pen = IApplication(Application.application).pen;
+                var value:uint = pen.color;
+                if (m_palette != null)
+                    m_palette.setStyle("backgroundColor", value);
                 colBSlider.value = value % 256;
                 value >>>= 8;
                 colGSlider.value = value % 256;
                 value >>>= 8;
                 colRSlider.value = value % 256;
+                drawPreview(pen.thickness, value, pen.alpha);
             }
             
-            public function set currentAlpha(value:Number):void
+            private function onChangeThickness(event:PenEvent):void
             {
-                IApplication(Application.application).module.alpha = m_alpha = alphaSlider.value = value;
-                drawPreview();
-            }
-            
-            public function set currentThickness(value:uint):void
-            {
-                IApplication(Application.application).module.thickness = m_thickness = thicknessSlider.value = value;
-                drawPreview();
+                var pen:Pen = IApplication(Application.application).pen;
+                var value:uint = pen.thickness;
+                thicknessSlider.value = value;
+                drawPreview(value, pen.color, pen.alpha);
             }
             
             private function onInitialize():void
             {
                 var application:IApplication = IApplication(Application.application);
-                var pen:Pen = application.pen;
                 blendModeComboBox.dataProvider = application.supportedBlendModes;
-                onClickPalette(1);
+                //onClickPalette(1);
                 // 初期値と設定値が一緒なのでイベントが飛んでこない、明示的に呼んであげる
-                currentColor = pen.color;
-                currentAlpha = pen.alpha;
-                currentThickness = pen.thickness;
-                drawPreview();
+                var pen:Pen = application.pen;
+                drawPreview(pen.thickness, pen.color, pen.alpha);
+                pen.addEventListener(PenEvent.ALPHA, onChangeAlpha);
+                pen.addEventListener(PenEvent.COLOR, onChangeColor);
+                pen.addEventListener(PenEvent.THICKNESS, onChangeThickness);
             }
             
             private function onClickPalette(index:uint):void
@@ -262,12 +284,12 @@
                 currentColor = c;
             }
             
-            private function drawPreview():void
+            private function drawPreview(thickness:uint, color:uint, alpha:Number):void
             {
                 var g:Graphics = previewCanvas.graphics;
                 g.clear();
-                g.beginFill(m_color, m_alpha);
-                g.drawCircle(previewCanvas.width / 2, previewCanvas.height / 2, m_thickness / 2);
+                g.beginFill(color, alpha);
+                g.drawCircle(previewCanvas.width / 2, previewCanvas.height / 2, thickness / 2);
                 g.endFill();
             }
             
@@ -276,10 +298,6 @@
                 pen = String(penModeComboBox.value);
                 IApplication(Application.application).module.blendMode = String(blendModeComboBox.value);
             }
-            
-            private var m_color:uint;
-            private var m_alpha:Number;
-            private var m_thickness:uint;
         ]]>
     </mx:Script>
     
