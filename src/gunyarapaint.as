@@ -308,12 +308,12 @@ private function onKeyDown(evt:KeyboardEvent):void
             break;
         case 82: // r
             // Rキーの状態 = 押下中
-            m_module.shouldStartAfterDrawing = true;
+            m_module.shouldDrawFromEndPoint = true;
             break;
         // 20090905-haku2 ins start
         case 84: // t
             // Tキーの状態 = 押下中
-            m_module.shouldStartBeforeDrawing = true;
+            m_module.shouldDrawFromStartPoint = true;
             break;
         // 20090905-haku2 ins end
         case 89: // y
@@ -393,12 +393,12 @@ private function onKeyUp(evt:KeyboardEvent):void
             break;
         case 82: // r
             // Rキーの状態 = 解放
-            m_module.shouldStartAfterDrawing = false;
+            m_module.shouldDrawFromEndPoint = false;
             break;
         // 20090905-haku2 ins start
         case 84: // t
             // Tキーの状態 = 解放
-            m_module.shouldStartBeforeDrawing = false;
+            m_module.shouldDrawFromStartPoint = false;
             break;
         // 20090905-haku2 ins end
         return;

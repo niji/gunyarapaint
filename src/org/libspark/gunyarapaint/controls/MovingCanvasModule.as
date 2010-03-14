@@ -34,6 +34,7 @@ package org.libspark.gunyarapaint.controls
         
         public function stop(x:Number, y:Number):void
         {
+            saveCoordinate(x, y);
         }
         
         public function interrupt(x:Number, y:Number):void
