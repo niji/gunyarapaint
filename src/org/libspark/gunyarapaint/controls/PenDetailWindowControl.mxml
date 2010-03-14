@@ -134,12 +134,12 @@
                 var value:uint = pen.color;
                 if (m_palette != null)
                     m_palette.setStyle("backgroundColor", value);
+                drawPreview(pen.thickness, value, pen.alpha);
                 colBSlider.value = value % 256;
                 value >>>= 8;
                 colGSlider.value = value % 256;
                 value >>>= 8;
                 colRSlider.value = value % 256;
-                drawPreview(pen.thickness, value, pen.alpha);
             }
             
             private function onChangeThickness(event:PenEvent):void
