@@ -39,8 +39,8 @@
         </mx:TextArea>
         <mx:Button id="rotateResetButton" y="63" label="角度" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setRotate(0)"/>
         <mx:Button id="zoomResetButton" y="81" label="拡大" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setZoom(1)"/>
-        <mx:Button id="horizontalMirrorButton" x="117" y="128" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.horizontalMirror(0xff)"/>
-        <mx:Button id="verticalMirrorButton" x="245" y="128" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.verticalMirror(0xff)"/>
+        <mx:Button id="horizontalMirrorButton" x="117" y="128" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.horizontalMirror(Painter.ALL_LAYERS)"/>
+        <mx:Button id="verticalMirrorButton" x="245" y="128" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.verticalMirror(Painter.ALL_LAYERS)"/>
         <mx:HSlider id="canvasRotate" y="62" width="152" minimum="-180" maximum="180" snapInterval="5" value="0"  right="49" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)"/>
         <mx:HSlider id="canvasZoom" y="79" width="152" minimum="-4" maximum="16" snapInterval="0.1" value="1"  right="49" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)"/>
         <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="18" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>

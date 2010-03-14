@@ -19,6 +19,7 @@ import mx.managers.PopUpManager;
 import org.libspark.gunyarapaint.controls.MovingCanvasModule;
 import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
 import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+import org.libspark.gunyarapaint.framework.Painter;
 import org.libspark.gunyarapaint.framework.Pen;
 import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.events.CommandEvent;
@@ -299,7 +300,7 @@ private function onKeyDown(evt:KeyboardEvent):void
             resetWindowsPosition();
             break;
         case 77: // m
-            m_module.horizontalMirror(0xff);
+            m_module.horizontalMirror(Painter.ALL_LAYERS);
             break;
         case 81: // q
             // Qキーの状態 = 押下中
