@@ -6,6 +6,7 @@ package org.libspark.gunyarapaint.controls
     import flash.geom.Rectangle;
     
     import mx.controls.Alert;
+    import mx.core.Application;
     import mx.core.UIComponent;
     
     import org.libspark.gunyarapaint.framework.AuxLineView;
@@ -15,18 +16,18 @@ package org.libspark.gunyarapaint.controls
     
     internal class GPCanvas extends UIComponent
     {
-        public function GPCanvas(application:IApplication)
+        public function GPCanvas()
         {
-            var rect:Rectangle = new Rectangle(0, 0, application.canvasWidth, application.canvasHeight);
+            var app:IApplication = IApplication(Application.application);
+            var rect:Rectangle = new Rectangle(0, 0, app.canvasWidth, app.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_auxLine = new AuxLineView(rect);
             m_auxPixel = new AuxPixelView(rect);
-            m_application = application;
             m_auxLine.visible = true;
             m_auxPixel.visible = false;
             
             addChild(transparent);
-            addChild(application.canvasView);
+            addChild(app.canvasView);
             addChild(m_auxLine);
             addChild(m_auxPixel);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
@@ -74,39 +75,44 @@ package org.libspark.gunyarapaint.controls
         
         private function onRemove(event:Event):void
         {
-            removeMouseEvents(m_application.canvasView);
+            var app:IApplication = IApplication(Application.application);
+            removeMouseEvents(app.canvasView);
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
         }
         
         private function onMouseDown(event:MouseEvent):void
         {
-            var cv:Sprite = m_application.canvasView;
+            var app:gunyarapaint = gunyarapaint(Application.application);
+            var cv:Sprite = app.canvasView;
             try {
-                m_application.module.start(event.localX, event.localY);
+                app.module.start(event.localX, event.localY);
                 cv.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
                 cv.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                 cv.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
                 removeMouseEvents(cv);
-                Alert.show(e.message, e.name);
+                Alert.show(e.message, app.moduleName);
             }
         }
         
         private function onMouseMove(event:MouseEvent):void
         {
-            m_application.module.move(event.localX, event.localY);
+            var app:IApplication = IApplication(Application.application);
+            app.module.move(event.localX, event.localY);
         }
         
         private function onMouseUp(event:MouseEvent):void
         {
-            removeMouseEvents(m_application.canvasView);
-            m_application.module.stop(event.localX, event.localY);
+            var app:IApplication = IApplication(Application.application);
+            removeMouseEvents(app.canvasView);
+            app.module.stop(event.localX, event.localY);
         }
         
         private function onMouseOut(event:MouseEvent):void
         {
-            removeMouseEvents(m_application.canvasView);
-            m_application.module.interrupt(event.localX, event.localY);
+            var app:IApplication = IApplication(Application.application);
+            removeMouseEvents(app.canvasView);
+            app.module.interrupt(event.localX, event.localY);
         }
         
         private function removeMouseEvents(cv:Sprite):void
@@ -118,6 +124,5 @@ package org.libspark.gunyarapaint.controls
         
         private var m_auxLine:AuxLineView;
         private var m_auxPixel:AuxPixelView;
-        private var m_application:IApplication;
     }
 }

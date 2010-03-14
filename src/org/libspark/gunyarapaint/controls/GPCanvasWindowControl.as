@@ -135,7 +135,7 @@ package org.libspark.gunyarapaint.controls
             m_canvasX = m_canvasY = 0;
             m_canvasScale = 1;
             
-            m_canvas = new GPCanvas(IApplication(Application.application));
+            m_canvas = new GPCanvas();
             m_canvasContainer.addChild(m_canvas);
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);

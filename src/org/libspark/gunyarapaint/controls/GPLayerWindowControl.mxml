@@ -18,6 +18,8 @@
             import org.libspark.gunyarapaint.utils.ComponentResizer;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             
+            private static const  NAME:String = "レイヤーツール";
+            
             public function update():void
             {
                 var layers:LayerBitmapCollection = IApplication(Application.application).layers;
@@ -85,7 +87,7 @@
                     IApplication(Application.application).module.removeLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, e.name);
+                    Alert.show(e.message, NAME);
                 }
             }
             
@@ -95,7 +97,7 @@
                     IApplication(Application.application).module.mergeLayers();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, e.name);
+                    Alert.show(e.message, NAME);
                 }
             }
             

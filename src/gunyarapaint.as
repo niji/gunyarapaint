@@ -25,9 +25,13 @@ import org.libspark.gunyarapaint.framework.Recorder;
 import org.libspark.gunyarapaint.framework.events.CommandEvent;
 import org.libspark.gunyarapaint.framework.events.UndoEvent;
 import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
+import org.libspark.gunyarapaint.framework.modules.CircleModule;
 import org.libspark.gunyarapaint.framework.modules.DropperModule;
+import org.libspark.gunyarapaint.framework.modules.FloodFillModule;
 import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
 import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
+import org.libspark.gunyarapaint.framework.modules.LineModule;
+import org.libspark.gunyarapaint.framework.modules.PixelModule;
 import org.libspark.nicopedia.Com;
 
 private var m_recorder:Recorder;
@@ -68,6 +72,26 @@ public function setModule(value:String):void
 public function get module():ICanvasModule
 {
     return m_module;
+}
+
+public function get moduleName():String
+{
+    switch (m_module.name) {
+        case CircleModule.CIRCLE:
+            return "円描画ツール";
+        case DropperModule.DROPPER:
+            return "スポイトツール";
+        case FloodFillModule.FLOOD_FILL:
+            return "塗りつぶしツール";
+        case FreeHandModule.FREE_HAND:
+            return "手書き(消しゴム)ツール";
+        case LineModule.LINE:
+            return "直線ツール";
+        case PixelModule.PIXEL:
+            return "ドットツール";
+        default:
+            return "謎のツール";
+    }
 }
 
 public function get supportedBlendModes():Array
