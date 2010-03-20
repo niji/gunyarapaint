@@ -324,7 +324,7 @@
                         break;
                     case 65: // a
                         // Aキーの状態 = 押下中
-                        m_module.keyA = true;
+                        m_module.shouldDrawCircleClockwise = true;
                         break;
                     case 73: // i
                         resetWindowsPosition();
@@ -334,7 +334,7 @@
                         break;
                     case 81: // q
                         // Qキーの状態 = 押下中
-                        m_module.keyQ = true;
+                        m_module.shouldDrawCircleCounterClockwise = true;
                         break;
                     case 82: // r
                         // Rキーの状態 = 押下中
@@ -415,11 +415,11 @@
                         break;
                     case 65: // a
                         // Aキーの状態 = 解放
-                        m_module.keyA = false;
+                        m_module.shouldDrawCircleClockwise = false;
                         break;
                     case 81: // q
                         // Qキーの状態 = 解放
-                        m_module.keyQ = false;
+                        m_module.shouldDrawCircleCounterClockwise = false;
                         break;
                     case 82: // r
                         // Rキーの状態 = 解放
