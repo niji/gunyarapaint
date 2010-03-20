@@ -20,6 +20,7 @@
             import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
+            import org.libspark.gunyarapaint.framework.modules.TransparentFloodFill;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.sepy.controls.SColorPicker;
             import org.sepy.events.SPickerEvent;
@@ -496,6 +497,7 @@
                 <mx:Object label="直線" data="{LineModule.LINE}" />
                 <mx:Object label="円" data="{CircleModule.CIRCLE}" />
                 <mx:Object label="ペイント" data="{FloodFillModule.FLOOD_FILL}" />
+                <mx:Object label="透明ペイント" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
                 <!--
                 <mx:Object label="スポイト" data="" />
                 <mx:Object label="四角" data="" />
