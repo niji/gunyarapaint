@@ -15,7 +15,6 @@
             import org.libspark.gunyarapaint.framework.Pen;
             import org.libspark.gunyarapaint.framework.events.PenEvent;
             import org.libspark.gunyarapaint.framework.modules.CircleModule;
-            import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
             import org.libspark.gunyarapaint.framework.modules.DropperModule;
             import org.libspark.gunyarapaint.framework.modules.FloodFillModule;
             import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
@@ -135,11 +134,9 @@
                 if (m_palette != null)
                     m_palette.setStyle("backgroundColor", value);
                 drawPreview(pen.thickness, value, pen.alpha);
-                colBSlider.value = value % 256;
-                value >>>= 8;
-                colGSlider.value = value % 256;
-                value >>>= 8;
-                colRSlider.value = value % 256;
+                colRSlider.value = (value & 0xff0000) >> 16;
+                colGSlider.value = (value & 0x00ff00) >> 8;
+                colBSlider.value = value & 0x0000ff;
             }
             
             private function onChangeThickness(event:PenEvent):void
@@ -484,13 +481,13 @@
         <!-- rgb -->
         <mx:Label x="3" y="304" text="R"/>
         <mx:Label x="1" y="313" text="{colRSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
-        <mx:HSlider id ="colRSlider" x="20" y="301" width="87" minimum="0" maximum="255" snapInterval="1" change="onChangeColorSlider(event, 'red')"/>
+        <mx:HSlider id ="colRSlider" x="20" y="301" width="87" minimum="0" maximum="255" snapInterval="1" change="onChangeColorSlider(event, 'red')" fillColors="#ff0000"/>
         <mx:Label x="3" y="319" text="G"/>
         <mx:Label x="1" y="328" text="{colGSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
-        <mx:HSlider id ="colGSlider" x="20" y="316" width="87" minimum="0" maximum="255" snapInterval="1" change="onChangeColorSlider(event, 'green')"/>
+        <mx:HSlider id ="colGSlider" x="20" y="316" width="87" minimum="0" maximum="255" snapInterval="1" change="onChangeColorSlider(event, 'green')" fillColors="#00ff00"/>
         <mx:Label x="3" y="334" text="B"/>
         <mx:Label x="1" y="343" text="{colBSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
-        <mx:HSlider id ="colBSlider" x="20" y="331" width="87" minimum="0" maximum="255" snapInterval="1" change="onChangeColorSlider(event, 'blue')"/>
+        <mx:HSlider id ="colBSlider" x="20" y="331" width="87" minimum="0" maximum="255" snapInterval="1" change="onChangeColorSlider(event, 'blue')" fillColors="#0000ff"/>
         
         <!-- line method/blend mode -->
         <mx:ComboBox id="penModeComboBox" x="6" y="356" width="96" change="onSelectPen(event)">

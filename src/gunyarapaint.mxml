@@ -2,6 +2,7 @@
 <mx:Application
     xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:gpcontrol="org.libspark.gunyarapaint.controls.*"
+    xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
     layout="absolute" width="100%" height="100%"
     preinitialize="onPreinitialize(event)"
     creationComplete="onCreationComplete(event)"
@@ -11,7 +12,438 @@
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
     implements="org.libspark.gunyarapaint.framework.ui.IApplication"
     alpha="1.0">
-    <mx:Script source="gunyarapaint.as">
+    <mx:Script>
+        <![CDATA[
+            import flash.errors.IllegalOperationError;
+            import flash.events.Event;
+            import flash.events.KeyboardEvent;
+            import flash.geom.Matrix;
+            import flash.geom.Point;
+            import flash.ui.Keyboard;
+            import flash.utils.ByteArray;
+            
+            import mx.controls.Alert;
+            import mx.core.UITextField;
+            import mx.events.FlexEvent;
+            import mx.events.ListEvent;
+            import mx.events.NumericStepperEvent;
+            import mx.events.SliderEvent;
+            import mx.managers.PopUpManager;
+            
+            import org.libspark.gunyarapaint.controls.MovingCanvasModule;
+            import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
+            import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+            import org.libspark.gunyarapaint.framework.Painter;
+            import org.libspark.gunyarapaint.framework.Pen;
+            import org.libspark.gunyarapaint.framework.Recorder;
+            import org.libspark.gunyarapaint.framework.events.CommandEvent;
+            import org.libspark.gunyarapaint.framework.events.UndoEvent;
+            import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
+            import org.libspark.gunyarapaint.framework.modules.CircleModule;
+            import org.libspark.gunyarapaint.framework.modules.DropperModule;
+            import org.libspark.gunyarapaint.framework.modules.FloodFillModule;
+            import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
+            import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
+            import org.libspark.gunyarapaint.framework.modules.LineModule;
+            import org.libspark.gunyarapaint.framework.modules.PixelModule;
+            import org.libspark.nicopedia.Com;
+            
+            private var m_recorder:Recorder;
+            private var m_context:CanvasModuleContext;
+            private var m_module:ICanvasModule;
+            private var m_commit:uint;
+            
+            private var basex:uint = 0;
+            private var basey:uint = 0;
+            private var baseWidth:uint = 0;
+            private var baseHeight:uint = 0;
+            
+            private var oekakiId:uint;
+            private var redirectUrl:String;
+            
+            //private var _logger:GPLogger;
+            
+            private const MAX_CANVAS_WIDTH:uint = 500;
+            private const MAX_CANVAS_HEIGHT:uint = 500;
+            private const MIN_CANVAS_WIDTH:uint = 16;
+            private const MIN_CANVAS_HEIGHT:uint = 16;
+            private const DEBUG:Boolean = true;
+            
+            // ポップアップの初期位置
+            private var initCanvasWindow:Rectangle;
+            private var initPenDetailWindowPos:Point;
+            private var initLayerWindowPos:Point;
+            private var initToolController:Point;
+            
+            public const ALERT_TITLE:String = 'お絵カキコ';
+            
+            public function setModule(value:String):void
+            {
+                m_module = m_context.getModule(value);
+                if (m_module == null)
+                    throw new IllegalOperationError(value
+                        + " is not the ICanvasModule implemented module");
+            }
+            
+            public function get module():ICanvasModule
+            {
+                return m_module;
+            }
+            
+            public function get moduleName():String
+            {
+                switch (m_module.name) {
+                    case CircleModule.CIRCLE:
+                        return "円描画ツール";
+                    case DropperModule.DROPPER:
+                        return "スポイトツール";
+                    case FloodFillModule.FLOOD_FILL:
+                        return "塗りつぶしツール";
+                    case FreeHandModule.FREE_HAND:
+                        return "手書き(消しゴム)ツール";
+                    case LineModule.LINE:
+                        return "直線ツール";
+                    case PixelModule.PIXEL:
+                        return "ドットツール";
+                    default:
+                        return "謎のツール";
+                }
+            }
+            
+            public function get supportedBlendModes():Array
+            {
+                return blendModes.toArray();
+            }
+            
+            public function get layers():LayerBitmapCollection
+            {
+                return m_recorder.layers;
+            }
+            
+            public function get pen():Pen
+            {
+                return m_recorder.pen;
+            }
+            
+            public function get canvasWidth():uint
+            {
+                return m_recorder.width;
+            }
+            
+            public function get canvasHeight():uint
+            {
+                return m_recorder.height;
+            }
+            
+            public function get canvasView():Sprite
+            {
+                return m_recorder.view;
+            }
+            
+            public function get commitCount():uint
+            {
+                return m_commit;
+            }
+            
+            public function get recorder():Recorder
+            {
+                return m_recorder;
+            }
+            
+            public function resetWindowsPosition():void
+            {
+                canvasWindow.rotate(0);
+                canvasWindow.transform.matrix = new Matrix(1, 0, 0, 1, initCanvasWindow.x, initCanvasWindow.y);
+                penDetailWindow.move(initPenDetailWindowPos.x, initPenDetailWindowPos.y);
+                layerWindow.move(initLayerWindowPos.x, initLayerWindowPos.y);
+                toolController.move(initToolController.x, initToolController.y);
+                canvasWindow.width = initCanvasWindow.width;
+                canvasWindow.height = initCanvasWindow.height;
+                toolController.setRotate(0);
+                toolController.setZoom(1);
+            }
+            
+            public function deserialize(s:String):void
+            {
+                // TODO: 実装
+                // var log:GPLogger = GPLogger.deserialize(s);
+            }
+            
+            private function onPreinitialize(event:FlexEvent):void
+            {
+                var width:int = 0;
+                var height:int = 0;
+                var undoBufferSize:int = 0;
+                if (DEBUG) {
+                    /*
+                    parameters['oekakiId'] = 23724;
+                    parameters['baseImgUrl'] = 'http://dic.nicovideo.jp/oekaki_layers/23724';
+                    parameters['baseImgInfoUrl'] = 'http://dic.nicovideo.jp/oekaki_info/23724';
+                    */
+                    parameters['postUrl'] = 'http://dic.dev.nicovideo.jp/';
+                    parameters['cookie'] = 'cookie';
+                    parameters['magic'] = 'magic';
+                    parameters['redirectUrl'] = 'http://dic.dev.nicovideo.jp/';
+                    parameters['undoBufferSize'] = 16;
+                    parameters['canvasWidth'] = 417;
+                    parameters['canvasHeight'] = 317;
+                }
+                
+                width = int(parameters['canvasWidth']);
+                height = int(parameters['canvasHeight']);
+                undoBufferSize = int(parameters['undoBufferSize']);
+                
+                var bytes:ByteArray = new ByteArray();
+                m_recorder = Recorder.create(bytes, width, height, undoBufferSize);
+                m_context = new CanvasModuleContext(m_recorder);
+                m_module = m_context.getModule(FreeHandModule.FREE_HAND);
+                m_commit = 0;
+                m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
+            }
+            
+            private function onCommit(event:CommandEvent):void
+            {
+                trace(event.command);
+                m_commit++;
+            }
+            
+            private function onCreationComplete(event:FlexEvent):void
+            {
+                var width:uint = 0;
+                var height:uint = 0;
+                var undoBufferSize:uint = 0;
+                
+                if (DEBUG) {
+                    // debug buttons
+                    //logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
+                    versionLabel.text += 'debug';
+                    //logPlayButton.visible = true;
+                    //checkPngButton.visible = true;
+                }
+                
+                /*
+                enabled = false;
+                canvasWindow.enabled = false;
+                penDetailWindow.enabled = false;
+                layerWindow.enabled = false;
+                */
+                
+                // ポップアップさせて、そいつらの初期位置を覚える
+                PopUpManager.addPopUp(canvasWindow, this);
+                PopUpManager.addPopUp(penDetailWindow, this);
+                PopUpManager.addPopUp(layerWindow, this);
+                PopUpManager.addPopUp(toolController, this);
+                initCanvasWindow = new Rectangle(canvasWindow.x, canvasWindow.y, canvasWindow.width, canvasWindow.height);
+                initPenDetailWindowPos = new Point(penDetailWindow.x, penDetailWindow.y);
+                initLayerWindowPos = new Point(layerWindow.x, layerWindow.y);
+                initToolController = new Point(toolController.x, toolController.y);
+                
+                if (parameters['postUrl'] && parameters['cookie'] && parameters['magic'] && parameters['redirectUrl']) {
+                    //postOekakiButton.enabled = true;
+                    redirectUrl = parameters['redirectUrl'];
+                }
+                if (parameters['undoBufferSize']) {
+                    undoBufferSize = int(parameters['undoBufferSize']);
+                    if (undoBufferSize < 0) {
+                        Alert.show('最大アンドゥ回数が少なすぎます。', ALERT_TITLE);      
+                    }
+                    if (undoBufferSize > 32) {
+                        Alert.show('最大アンドゥ回数が多すぎます。', ALERT_TITLE);      
+                    }
+                }
+                else {
+                    return;
+                }
+                if (parameters['oekakiId'] && parameters['baseImgUrl']) {
+                    oekakiId = uint(parameters['oekakiId']);
+                    //new Com().loadURL(parameters['baseImgUrl'], getBaseImgHandler);
+                }
+                else {
+                    if (parameters['canvasWidth'] && parameters['canvasHeight']) {
+                        width = int(parameters['canvasWidth']);
+                        height = int(parameters['canvasHeight']);
+                        if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
+                            Alert.show('キャンバスサイズが小さすぎます。', ALERT_TITLE);
+                            return;
+                        }
+                        if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
+                            Alert.show('キャンバスサイズが大きすぎます。', ALERT_TITLE);
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+                m_context.add(new MovingCanvasModule(m_recorder, canvasWindow));
+            }
+            
+            private function onApplicationComplete(event:FlexEvent):void
+            {
+                stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);  
+                stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);  
+                //stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+                //stage.addEventListener(MouseEvent.MOUSE_OUT, onMouseUp); // これを入れるとマズい。
+            }
+            
+            private function onRemove(event:Event):void
+            {
+                m_recorder.removeEventListener(CommandEvent.COMMITTED, onCommit);
+                stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);  
+                stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);  
+                //stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+                //stage.removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+            }
+            
+            // canvasでの外のmouseUpをcanvasに通知  
+            private function onMouseUp(evt:MouseEvent):void
+            {
+                module.interrupt(evt.localX, evt.localY);
+            }
+            
+            private function get isShortCut():Boolean
+            {
+                return stage.focus is mx.core.UITextField;
+            }
+            
+            private function onKeyDown(evt:KeyboardEvent):void
+            {
+                if (isShortCut)
+                    return;
+                switch (evt.keyCode) {
+                    case Keyboard.CONTROL:
+                        penDetailWindow.pen = DropperModule.DROPPER;
+                        break;
+                    case Keyboard.SHIFT:
+                        break;
+                    case Keyboard.SPACE:
+                        penDetailWindow.pen = MovingCanvasModule.MOVING_CANVAS;
+                        break;
+                    case 48: // 0
+                    case 96: // ten-key 0
+                        evt.shiftKey ? toolController.setRotate(0) : toolController.setZoom(1);
+                        break;
+                    case 65: // a
+                        // Aキーの状態 = 押下中
+                        m_module.keyA = true;
+                        break;
+                    case 73: // i
+                        resetWindowsPosition();
+                        break;
+                    case 77: // m
+                        m_module.horizontalMirror(Painter.ALL_LAYERS);
+                        break;
+                    case 81: // q
+                        // Qキーの状態 = 押下中
+                        m_module.keyQ = true;
+                        break;
+                    case 82: // r
+                        // Rキーの状態 = 押下中
+                        m_module.shouldDrawFromEndPoint = true;
+                        break;
+                    // 20090905-haku2 ins start
+                    case 84: // t
+                        // Tキーの状態 = 押下中
+                        m_module.shouldDrawFromStartPoint = true;
+                        break;
+                    // 20090905-haku2 ins end
+                    case 89: // y
+                        m_module.redo();
+                        break;
+                    case 90: // z
+                        m_module.undo();
+                        break;
+                    case 107: // ten key +
+                        // +
+                        toolController.setZoom(toolController.canvasZoom.value + 1);
+                        break;
+                    case 109: // ten key -
+                        // -
+                        toolController.setZoom(toolController.canvasZoom.value - 1);
+                        break;
+                    case 187:
+                        if (evt.shiftKey)
+                            // +
+                            toolController.setZoom(toolController.canvasZoom.value + 1);
+                        break;
+                    case 189:
+                        // -
+                        toolController.setZoom(toolController.canvasZoom.value - 1);
+                        break;
+                    case 49: // 1
+                    case 50: // 2
+                    case 51: // 3
+                    case 52: // 4
+                    case 53: // 5
+                    case 54: // 6
+                    case 55: // 7
+                    case 56: // 8
+                    case 57: // 9
+                        if (!evt.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
+                            penDetailWindow.currentThickness = evt.keyCode - 48;
+                        break;
+                    case 97: // ten-key 1
+                    case 98: // ten-key 2
+                    case 99: // ten-key 3
+                    case 100: // ten-key 4
+                    case 101: // ten-key 5
+                    case 102: // ten-key 6
+                    case 103: // ten-key 7
+                    case 104: // ten-key 8
+                    case 105: // ten-key 9
+                        penDetailWindow.currentThickness = evt.keyCode - 96;
+                        break;
+                    case 45: // INS
+                        if (!evt.shiftKey)
+                            toolController.setRotate(0);
+                        break;
+                    default:
+                        // Alert('' + evt.keyCode);
+                        break;
+                }
+            }
+            
+            private function onKeyUp(evt:KeyboardEvent):void
+            {
+                if (isShortCut)
+                    return;
+                switch (evt.keyCode) {
+                    case Keyboard.CONTROL:
+                        penDetailWindow.reset();
+                        break;
+                    case Keyboard.SPACE:
+                        penDetailWindow.reset();
+                        break;
+                    case 65: // a
+                        // Aキーの状態 = 解放
+                        m_module.keyA = false;
+                        break;
+                    case 81: // q
+                        // Qキーの状態 = 解放
+                        m_module.keyQ = false;
+                        break;
+                    case 82: // r
+                        // Rキーの状態 = 解放
+                        m_module.shouldDrawFromEndPoint = false;
+                        break;
+                    case 84: // t
+                        // Tキーの状態 = 解放
+                        m_module.shouldDrawFromStartPoint = false;
+                        break;
+                    return;
+                }
+            }
+            
+            private function alertOnUnload(b:Boolean):void
+            {
+                if (ExternalInterface.available) {
+                    try {
+                        ExternalInterface.call("changeAlertOnUnload", b);
+                    } catch (e:SecurityError) {
+                    } catch (e:Error) {
+                    }
+                }
+            }
+        ]]>
     </mx:Script>
     <mx:ArrayCollection id="blendModes">
         <mx:Object label="通常" data="{BlendMode.NORMAL}" />
@@ -27,47 +459,9 @@
         <mx:Object label="反転" data="{BlendMode.INVERT}" />
     </mx:ArrayCollection>
     <mx:Image source="@Embed('./gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10"/>
-    <mx:Canvas id="toolCanvas" height="155" right="0" left="0" y="0">
-        <mx:Label x="12" y="7" text="投稿者名"/>
-        <mx:TextInput id="fromTextInput" x="55" y="3" maxChars="32" fontSize="14" focusThickness="0"/>
-        <mx:Label x="2" y="36" text="絵のタイトル"/>
-        <mx:TextInput id="titleTextInput" x="55" y="32" maxChars="32" fontSize="14" focusThickness="0" width="406"/>
-        <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="ウォッチリストに登録"/>
-        <mx:Label x="10" y="76" text="書き込み"/>
-        <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
-            <mx:text></mx:text>
-        </mx:TextArea>
-        <mx:Button id="rotateResetButton" y="63" label="角度" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setRotate(0)"/>
-        <mx:Button id="zoomResetButton" y="81" label="拡大" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setZoom(1)"/>
-        <mx:Button id="horizontalMirrorButton" x="117" y="128" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.horizontalMirror(Painter.ALL_LAYERS)"/>
-        <mx:Button id="verticalMirrorButton" x="245" y="128" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="module.verticalMirror(Painter.ALL_LAYERS)"/>
-        <mx:HSlider id="canvasRotate" y="62" width="152" minimum="-180" maximum="180" snapInterval="5" value="0"  right="49" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)"/>
-        <mx:HSlider id="canvasZoom" y="79" width="152" minimum="-4" maximum="16" snapInterval="0.1" value="1"  right="49" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)"/>
-        <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="18" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
-        <mx:Label y="66" text="°" right="0"/>
-        <mx:TextInput id="canvasZoomValue" y="83" width="32" height="17" right="18" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="onChangeCanvasZoom(event)"/>
-        <mx:Label y="83" text="%" right="0"/>
-        
-        <mx:Label y="4" text="補助線" right="199"/>
-        <mx:NumericStepper id="additionalNumberStepper" y="4" value="4" minimum="2" maximum="16" stepSize="1" right="143" height="18" fontSize="8" change="onChangeAuxDivideCount(event)"/>
-        <mx:CheckBox id="additionalBoxCheckBox" y="2" label="縦横" right="8" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)"/>
-        <mx:CheckBox id="additionalSkewCheckBox" y="18" label="斜め" right="9" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)"/>
-        <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
-        <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="m_recorder.undo()"/>
-        <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="m_recorder.redo()"/>
-        <mx:Button id="windowsResetButton" x="10" y="128" label="ウィンドウ初期状態" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>
-        <mx:Button id="passwordButton" x="373" y="128" label="ふっかつのじゅもん" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" enabled="false" buttonDown="passwordButtonHandler(event)"/>
-        <mx:Button id="logPlayButton" y="105" label="ログプレイ" visible="false" right="99"/>
-        <mx:Button id="checkPngButton" y="105" label="同一check" visible="false" right="10"/>
-        <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)">
-            <mx:ArrayCollection id="auxTypes">
-                <mx:Object label="分割" data="0" />
-                <mx:Object label="px単位" data="1" />
-            </mx:ArrayCollection>
-        </mx:ComboBox>
-    </mx:Canvas>
-    <gpcontrol:PenDetailWindowControl id="penDetailWindow" x="9" y="163" layout="absolute" title="ペン" height="450" />
-    <gpcontrol:GPCanvasWindowControl id="gpCanvasWindow" x="145" y="163" width="379" height="410" layout="absolute" title="キャンバス" />
-    <gpcontrol:GPLayerWindowControl x="532" y="163" layout="absolute" title="レイヤー" id="gpLayerWindow" height="312" />
+    <ui:ToolController id="toolController" left="10" y="10" title="補助ツール" />
+    <gpcontrol:PenDetailWindowControl id="penDetailWindow" x="10" y="218" layout="absolute" title="ペン" height="450" />
+    <gpcontrol:GPCanvasWindowControl id="canvasWindow" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
+    <gpcontrol:GPLayerWindowControl x="533" y="218" layout="absolute" title="レイヤー" id="layerWindow" height="312" />
     <mx:Label id="versionLabel" text="ver.2009090902" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

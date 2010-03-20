@@ -42,7 +42,6 @@
             {
                 var application:IApplication = IApplication(Application.application);
                 blendModeComboBox.dataProvider = application.supportedBlendModes;
-                enabled = true;
                 update();
                 
                 var layers:LayerBitmapCollection = application.layers;
@@ -58,7 +57,6 @@
                 }
                 layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
                 ComponentResizer.addResize(this, new Point(144, 230));
-                enabled = false;
             }
             
             private function onClickLayer(evt:ListEvent):void

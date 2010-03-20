@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="720" height="200" initialize="onInitialize()" removedFromStage="onRemove()">
+    <mx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import mx.core.Application; 
+            import mx.events.FlexEvent;
+            import mx.events.ListEvent;
+            import mx.events.NumericStepperEvent;
+            import mx.managers.PopUpManager;
+            
+            import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
+            import org.libspark.gunyarapaint.framework.events.UndoEvent;
+            import org.libspark.gunyarapaint.framework.ui.IApplication;
+            import org.libspark.gunyarapaint.framework.Painter;
+            import org.libspark.gunyarapaint.framework.Recorder;
+            import org.libspark.nicopedia.Com;
+            
+            public function setRotate(value:Number):void
+            {
+                canvasRotate.value = value;
+                canvasRotateValue.text = String(-canvasRotate.value); // 20090909-haku2 ins キャンバス回転角度をテキストボックスに反映
+                Application.application.canvasWindow.rotate(canvasRotate.value);
+            }
+            
+            public function setZoom(value:Number):void
+            {
+                var n:Number = value;
+                if (n < 1)
+                    n = 1.0 / (-value + 2);
+                n *= 10000;
+                canvasZoom.value = value;
+                Application.application.canvasWindow.zoom(value);  
+                // 拡大率をテキストボックスに反映
+                canvasZoomValue.text = String(Math.round(n) / 100);
+            }
+            
+            private function onInitialize():void
+            {
+                var recorder:Recorder = Application.application.recorder;
+                recorder.addEventListener(UndoEvent.UNDO, onChangeUndo);
+                recorder.addEventListener(UndoEvent.REDO, onChangeUndo);
+                recorder.addEventListener(UndoEvent.PUSH, onChangeUndo);
+            }
+            
+            private function onRemove():void
+            {
+                var recorder:Recorder = Application.application.recorder;
+                recorder.removeEventListener(UndoEvent.UNDO, onChangeUndo);
+                recorder.removeEventListener(UndoEvent.REDO, onChangeUndo);
+                recorder.removeEventListener(UndoEvent.PUSH, onChangeUndo);
+            }
+            
+            private function onChangeUndo(event:UndoEvent):void
+            {
+                var undoCount:int = event.undoCount;
+                undoButton.label = 'アンドゥ ';
+                if (undoCount > 0) {
+                    undoButton.label += '(' + undoCount + ')';
+                    undoButton.enabled = true;
+                }
+                else {
+                    undoButton.enabled = false;
+                }
+                var redoCount:int = event.redoCount;
+                redoButton.label = 'リドゥ ';
+                if (redoCount > 0) {
+                    redoButton.label += '(' + redoCount + ')';
+                    redoButton.enabled = true;
+                }
+                else {
+                    redoButton.enabled = false;
+                }
+            }
+            
+            // 数値入力で拡大率指定
+            private function onChangeCanvasZoom(evt:Event):void
+            {
+                var value:Number = Number(canvasZoomValue.text);
+                if (value <= 0) {
+                    value = 1;
+                }
+                else if (value >= 100) {
+                    value /= 100;
+                }
+                else {
+                    value = -(100 / value) + 2;
+                }
+                setZoom(value);
+            }
+            
+            // 数値入力でキャンバス回転角度指定
+            private function onChangeCanvasRotate(evt:Event):void
+            {
+                setRotate(Number(canvasRotateValue.text));
+            }
+            
+            private function onChangeAuxDivideCount(evt:NumericStepperEvent):void
+            {
+                Application.application.canvasWindow.auxDivideCount = uint(evt.value);
+            }
+            
+            private function onChangeAuxBoxVisible(evt:Event):void
+            {
+                Application.application.canvasWindow.auxBoxVisible = evt.target.selected;
+            }
+            
+            private function onChangeAuxSkewVisible(evt:Event):void
+            {
+                Application.application.canvasWindow.auxSkewVisible = evt.target.selected;
+            }
+            
+            // 20090906-haku2 ins start
+            // 補助線種類の変更
+            private function onChangeAuxType(evt:ListEvent):void
+            {
+                var n:Number = additionalNumberStepper.value;
+                if (evt.currentTarget.value == 0) {
+                    additionalNumberStepper.minimum = 2;
+                    additionalNumberStepper.maximum = 16;
+                    Application.application.canvasWindow.enableAuxPixel = false;
+                }
+                else {
+                    additionalNumberStepper.minimum = 4;
+                    additionalNumberStepper.maximum = 80;
+                    Application.application.canvasWindow.enableAuxPixel = true;
+                }
+            }
+            
+            private function passwordButtonHandler(evt:FlexEvent):void
+            {
+                var w:GPPasswordWindowControl = new GPPasswordWindowControl();
+                PopUpManager.addPopUp(w, this, true);
+                // w.password = gpCanvas.logger.password;
+            }
+            
+            // TODO: もう本当に汚い…　これのスコープを短くする。
+            private var baseImg:BitmapData;
+            
+            private function getBaseImgHandler(com:Com):void
+            {
+                baseImg = Bitmap(com.content).bitmapData;
+                /*
+                if (parameters['baseImgInfoUrl']) {
+                    new Com().sendGetUrlRequest(parameters['baseImgInfoUrl'], getBaseImgInfoHandler);
+                } else {
+                    // 画像のサイズがそのままwidth/height
+                    // このロジックは通らなくなっているはずだが、移行措置のため残してある。
+                    // 消してもよい。
+                    baseImgToCanvas(baseImg.width, baseImg.height, parameters['undoBufferSize'], null);
+                }
+                */
+            }
+            
+            private function getBaseImgInfoHandler(com:Com):void
+            {
+                var info:Object = com.jsonObject;
+                if (!info) {
+                    info = {'width': baseImg.width, 'height': baseImg.height};
+                }
+                //baseImgToCanvas(info['width'], info['height'], parameters['undoBufferSize'], info);
+            }
+            
+            private function baseImgToCanvas(width:uint, height:uint, undoBufferSize:uint, baseInfo:Object):void
+            {
+                /*
+                _logger = GPLogger.createForDraw(width, height, undoBufferSize,
+                baseImg, baseInfo);
+                canvasWindow.logger = _logger;
+                */
+                enabled = true;
+            }
+            
+            private function commCompleteHandler(com:Com):void
+            {
+                try {
+                    if (com.errStr) {
+                        // error
+                        Alert.show(com.errStr, Application.application.ALERT_TITLE);
+                    }
+                    else if (com.data.toString() != '') {
+                        Alert.show(com.data.toString(), Application.application.ALERT_TITLE);
+                    }
+                    else {
+                        // redirect
+                        //Com.redirect(redirectUrl);
+                        return;
+                    }
+                }
+                catch (e:Error) {
+                    Alert.show('何かしらのエラーが起きました…再投稿お願いいたします。', Application.application.ALERT_TITLE);
+                }
+                //alertOnUnload(true);
+            }
+            
+            private function postOekakiButtonHandler(evt:Event):void
+            {
+                if (titleTextInput.text == '') {
+                    Alert.show('絵のタイトルが空です。', Application.application.ALERT_TITLE);
+                }
+                else if (messageTextArea.text == '') {
+                    Alert.show('書き込みが空です。', Application.application.ALERT_TITLE);
+                }
+                else if (Application.application.commitCount == 0) {
+                    Alert.show('絵が描かれていません。お絵かきしてください。', Application.application.ALERT_TITLE);
+                }
+                else {
+                    try {
+                        Application.application.alertOnUnload(false);
+                        /*
+                        var com:Com = new Com();
+                        com.postOekaki(this,
+                            parameters['postUrl'],
+                            parameters['magic'],
+                            parameters['cookie'],
+                            fromTextInput.text,
+                            titleTextInput.text,
+                            messageTextArea.text,
+                            watchlistCheckBox.selected,
+                            oekakiId,
+                            new ByteArray(), //_logger.dataForPost,
+                            commCompleteHandler
+                        );
+                        */
+                    }
+                    catch (e:Error) {
+                        Application.application.alertOnUnload(true);
+                        Alert.show(e.message, Application.application.ALERT_TITLE);
+                    }
+                }
+            }
+        ]]>
+    </mx:Script>
+    <mx:Label x="12" y="7" text="投稿者名"/>
+    <mx:TextInput id="fromTextInput" x="55" y="3" maxChars="32" fontSize="14" focusThickness="0"/>
+    <mx:Label x="2" y="36" text="絵のタイトル"/>
+    <mx:TextInput id="titleTextInput" x="55" y="32" maxChars="32" fontSize="14" focusThickness="0" width="406"/>
+    <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="ウォッチリストに登録"/>
+    <mx:Label x="10" y="76" text="書き込み"/>
+    <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
+        <mx:text></mx:text>
+    </mx:TextArea>
+    <mx:Button id="rotateResetButton" y="63" label="角度" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setRotate(0)"/>
+    <mx:Button id="zoomResetButton" y="81" label="拡大" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setZoom(1)"/>
+    <mx:Button id="horizontalMirrorButton" x="117" y="128" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).module.horizontalMirror(Painter.ALL_LAYERS)"/>
+    <mx:Button id="verticalMirrorButton" x="245" y="128" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).module.verticalMirror(Painter.ALL_LAYERS)"/>
+    <mx:HSlider id="canvasRotate" y="62" width="152" minimum="-180" maximum="180" snapInterval="5" value="0"  right="49" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)"/>
+    <mx:HSlider id="canvasZoom" y="79" width="152" minimum="-4" maximum="19" snapInterval="0.1" value="1"  right="49" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)"/>
+    <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="18" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
+    <mx:Label y="66" text="°" right="0"/>
+    <mx:TextInput id="canvasZoomValue" y="83" width="32" height="17" right="18" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="onChangeCanvasZoom(event)"/>
+    <mx:Label y="83" text="%" right="0"/>
+    
+    <mx:Label y="4" text="補助線" right="199"/>
+    <mx:NumericStepper id="additionalNumberStepper" y="4" value="4" minimum="2" maximum="16" stepSize="1" right="143" height="18" fontSize="8" change="onChangeAuxDivideCount(event)"/>
+    <mx:CheckBox id="additionalBoxCheckBox" y="2" label="縦横" right="8" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)"/>
+    <mx:CheckBox id="additionalSkewCheckBox" y="18" label="斜め" right="9" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)"/>
+    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
+    <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="IApplication(Application.application).module.undo()"/>
+    <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="IApplication(Application.application).module.redo()"/>
+    <mx:Button id="windowsResetButton" x="10" y="128" label="ウィンドウ初期状態" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="Application.application.resetWindowsPosition()"/>
+    <mx:Button id="passwordButton" x="373" y="128" label="ふっかつのじゅもん" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" enabled="false" buttonDown="passwordButtonHandler(event)"/>
+    <mx:Button id="logPlayButton" y="105" label="ログプレイ" visible="false" right="99"/>
+    <mx:Button id="checkPngButton" y="105" label="同一check" visible="false" right="10"/>
+    <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)">
+        <mx:ArrayCollection id="auxTypes">
+            <mx:Object label="分割" data="0" />
+            <mx:Object label="px単位" data="1" />
+        </mx:ArrayCollection>
+    </mx:ComboBox>
+</mx:TitleWindow>
