@@ -15,9 +15,9 @@ package org.libspark.gunyarapaint.ui.v1
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
     
-    import org.libspark.gunyarapaint.controls.ResizableComponent;
     import org.libspark.gunyarapaint.framework.Pen;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
+    import org.libspark.gunyarapaint.utils.ComponentResizer;
     
     public class CanvasController extends TitleWindow
     {
@@ -140,7 +140,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
-            m_resizable = new ResizableComponent(this, new Point(100, 100));
+            ComponentResizer.addResize(this, new Point(100, 100));
             
             resize();
             update();
@@ -249,7 +249,6 @@ package org.libspark.gunyarapaint.ui.v1
         private var m_canvasScale:Number; // キャンバスの倍率
         private var m_preDegree:int; // 前の回転角度
         private var m_scrollDragStartPoint:Point;
-        private var m_resizable:ResizableComponent;
         private var m_canvas:Canvas;
     }
 }

@@ -19,7 +19,7 @@
             {
                 canvasRotate.value = value;
                 canvasRotateValue.text = String(-canvasRotate.value); // 20090909-haku2 ins キャンバス回転角度をテキストボックスに反映
-                Application.application.canvasWindow.rotate(canvasRotate.value);
+                Application.application.canvasController.rotate(canvasRotate.value);
             }
             
             public function setZoom(value:Number):void
@@ -29,7 +29,7 @@
                     n = 1.0 / (-value + 2);
                 n *= 10000;
                 canvasZoom.value = value;
-                Application.application.canvasWindow.zoom(value);  
+                Application.application.canvasController.zoom(value);  
                 // 拡大率をテキストボックスに反映
                 canvasZoomValue.text = String(Math.round(n) / 100);
             }
@@ -96,17 +96,17 @@
             
             private function onChangeAuxDivideCount(evt:NumericStepperEvent):void
             {
-                Application.application.canvasWindow.auxDivideCount = uint(evt.value);
+                Application.application.canvasController.auxDivideCount = uint(evt.value);
             }
             
             private function onChangeAuxBoxVisible(evt:Event):void
             {
-                Application.application.canvasWindow.auxBoxVisible = evt.target.selected;
+                Application.application.canvasController.auxBoxVisible = evt.target.selected;
             }
             
             private function onChangeAuxSkewVisible(evt:Event):void
             {
-                Application.application.canvasWindow.auxSkewVisible = evt.target.selected;
+                Application.application.canvasController.auxSkewVisible = evt.target.selected;
             }
             
             // 補助線種類の変更
@@ -116,16 +116,16 @@
                 if (evt.currentTarget.value == 0) {
                     additionalNumberStepper.minimum = 2;
                     additionalNumberStepper.maximum = 16;
-                    Application.application.canvasWindow.enableAuxPixel = false;
+                    Application.application.canvasController.enableAuxPixel = false;
                 }
                 else {
                     additionalNumberStepper.minimum = 4;
                     additionalNumberStepper.maximum = 80;
-                    Application.application.canvasWindow.enableAuxPixel = true;
+                    Application.application.canvasController.enableAuxPixel = true;
                 }
             }
             
-            private function passwordButtonHandler(evt:FlexEvent):void
+            private function onLoad(evt:FlexEvent):void
             {
                 var controller:DataController = new DataController();
                 PopUpManager.addPopUp(controller, this, true);
@@ -257,7 +257,7 @@
     <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="IApplication(Application.application).module.undo()"/>
     <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="IApplication(Application.application).module.redo()"/>
     <mx:Button id="windowsResetButton" x="10" y="128" label="ウィンドウ初期状態" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="Application.application.resetWindowsPosition()"/>
-    <mx:Button id="passwordButton" x="373" y="128" label="ふっかつのじゅもん" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" enabled="false" buttonDown="passwordButtonHandler(event)"/>
+    <mx:Button id="passwordButton" x="373" y="128" label="ふっかつのじゅもん" width="99" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="onLoad(event)"/>
     <mx:Button id="logPlayButton" y="105" label="ログプレイ" visible="false" right="99"/>
     <mx:Button id="checkPngButton" y="105" label="同一check" visible="false" right="10"/>
     <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)">
