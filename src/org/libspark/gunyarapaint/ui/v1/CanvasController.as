@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.controls
+package org.libspark.gunyarapaint.ui.v1
 {
     import flash.events.MouseEvent;
     import flash.geom.Matrix;
@@ -15,13 +15,13 @@ package org.libspark.gunyarapaint.controls
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
     
-    import org.libspark.gunyarapaint.framework.AuxBitmap;
+    import org.libspark.gunyarapaint.controls.ResizableComponent;
     import org.libspark.gunyarapaint.framework.Pen;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
     
-    public class GPCanvasWindowControl extends TitleWindow
+    public class CanvasController extends TitleWindow
     {
-        public function GPCanvasWindowControl()
+        public function CanvasController()
         {
             m_contentContainer = new Container();
             m_contentContainer.setStyle("borderStyle", "none");
@@ -135,7 +135,7 @@ package org.libspark.gunyarapaint.controls
             m_canvasX = m_canvasY = 0;
             m_canvasScale = 1;
             
-            m_canvas = new GPCanvas();
+            m_canvas = new Canvas();
             m_canvasContainer.addChild(m_canvas);
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
@@ -250,6 +250,6 @@ package org.libspark.gunyarapaint.controls
         private var m_preDegree:int; // 前の回転角度
         private var m_scrollDragStartPoint:Point;
         private var m_resizable:ResizableComponent;
-        private var m_canvas:GPCanvas;
+        private var m_canvas:Canvas;
     }
 }

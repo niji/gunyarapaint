@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.controls
+package org.libspark.gunyarapaint.ui.v1
 {
     import flash.geom.Point;
     
@@ -6,11 +6,11 @@ package org.libspark.gunyarapaint.controls
     import org.libspark.gunyarapaint.framework.modules.CanvasModule;
     import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
     
-    public final class MovingCanvasModule extends CanvasModule implements ICanvasModule
+    public final class MovableCanvasModule extends CanvasModule implements ICanvasModule
     {
-        public static const MOVING_CANVAS:String = "movingCanvas";
+        public static const MOVABLE_CANVAS:String = "movableCanvas";
         
-        public function MovingCanvasModule(recorder:Recorder, canvas:GPCanvasWindowControl)
+        public function MovableCanvasModule(recorder:Recorder, canvas:CanvasController)
         {
             m_canvas = canvas;
             super(recorder);
@@ -43,10 +43,10 @@ package org.libspark.gunyarapaint.controls
         
         public function get name():String
         {
-            return MOVING_CANVAS;
+            return MOVABLE_CANVAS;
         }
         
-        private var m_canvas:GPCanvasWindowControl;
+        private var m_canvas:CanvasController;
         private var m_scrollPosition:Point;
     }
 }

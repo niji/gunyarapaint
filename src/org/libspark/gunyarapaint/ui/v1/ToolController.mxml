@@ -3,17 +3,16 @@
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
-            import mx.core.Application; 
+            import mx.core.Application;
             import mx.events.FlexEvent;
             import mx.events.ListEvent;
             import mx.events.NumericStepperEvent;
             import mx.managers.PopUpManager;
             
-            import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
-            import org.libspark.gunyarapaint.framework.events.UndoEvent;
-            import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Recorder;
+            import org.libspark.gunyarapaint.framework.events.UndoEvent;
+            import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.libspark.nicopedia.Com;
             
             public function setRotate(value:Number):void
@@ -128,8 +127,8 @@
             
             private function passwordButtonHandler(evt:FlexEvent):void
             {
-                var w:GPPasswordWindowControl = new GPPasswordWindowControl();
-                PopUpManager.addPopUp(w, this, true);
+                var controller:DataController = new DataController();
+                PopUpManager.addPopUp(controller, this, true);
                 // w.password = gpCanvas.logger.password;
             }
             

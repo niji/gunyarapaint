@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.controls
+package org.libspark.gunyarapaint.ui.v1
 {
     import flash.display.Sprite;
     import flash.events.Event;
@@ -14,9 +14,9 @@ package org.libspark.gunyarapaint.controls
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
     
-    internal class GPCanvas extends UIComponent
+    internal class Canvas extends UIComponent
     {
-        public function GPCanvas()
+        public function Canvas()
         {
             var app:IApplication = IApplication(Application.application);
             var rect:Rectangle = new Rectangle(0, 0, app.canvasWidth, app.canvasHeight);

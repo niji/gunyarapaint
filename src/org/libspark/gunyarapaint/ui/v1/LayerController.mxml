@@ -2,7 +2,7 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 width="144" height="312"
                 creationComplete="onCreateComplete()"
-                xmlns:ns1="org.libspark.gunyarapaint.controls.*"
+                xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
                 >
     <mx:Script>
         <![CDATA[
@@ -131,15 +131,15 @@
             }
         ]]>
     </mx:Script>
-    <ns1:GPLayerDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
+    <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
                          itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)">
-        <ns1:columns>
-            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/>
-            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+        <ui:columns>
+            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
             <!--mx:DataGridColumn headerText="マ" dataField="maskCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/-->
             <mx:DataGridColumn editable="true" headerText="レイヤ名" dataField="name"/>
-        </ns1:columns>
-    </ns1:GPLayerDataGrid>
+        </ui:columns>
+    </ui:ExtendedDataGrid>
     <mx:Button x="6" y="246" id="newLayerButton" label="新" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCreateLayer(event)"/>
     <mx:Button x="36" y="246" id="copyLayerButton" label="複" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCopyLayer(event)"/>
     <mx:Button x="66" y="246" id="deleteLayerButton" label="削" width="22" paddingLeft="0" paddingRight="0" buttonDown="onRemoveLayer(event)"/>

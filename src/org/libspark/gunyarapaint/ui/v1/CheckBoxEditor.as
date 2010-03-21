@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.controls
+package org.libspark.gunyarapaint.ui.v1
 {
     import flash.events.Event;
     import flash.events.MouseEvent;

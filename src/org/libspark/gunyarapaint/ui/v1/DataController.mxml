@@ -5,9 +5,11 @@
     <mx:Button id="deserializeButton" x="7" y="138" label="ふっかつする" click="deserialize()"/>
     <mx:Script>
         import flash.system.System;
-        import org.libspark.gunyarapaint.controls.GPCanvas;
-        import mx.managers.PopUpManager;
+        
         import mx.core.Application;
+        import mx.managers.PopUpManager;
+        
+        import org.libspark.gunyarapaint.ui.v1.Canvas;
         
         public function set password(s:String):void {
             passwordTextArea.text = s;

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application
     xmlns:mx="http://www.adobe.com/2006/mxml"
-    xmlns:gpcontrol="org.libspark.gunyarapaint.controls.*"
     xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
     layout="absolute" width="100%" height="100%"
     preinitialize="onPreinitialize(event)"
@@ -14,30 +13,16 @@
     alpha="1.0">
     <mx:Script>
         <![CDATA[
-            import flash.errors.IllegalOperationError;
-            import flash.events.Event;
-            import flash.events.KeyboardEvent;
-            import flash.geom.Matrix;
-            import flash.geom.Point;
-            import flash.ui.Keyboard;
-            import flash.utils.ByteArray;
-            
             import mx.controls.Alert;
             import mx.core.UITextField;
             import mx.events.FlexEvent;
-            import mx.events.ListEvent;
-            import mx.events.NumericStepperEvent;
-            import mx.events.SliderEvent;
             import mx.managers.PopUpManager;
             
-            import org.libspark.gunyarapaint.controls.MovingCanvasModule;
-            import org.libspark.gunyarapaint.controls.GPPasswordWindowControl;
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Pen;
             import org.libspark.gunyarapaint.framework.Recorder;
             import org.libspark.gunyarapaint.framework.events.CommandEvent;
-            import org.libspark.gunyarapaint.framework.events.UndoEvent;
             import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
             import org.libspark.gunyarapaint.framework.modules.CircleModule;
             import org.libspark.gunyarapaint.framework.modules.DropperModule;
@@ -46,7 +31,7 @@
             import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
-            import org.libspark.nicopedia.Com;
+            import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             
             private var m_recorder:Recorder;
             private var m_context:CanvasModuleContext;
@@ -152,13 +137,13 @@
             
             public function resetWindowsPosition():void
             {
-                canvasWindow.rotate(0);
-                canvasWindow.transform.matrix = new Matrix(1, 0, 0, 1, initCanvasWindow.x, initCanvasWindow.y);
-                penDetailWindow.move(initPenDetailWindowPos.x, initPenDetailWindowPos.y);
-                layerWindow.move(initLayerWindowPos.x, initLayerWindowPos.y);
+                canvasController.rotate(0);
+                canvasController.transform.matrix = new Matrix(1, 0, 0, 1, initCanvasWindow.x, initCanvasWindow.y);
+                penController.move(initPenDetailWindowPos.x, initPenDetailWindowPos.y);
+                layerController.move(initLayerWindowPos.x, initLayerWindowPos.y);
                 toolController.move(initToolController.x, initToolController.y);
-                canvasWindow.width = initCanvasWindow.width;
-                canvasWindow.height = initCanvasWindow.height;
+                canvasController.width = initCanvasWindow.width;
+                canvasController.height = initCanvasWindow.height;
                 toolController.setRotate(0);
                 toolController.setZoom(1);
             }
@@ -223,19 +208,19 @@
                 
                 /*
                 enabled = false;
-                canvasWindow.enabled = false;
-                penDetailWindow.enabled = false;
+                canvasController.enabled = false;
+                penController.enabled = false;
                 layerWindow.enabled = false;
                 */
                 
                 // ポップアップさせて、そいつらの初期位置を覚える
-                PopUpManager.addPopUp(canvasWindow, this);
-                PopUpManager.addPopUp(penDetailWindow, this);
-                PopUpManager.addPopUp(layerWindow, this);
+                PopUpManager.addPopUp(canvasController, this);
+                PopUpManager.addPopUp(penController, this);
+                PopUpManager.addPopUp(layerController, this);
                 PopUpManager.addPopUp(toolController, this);
-                initCanvasWindow = new Rectangle(canvasWindow.x, canvasWindow.y, canvasWindow.width, canvasWindow.height);
-                initPenDetailWindowPos = new Point(penDetailWindow.x, penDetailWindow.y);
-                initLayerWindowPos = new Point(layerWindow.x, layerWindow.y);
+                initCanvasWindow = new Rectangle(canvasController.x, canvasController.y, canvasController.width, canvasController.height);
+                initPenDetailWindowPos = new Point(penController.x, penController.y);
+                initLayerWindowPos = new Point(layerController.x, layerController.y);
                 initToolController = new Point(toolController.x, toolController.y);
                 
                 if (parameters['postUrl'] && parameters['cookie'] && parameters['magic'] && parameters['redirectUrl']) {
@@ -274,7 +259,7 @@
                         return;
                     }
                 }
-                m_context.add(new MovingCanvasModule(m_recorder, canvasWindow));
+                m_context.add(new MovableCanvasModule(m_recorder, canvasController));
             }
             
             private function onApplicationComplete(event:FlexEvent):void
@@ -311,12 +296,12 @@
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
-                        penDetailWindow.pen = DropperModule.DROPPER;
+                        penController.pen = DropperModule.DROPPER;
                         break;
                     case Keyboard.SHIFT:
                         break;
                     case Keyboard.SPACE:
-                        penDetailWindow.pen = MovingCanvasModule.MOVING_CANVAS;
+                        penController.pen = MovableCanvasModule.MOVABLE_CANVAS;
                         break;
                     case 48: // 0
                     case 96: // ten-key 0
@@ -379,7 +364,7 @@
                     case 56: // 8
                     case 57: // 9
                         if (!evt.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
-                            penDetailWindow.currentThickness = evt.keyCode - 48;
+                            penController.currentThickness = evt.keyCode - 48;
                         break;
                     case 97: // ten-key 1
                     case 98: // ten-key 2
@@ -390,7 +375,7 @@
                     case 103: // ten-key 7
                     case 104: // ten-key 8
                     case 105: // ten-key 9
-                        penDetailWindow.currentThickness = evt.keyCode - 96;
+                        penController.currentThickness = evt.keyCode - 96;
                         break;
                     case 45: // INS
                         if (!evt.shiftKey)
@@ -408,10 +393,10 @@
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
-                        penDetailWindow.reset();
+                        penController.reset();
                         break;
                     case Keyboard.SPACE:
-                        penDetailWindow.reset();
+                        penController.reset();
                         break;
                     case 65: // a
                         // Aキーの状態 = 解放
@@ -460,8 +445,8 @@
     </mx:ArrayCollection>
     <mx:Image source="@Embed('./gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10"/>
     <ui:ToolController id="toolController" left="10" y="10" title="補助ツール" />
-    <gpcontrol:PenDetailWindowControl id="penDetailWindow" x="10" y="218" layout="absolute" title="ペン" height="450" />
-    <gpcontrol:GPCanvasWindowControl id="canvasWindow" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
-    <gpcontrol:GPLayerWindowControl x="533" y="218" layout="absolute" title="レイヤー" id="layerWindow" height="312" />
+    <ui:PenController id="penController" x="10" y="218" layout="absolute" title="ペン" height="450" />
+    <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
+    <ui:LayerController x="533" y="218" layout="absolute" title="レイヤー" id="layerController" height="312" />
     <mx:Label id="versionLabel" text="ver.2009090902" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

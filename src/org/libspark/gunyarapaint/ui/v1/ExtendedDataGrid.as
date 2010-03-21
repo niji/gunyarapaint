@@ -1,12 +1,12 @@
-package org.libspark.gunyarapaint.controls
+package org.libspark.gunyarapaint.ui.v1
 {
     import flash.events.MouseEvent;
     
     import mx.controls.DataGrid;
     
-    public class GPLayerDataGrid extends DataGrid
+    public class ExtendedDataGrid extends DataGrid
     {
-        public function GPLayerDataGrid()
+        public function ExtendedDataGrid()
         {
             super();
             doubleClickEnabled = true;
