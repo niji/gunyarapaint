@@ -110,7 +110,6 @@
                 Application.application.canvasWindow.auxSkewVisible = evt.target.selected;
             }
             
-            // 20090906-haku2 ins start
             // 補助線種類の変更
             private function onChangeAuxType(evt:ListEvent):void
             {
@@ -190,7 +189,7 @@
                 catch (e:Error) {
                     Alert.show('何かしらのエラーが起きました…再投稿お願いいたします。', Application.application.ALERT_TITLE);
                 }
-                //alertOnUnload(true);
+                Application.application.alertOnUnload(true);
             }
             
             private function postOekakiButtonHandler(evt:Event):void
