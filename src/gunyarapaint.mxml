@@ -13,6 +13,11 @@
     alpha="1.0">
     <mx:Script>
         <![CDATA[
+            import com.hurlant.crypto.Crypto;
+            import com.hurlant.crypto.symmetric.ICipher;
+            import com.hurlant.crypto.symmetric.IVMode;
+            import com.hurlant.crypto.symmetric.PKCS5;
+            
             import mx.controls.Alert;
             import mx.core.UITextField;
             import mx.events.FlexEvent;
@@ -33,6 +38,7 @@
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             
+            private var m_bytes:ByteArray;
             private var m_recorder:Recorder;
             private var m_context:CanvasModuleContext;
             private var m_module:ICanvasModule;
@@ -148,10 +154,43 @@
                 toolController.setZoom(1);
             }
             
-            public function deserialize(s:String):void
+            public function load(bytes:ByteArray, password:String):void
             {
-                // TODO: 実装
-                // var log:GPLogger = GPLogger.deserialize(s);
+                var passwordBytes:ByteArray = new ByteArray();
+                bytes.position = 0;
+                bytes.endian = Endian.BIG_ENDIAN;
+                passwordBytes.writeUTFBytes(password);
+                var cipher:ICipher = Crypto.getCipher("aes", passwordBytes, new PKCS5());
+                try {
+                    var ivMode:IVMode = IVMode(cipher);
+                    var ivBytes:ByteArray = ByteArray(bytes.readObject());
+                    var dataBytes:ByteArray = ByteArray(bytes.readObject());
+                    ivMode.IV = ivBytes;
+                    cipher.decrypt(dataBytes);
+                    dataBytes.inflate();
+                    dataBytes.readBytes(m_bytes);
+                    // TODO: 実装
+                    // var log:GPLogger = GPLogger.deserialize(s);
+                }
+                catch (e:Error) {
+                    trace(e.message);
+                    Alert.show("指定されたファイルからログを復元することが出来ませんでした", ALERT_TITLE);
+                }
+            }
+            
+            public function save(bytes:ByteArray, password:String):void
+            {
+                var dataBytes:ByteArray = new ByteArray();
+                var passwordBytes:ByteArray = new ByteArray();
+                bytes.endian = Endian.BIG_ENDIAN;
+                passwordBytes.writeUTFBytes(password);
+                dataBytes.writeBytes(m_bytes);
+                dataBytes.deflate();
+                var cipher:ICipher = Crypto.getCipher("aes", passwordBytes, new PKCS5());
+                cipher.encrypt(dataBytes);
+                bytes.writeObject(IVMode(cipher).IV);
+                bytes.writeObject(dataBytes);
+                bytes.position = 0;
             }
             
             private function onPreinitialize(event:FlexEvent):void
@@ -178,8 +217,8 @@
                 height = int(parameters['canvasHeight']);
                 undoBufferSize = int(parameters['undoBufferSize']);
                 
-                var bytes:ByteArray = new ByteArray();
-                m_recorder = Recorder.create(bytes, width, height, undoBufferSize);
+                m_bytes = new ByteArray();
+                m_recorder = Recorder.create(m_bytes, width, height, undoBufferSize);
                 m_context = new CanvasModuleContext(m_recorder);
                 m_module = m_context.getModule(FreeHandModule.FREE_HAND);
                 m_commit = 0;
