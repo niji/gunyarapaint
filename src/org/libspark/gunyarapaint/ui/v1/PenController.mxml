@@ -344,7 +344,7 @@
             <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
             <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
         </mx:State>
-        <mx:State name="movingCanvas">
+        <mx:State name="movableCanvas">
             <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
             <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
             <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
