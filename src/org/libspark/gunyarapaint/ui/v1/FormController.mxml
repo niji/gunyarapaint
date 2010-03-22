@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="486" height="166">
+    <mx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import mx.core.Application;
+            
+            import org.libspark.nicopedia.Com;
+            
+            private var baseImg:BitmapData;
+            
+            private function postOekakiButtonHandler(evt:Event):void
+            {
+                if (titleTextInput.text == '') {
+                    Alert.show('絵のタイトルが空です。', Application.application.ALERT_TITLE);
+                }
+                else if (messageTextArea.text == '') {
+                    Alert.show('書き込みが空です。', Application.application.ALERT_TITLE);
+                }
+                else if (Application.application.commitCount == 0) {
+                    Alert.show('絵が描かれていません。お絵かきしてください。', Application.application.ALERT_TITLE);
+                }
+                else {
+                    try {
+                        Application.application.alertOnUnload(false);
+                        /*
+                        var com:Com = new Com();
+                        com.postOekaki(this,
+                        parameters['postUrl'],
+                        parameters['magic'],
+                        parameters['cookie'],
+                        fromTextInput.text,
+                        titleTextInput.text,
+                        messageTextArea.text,
+                        watchlistCheckBox.selected,
+                        oekakiId,
+                        new ByteArray(), //_logger.dataForPost,
+                        commCompleteHandler
+                        );
+                        */
+                    }
+                    catch (e:Error) {
+                        Application.application.alertOnUnload(true);
+                        Alert.show(e.message, Application.application.ALERT_TITLE);
+                    }
+                }
+            }
+            
+            private function commCompleteHandler(com:Com):void
+            {
+                try {
+                    if (com.errStr) {
+                        // error
+                        Alert.show(com.errStr, Application.application.ALERT_TITLE);
+                    }
+                    else if (com.data.toString() != '') {
+                        Alert.show(com.data.toString(), Application.application.ALERT_TITLE);
+                    }
+                    else {
+                        // redirect
+                        //Com.redirect(redirectUrl);
+                        return;
+                    }
+                }
+                catch (e:Error) {
+                    Alert.show('何かしらのエラーが起きました…再投稿お願いいたします。', Application.application.ALERT_TITLE);
+                }
+                Application.application.alertOnUnload(true);
+            }
+            
+            private function getBaseImgHandler(com:Com):void
+            {
+                baseImg = Bitmap(com.content).bitmapData;
+                /*
+                if (parameters['baseImgInfoUrl']) {
+                new Com().sendGetUrlRequest(parameters['baseImgInfoUrl'], getBaseImgInfoHandler);
+                } else {
+                // 画像のサイズがそのままwidth/height
+                // このロジックは通らなくなっているはずだが、移行措置のため残してある。
+                // 消してもよい。
+                baseImgToCanvas(baseImg.width, baseImg.height, parameters['undoBufferSize'], null);
+                }
+                */
+            }
+            
+            private function getBaseImgInfoHandler(com:Com):void
+            {
+                var info:Object = com.jsonObject;
+                if (!info) {
+                    info = {'width': baseImg.width, 'height': baseImg.height};
+                }
+                //baseImgToCanvas(info['width'], info['height'], parameters['undoBufferSize'], info);
+            }
+            
+            private function baseImgToCanvas(width:uint, height:uint, undoBufferSize:uint, baseInfo:Object):void
+            {
+                /*
+                _logger = GPLogger.createForDraw(width, height, undoBufferSize,
+                baseImg, baseInfo);
+                canvasWindow.logger = _logger;
+                */
+                enabled = true;
+            }
+        ]]>
+    </mx:Script>
+    <mx:Label x="12" y="7" text="投稿者名"/>
+    <mx:TextInput id="fromTextInput" x="55" y="3" maxChars="32" fontSize="14" focusThickness="0"/>
+    <mx:Label x="2" y="36" text="絵のタイトル"/>
+    <mx:TextInput id="titleTextInput" x="55" y="32" maxChars="32" fontSize="14" focusThickness="0" width="406"/>
+    <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="ウォッチリストに登録"/>
+    <mx:Label x="10" y="76" text="書き込み"/>
+    <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
+        <mx:text></mx:text>
+    </mx:TextArea>
+    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
+</mx:TitleWindow>

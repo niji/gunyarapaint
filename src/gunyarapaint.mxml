@@ -66,6 +66,7 @@
             private var initPenDetailWindowPos:Point;
             private var initLayerWindowPos:Point;
             private var initToolController:Point;
+            private var initFormController:Point;
             
             public const ALERT_TITLE:String = 'お絵カキコ';
             
@@ -154,6 +155,7 @@
                 penController.move(initPenDetailWindowPos.x, initPenDetailWindowPos.y);
                 layerController.move(initLayerWindowPos.x, initLayerWindowPos.y);
                 toolController.move(initToolController.x, initToolController.y);
+                formController.move(initFormController.x, initFormController.y);
                 canvasController.width = initCanvasWindow.width;
                 canvasController.height = initCanvasWindow.height;
                 toolController.setRotate(0);
@@ -263,10 +265,12 @@
                 PopUpManager.addPopUp(penController, this);
                 PopUpManager.addPopUp(layerController, this);
                 PopUpManager.addPopUp(toolController, this);
+                PopUpManager.addPopUp(formController, this);
                 initCanvasWindow = new Rectangle(canvasController.x, canvasController.y, canvasController.width, canvasController.height);
                 initPenDetailWindowPos = new Point(penController.x, penController.y);
                 initLayerWindowPos = new Point(layerController.x, layerController.y);
                 initToolController = new Point(toolController.x, toolController.y);
+                initFormController = new Point(formController.x, formController.y);
                 
                 if (parameters['postUrl'] && parameters['cookie'] && parameters['magic'] && parameters['redirectUrl']) {
                     //postOekakiButton.enabled = true;
@@ -489,9 +493,10 @@
         <mx:Object label="反転" data="{BlendMode.INVERT}" />
     </mx:ArrayCollection>
     <mx:Image source="@Embed('./gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10"/>
-    <ui:ToolController id="toolController" left="10" y="10" title="補助ツール" />
-    <ui:PenController id="penController" x="10" y="218" layout="absolute" title="ペン" height="450" />
-    <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
-    <ui:LayerController x="533" y="218" layout="absolute" title="レイヤー" id="layerController" height="312" />
+    <ui:FormController id="formController" title="投稿フォーム"  x="10" y="10" height="169" width="486"/>
+    <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
+    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペン" height="450" />
+    <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="キャンバス" />
+    <ui:LayerController x="533" y="223" layout="absolute" title="レイヤー" id="layerController" height="312" />
     <mx:Label id="versionLabel" text="ver.2009090902" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>
