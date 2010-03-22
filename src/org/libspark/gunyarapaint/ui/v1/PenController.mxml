@@ -143,8 +143,7 @@
             {
                 var pen:Pen = IApplication(Application.application).pen;
                 var value:uint = pen.color;
-                if (m_palette != null)
-                    m_palette.setStyle("backgroundColor", value);
+                m_palette.setStyle("backgroundColor", value);
                 drawPreview(pen.thickness, value, pen.alpha);
                 colRSlider.value = (value & 0xff0000) >> 16;
                 colGSlider.value = (value & 0x00ff00) >> 8;
@@ -169,6 +168,7 @@
                 pen.addEventListener(PenEvent.ALPHA, onChangeAlpha);
                 pen.addEventListener(PenEvent.COLOR, onChangeColor);
                 pen.addEventListener(PenEvent.THICKNESS, onChangeThickness);
+                m_palette = gridItemPalette1;
             }
             
             private function onCreationComplete():void
@@ -179,14 +179,12 @@
             private function onClickPalette(index:uint):void
             {
                 var palette:GridItem = this["gridItemPalette" + index];
-                if (m_palette) {
-                    m_palette.setStyle("borderThickness", 1);
-                    m_palette.setStyle("borderColor", 0xb7babc);
-                }
+                m_palette.setStyle("borderThickness", 1);
+                m_palette.setStyle("borderColor", 0xb7babc);
                 palette.setStyle("borderThickness", 3);
                 palette.setStyle("borderColor", 0x000000);
                 m_palette = palette;
-                currentColor = m_palette.getStyle("backgroundColor");
+                currentColor = palette.getStyle("backgroundColor");
             }
             
             private function onClickColorPicker(evt:FlexEvent):void
