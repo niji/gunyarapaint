@@ -2,6 +2,7 @@ package org.libspark.gunyarapaint.ui.v1
 {
     import flash.display.Sprite;
     import flash.events.Event;
+    import flash.events.IEventDispatcher;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     
@@ -13,6 +14,7 @@ package org.libspark.gunyarapaint.ui.v1
     import org.libspark.gunyarapaint.framework.AuxPixelView;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
+    import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
     
     internal class Canvas extends UIComponent
     {
@@ -25,14 +27,16 @@ package org.libspark.gunyarapaint.ui.v1
             m_auxPixel = new AuxPixelView(rect);
             m_auxLine.visible = true;
             m_auxPixel.visible = false;
-            
+            // 透明画像、キャンバス本体、補助線(直線および斜線)の順番に追加される
             addChild(transparent);
             addChild(app.canvasView);
             addChild(m_auxLine);
             addChild(m_auxPixel);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-            
+            var dispatcher:IEventDispatcher = IEventDispatcher(app);
+            dispatcher.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
+            dispatcher.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
             super();
         }
         
@@ -71,6 +75,17 @@ package org.libspark.gunyarapaint.ui.v1
         {
             m_auxLine.visible = value ? false : true;
             m_auxPixel.visible = value ? true : false;
+        }
+        
+        private function onModuleChangeBefore(event:CanvasModuleEvent):void
+        {
+            removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+        }
+        
+        private function onModuleChangeAfter(event:CanvasModuleEvent):void
+        {
+            if (IApplication(Application.application).module is MovableCanvasModule)
+                addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
         }
         
         private function onRemove(event:Event):void
@@ -115,6 +130,12 @@ package org.libspark.gunyarapaint.ui.v1
             var app:IApplication = IApplication(Application.application);
             removeMouseEvents(app.canvasView);
             app.module.interrupt(event.localX, event.localY);
+        }
+        
+        private function onMouseWheel(event:MouseEvent):void
+        {
+            var module:MovableCanvasModule = MovableCanvasModule(Application.application.module);
+            module.wheel(event.localX, event.localY, event.delta);
         }
         
         private function removeMouseEvents(cv:Sprite):void

@@ -37,6 +37,7 @@
             import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
+            import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             
@@ -67,10 +68,15 @@
             
             public function setModule(value:String):void
             {
+                if (hasEventListener(CanvasModuleEvent.BEFORE_CHANGE))
+                    dispatchEvent(new CanvasModuleEvent(CanvasModuleEvent.BEFORE_CHANGE));
                 m_module = m_context.getModule(value);
-                if (m_module == null)
+                if (m_module == null) {
                     throw new IllegalOperationError(value
                         + " is not the ICanvasModule implemented module");
+                }
+                if (hasEventListener(CanvasModuleEvent.AFTER_CHANGE))
+                    dispatchEvent(new CanvasModuleEvent(CanvasModuleEvent.AFTER_CHANGE));
             }
             
             public function get module():ICanvasModule
