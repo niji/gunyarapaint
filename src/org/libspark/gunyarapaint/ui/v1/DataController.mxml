@@ -112,6 +112,8 @@
                 PopUpManager.removePopUp(this);
             }
             
+            // FileReferenceの参照を確実に持つ必要があるため、クラス属性として定義している
+            // そうしないとダイアログを開いた後 Event.COMPLETEのイベントが呼ばれなくなる
             private var m_file:FileReference;
         ]]>
     </mx:Script>

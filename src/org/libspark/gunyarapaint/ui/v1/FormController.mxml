@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="486" height="166">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+                width="486" height="166" creationComplete="onCreationComplete()"
+                implements="org.libspark.gunyarapaint.ui.v1.IController">
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
@@ -8,6 +10,16 @@
             import org.libspark.nicopedia.Com;
             
             private var baseImg:BitmapData;
+            
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
+            }
+            
+            private function onCreationComplete():void
+            {
+                m_initPosition = new Point(x, y);
+            }
             
             private function postOekakiButtonHandler(evt:Event):void
             {
@@ -101,6 +113,8 @@
                 */
                 enabled = true;
             }
+            
+            private var m_initPosition:Point;
         ]]>
     </mx:Script>
     <mx:Label x="12" y="7" text="投稿者名"/>

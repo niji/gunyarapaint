@@ -37,6 +37,7 @@
             import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
+            import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             
             private var m_bytes:ByteArray;
@@ -44,6 +45,7 @@
             private var m_context:CanvasModuleContext;
             private var m_module:ICanvasModule;
             private var m_commit:uint;
+            private var m_windows:Vector.<IController>;
             
             private var basex:uint = 0;
             private var basey:uint = 0;
@@ -60,13 +62,6 @@
             private const MIN_CANVAS_WIDTH:uint = 16;
             private const MIN_CANVAS_HEIGHT:uint = 16;
             private const DEBUG:Boolean = true;
-            
-            // ポップアップの初期位置
-            private var initCanvasWindow:Rectangle;
-            private var initPenDetailWindowPos:Point;
-            private var initLayerWindowPos:Point;
-            private var initToolController:Point;
-            private var initFormController:Point;
             
             public const ALERT_TITLE:String = 'お絵カキコ';
             
@@ -150,16 +145,9 @@
             
             public function resetWindowsPosition():void
             {
-                canvasController.rotate(0);
-                canvasController.transform.matrix = new Matrix(1, 0, 0, 1, initCanvasWindow.x, initCanvasWindow.y);
-                penController.move(initPenDetailWindowPos.x, initPenDetailWindowPos.y);
-                layerController.move(initLayerWindowPos.x, initLayerWindowPos.y);
-                toolController.move(initToolController.x, initToolController.y);
-                formController.move(initFormController.x, initFormController.y);
-                canvasController.width = initCanvasWindow.width;
-                canvasController.height = initCanvasWindow.height;
-                toolController.setRotate(0);
-                toolController.setZoom(1);
+                for (var i:String in m_windows) {
+                    m_windows[i].resetWindow();
+                }
             }
             
             public function load(bytes:ByteArray, password:String):void
@@ -266,11 +254,14 @@
                 PopUpManager.addPopUp(layerController, this);
                 PopUpManager.addPopUp(toolController, this);
                 PopUpManager.addPopUp(formController, this);
-                initCanvasWindow = new Rectangle(canvasController.x, canvasController.y, canvasController.width, canvasController.height);
-                initPenDetailWindowPos = new Point(penController.x, penController.y);
-                initLayerWindowPos = new Point(layerController.x, layerController.y);
-                initToolController = new Point(toolController.x, toolController.y);
-                initFormController = new Point(formController.x, formController.y);
+                m_windows = new Vector.<IController>();
+                m_windows.push(
+                    canvasController,
+                    penController,
+                    layerController,
+                    toolController,
+                    formController
+                );
                 
                 if (parameters['postUrl'] && parameters['cookie'] && parameters['magic'] && parameters['redirectUrl']) {
                     //postOekakiButton.enabled = true;
@@ -498,5 +489,5 @@
     <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペン" height="450" />
     <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="キャンバス" />
     <ui:LayerController x="533" y="223" layout="absolute" title="レイヤー" id="layerController" height="312" />
-    <mx:Label id="versionLabel" text="ver.2009090902" right="10" bottom="10" alpha="0.5"/>
+    <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

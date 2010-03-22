@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450" xmlns:ns1="org.libspark.gunyarapaint.controls.*" initialize="onInitialize()">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450"
+                xmlns:ns1="org.libspark.gunyarapaint.controls.*"
+                implements="org.libspark.gunyarapaint.ui.v1.IController"
+                initialize="onInitialize()"
+                creationComplete="onCreationComplete()">
     <mx:Script>
         <![CDATA[
             import mx.containers.GridItem;
@@ -50,6 +54,8 @@
                 }
             }
             
+            // 全てのボタンを非選択状態にしてコンボボックス内にあるペンを有効にする
+            // 基本的にボタンにあるペンが優先度が高い
             public function cancel():void
             {
                 dropperButton.selected = false;
@@ -58,6 +64,11 @@
                 dotButton.selected = false;
                 var app:IApplication = IApplication(Application.application);
                 app.setModule(String(penModeComboBox.value));
+            }
+            
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
             }
             
             public function get dataForPost():Object
@@ -152,13 +163,17 @@
             {
                 var application:IApplication = IApplication(Application.application);
                 blendModeComboBox.dataProvider = application.supportedBlendModes;
-                //onClickPalette(1);
-                // 初期値と設定値が一緒なのでイベントが飛んでこない、明示的に呼んであげる
+                // 初回時プレビュー画面は真っ白なのでここで描写を行う必要がある
                 var pen:Pen = application.pen;
                 drawPreview(pen.thickness, pen.color, pen.alpha);
                 pen.addEventListener(PenEvent.ALPHA, onChangeAlpha);
                 pen.addEventListener(PenEvent.COLOR, onChangeColor);
                 pen.addEventListener(PenEvent.THICKNESS, onChangeThickness);
+            }
+            
+            private function onCreationComplete():void
+            {
+                m_initPosition = new Point(x, y);
             }
             
             private function onClickPalette(index:uint):void
@@ -296,6 +311,8 @@
                 pen = String(penModeComboBox.value);
                 IApplication(Application.application).module.blendMode = String(blendModeComboBox.value);
             }
+            
+            private var m_initPosition:Point;
         ]]>
     </mx:Script>
     

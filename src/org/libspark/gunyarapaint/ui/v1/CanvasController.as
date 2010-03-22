@@ -19,7 +19,7 @@ package org.libspark.gunyarapaint.ui.v1
     import org.libspark.gunyarapaint.framework.ui.IApplication;
     import org.libspark.gunyarapaint.utils.ComponentResizer;
     
-    public class CanvasController extends TitleWindow
+    public class CanvasController extends TitleWindow implements IController
     {
         public function CanvasController()
         {
@@ -82,6 +82,17 @@ package org.libspark.gunyarapaint.ui.v1
             update();
         }
         
+        public function resetWindow():void
+        {
+            move(m_initRectangle.x, m_initRectangle.y);
+            width = m_initRectangle.width;
+            height = m_initRectangle.height;
+            rotate(0);
+            transform.matrix = new Matrix(
+                1, 0, 0, 1, m_initRectangle.x, m_initRectangle.y
+            );
+        }
+        
         public function get canvasScrollPosition():Point
         {
             return new Point(m_canvasX, m_canvasY);
@@ -140,6 +151,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
+            m_initRectangle = new Rectangle(x, y, width, height);
             ComponentResizer.addResize(this, new Point(100, 100));
             
             resize();
@@ -245,7 +257,9 @@ package org.libspark.gunyarapaint.ui.v1
         private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
         private var m_hScrollBar:HScrollBar; // 横スクロールバー
         private var m_vScrollBar:VScrollBar; // 縦スクロールバー
-        private var m_canvasX:Number, m_canvasY:Number; // キャンバスのスクロール位置
+        private var m_initRectangle:Rectangle;
+        private var m_canvasX:Number;
+        private var m_canvasY:Number; // キャンバスのスクロール位置
         private var m_canvasScale:Number; // キャンバスの倍率
         private var m_preDegree:int; // 前の回転角度
         private var m_scrollDragStartPoint:Point;

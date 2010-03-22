@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="300" height="205" initialize="onInitialize()" removedFromStage="onRemove()">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="300" height="205"
+                implements="org.libspark.gunyarapaint.ui.v1.IController"
+                initialize="onInitialize()" removedFromStage="onRemove()"
+                creationComplete="onCreationComplete()">
     <mx:Script>
         <![CDATA[
             import mx.core.Application;
@@ -16,7 +19,7 @@
             public function setRotate(value:Number):void
             {
                 canvasRotate.value = value;
-                canvasRotateValue.text = String(-canvasRotate.value); // 20090909-haku2 ins キャンバス回転角度をテキストボックスに反映
+                canvasRotateValue.text = String(-canvasRotate.value);
                 Application.application.canvasController.rotate(canvasRotate.value);
             }
             
@@ -28,21 +31,32 @@
                 n *= 10000;
                 canvasZoom.value = value;
                 Application.application.canvasController.zoom(value);  
-                // 拡大率をテキストボックスに反映
                 canvasZoomValue.text = String(Math.round(n) / 100);
+            }
+            
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
+                setRotate(0);
+                setZoom(1);
             }
             
             private function onInitialize():void
             {
-                var undo:UndoStack = Application.application.undoStack;
+                var undo:UndoStack = IApplication(Application.application).undoStack;
                 undo.addEventListener(UndoEvent.UNDO, onChangeUndo);
                 undo.addEventListener(UndoEvent.REDO, onChangeUndo);
                 undo.addEventListener(UndoEvent.PUSH, onChangeUndo);
             }
             
+            private function onCreationComplete():void
+            {
+                m_initPosition = new Point(x, y);
+            }
+            
             private function onRemove():void
             {
-                var undo:UndoStack = Application.application.undoStack;
+                var undo:UndoStack = IApplication(Application.application).undoStack;
                 undo.removeEventListener(UndoEvent.UNDO, onChangeUndo);
                 undo.removeEventListener(UndoEvent.REDO, onChangeUndo);
                 undo.removeEventListener(UndoEvent.PUSH, onChangeUndo);
@@ -130,6 +144,8 @@
                 PopUpManager.addPopUp(controller, this, true);
                 // w.password = gpCanvas.logger.password;
             }
+            
+            private var m_initPosition:Point;
         ]]>
     </mx:Script>
     <mx:Canvas x="10" y="0" height="163" width="260">

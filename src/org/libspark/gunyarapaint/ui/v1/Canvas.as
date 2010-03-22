@@ -85,6 +85,8 @@ package org.libspark.gunyarapaint.ui.v1
             var app:gunyarapaint = gunyarapaint(Application.application);
             var cv:Sprite = app.canvasView;
             try {
+                // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
+                // 必ず try/catch で囲む必要がある
                 app.module.start(event.localX, event.localY);
                 cv.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
                 cv.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);

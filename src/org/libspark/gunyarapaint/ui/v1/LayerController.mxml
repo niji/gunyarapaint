@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 width="144" height="312"
                 creationComplete="onCreateComplete()"
-                xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
-                >
+                implements="org.libspark.gunyarapaint.ui.v1.IController"
+                xmlns:ui="org.libspark.gunyarapaint.ui.v1.*">
     <mx:Script>
         <![CDATA[
             import mx.collections.ArrayCollection;
@@ -15,8 +15,8 @@
             
             import org.libspark.gunyarapaint.framework.LayerBitmap;
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
-            import org.libspark.gunyarapaint.utils.ComponentResizer;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
+            import org.libspark.gunyarapaint.utils.ComponentResizer;
             
             private static const  NAME:String = "レイヤーツール";
             
@@ -38,6 +38,11 @@
                 }
             }
             
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
+            }
+            
             private function onCreateComplete():void
             {
                 var application:IApplication = IApplication(Application.application);
@@ -57,6 +62,7 @@
                 }
                 layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
                 ComponentResizer.addResize(this, new Point(144, 230));
+                m_initPosition = new Point(x, y);
             }
             
             private function onClickLayer(evt:ListEvent):void
@@ -82,6 +88,7 @@
             private function onRemoveLayer(evt:Event):void
             {
                 try {
+                    // RemoveLayerErrorを捉える必要がある
                     IApplication(Application.application).module.removeLayer();
                     update();
                 } catch (e:Error) {
@@ -92,6 +99,7 @@
             private function onMergeLayers(evt:Event):void
             {
                 try {
+                    // MergeLayersErrorを捉える必要がある
                     IApplication(Application.application).module.mergeLayers();
                     update();
                 } catch (e:Error) {
@@ -129,6 +137,8 @@
                     }
                 }
             }
+            
+            private var m_initPosition:Point;
         ]]>
     </mx:Script>
     <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
