@@ -189,6 +189,17 @@
                 bytes.position = 0;
             }
             
+            public function confirmUnload(bool:Boolean):void
+            {
+                if (ExternalInterface.available) {
+                    try {
+                        ExternalInterface.call("changeAlertOnUnload", bool);
+                    } catch (e:SecurityError) {
+                    } catch (e:Error) {
+                    }
+                }
+            }
+            
             private function onPreinitialize(event:FlexEvent):void
             {
                 var width:int = 0;
@@ -455,17 +466,6 @@
                         m_module.shouldDrawFromStartPoint = false;
                         break;
                     return;
-                }
-            }
-            
-            private function alertOnUnload(b:Boolean):void
-            {
-                if (ExternalInterface.available) {
-                    try {
-                        ExternalInterface.call("changeAlertOnUnload", b);
-                    } catch (e:SecurityError) {
-                    } catch (e:Error) {
-                    }
                 }
             }
         ]]>

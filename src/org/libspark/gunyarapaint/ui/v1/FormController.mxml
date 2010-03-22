@@ -34,7 +34,7 @@
                 }
                 else {
                     try {
-                        Application.application.alertOnUnload(false);
+                        Application.application.confirmUnload(false);
                         /*
                         var com:Com = new Com();
                         com.postOekaki(this,
@@ -52,7 +52,7 @@
                         */
                     }
                     catch (e:Error) {
-                        Application.application.alertOnUnload(true);
+                        Application.application.confirmUnload(true);
                         Alert.show(e.message, Application.application.ALERT_TITLE);
                     }
                 }
@@ -77,7 +77,7 @@
                 catch (e:Error) {
                     Alert.show('何かしらのエラーが起きました…再投稿お願いいたします。', Application.application.ALERT_TITLE);
                 }
-                Application.application.alertOnUnload(true);
+                Application.application.confirmUnload(true);
             }
             
             private function getBaseImgHandler(com:Com):void
