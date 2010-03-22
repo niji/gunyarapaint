@@ -27,6 +27,7 @@
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Pen;
             import org.libspark.gunyarapaint.framework.Recorder;
+            import org.libspark.gunyarapaint.framework.UndoStack;
             import org.libspark.gunyarapaint.framework.events.CommandEvent;
             import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
             import org.libspark.gunyarapaint.framework.modules.CircleModule;
@@ -114,6 +115,11 @@
             public function get pen():Pen
             {
                 return m_recorder.pen;
+            }
+            
+            public function get undoStack():UndoStack
+            {
+                return m_recorder.undoStack;
             }
             
             public function get canvasWidth():uint
