@@ -342,14 +342,9 @@
                 module.interrupt(evt.localX, evt.localY);
             }
             
-            private function get isShortCut():Boolean
-            {
-                return stage.focus is mx.core.UITextField;
-            }
-            
             private function onKeyDown(evt:KeyboardEvent):void
             {
-                if (isShortCut)
+                if (isForcusedOnTextField)
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
@@ -446,7 +441,7 @@
             
             private function onKeyUp(evt:KeyboardEvent):void
             {
-                if (isShortCut)
+                if (isForcusedOnTextField)
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
@@ -473,6 +468,11 @@
                         break;
                     return;
                 }
+            }
+            
+            private function get isForcusedOnTextField():Boolean
+            {
+                return stage.focus is mx.core.UITextField;
             }
         ]]>
     </mx:Script>
