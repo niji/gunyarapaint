@@ -9,10 +9,13 @@ package org.libspark.gunyarapaint.ui.v1
     import mx.controls.Alert;
     import mx.core.Application;
     import mx.core.UIComponent;
+    import mx.managers.CursorManager;
     
     import org.libspark.gunyarapaint.framework.AuxLineView;
     import org.libspark.gunyarapaint.framework.AuxPixelView;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
+    import org.libspark.gunyarapaint.framework.modules.DropperModule;
+    import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
     import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
     
@@ -84,8 +87,18 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onModuleChangeAfter(event:CanvasModuleEvent):void
         {
-            if (IApplication(Application.application).module is MovableCanvasModule)
+            var module:ICanvasModule = IApplication(Application.application).module;
+            if (module is MovableCanvasModule)
                 addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+            CursorManager.removeCursor(CursorManager.currentCursorID);
+            switch (module.name) {
+                case DropperModule.DROPPER:
+                    CursorManager.setCursor(m_dropperIcon);
+                    break;
+                case MovableCanvasModule.MOVABLE_CANVAS:
+                    CursorManager..setCursor(m_handOpenIcon);
+                    break;
+            }
         }
         
         private function onRemove(event:Event):void
@@ -93,6 +106,9 @@ package org.libspark.gunyarapaint.ui.v1
             var app:IApplication = IApplication(Application.application);
             removeMouseEvents(app.canvasView);
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+            var dispatcher:IEventDispatcher = IEventDispatcher(app);
+            dispatcher.removeEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
+            dispatcher.removeEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
         }
         
         private function onMouseDown(event:MouseEvent):void
@@ -144,6 +160,12 @@ package org.libspark.gunyarapaint.ui.v1
             cv.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             cv.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
         }
+        
+        [Embed(source="../../../../../../imgs/icon_dropper.png")]
+        private var m_dropperIcon:Class;
+        
+        [Embed(source="../../../../../../imgs/icon_hand_open.png")]
+        private var m_handOpenIcon:Class;
         
         private var m_auxLine:AuxLineView;
         private var m_auxPixel:AuxPixelView;
