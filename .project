@@ -3,6 +3,7 @@
 	<name>compat</name>
 	<comment></comment>
 	<projects>
+		<project>framework</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
