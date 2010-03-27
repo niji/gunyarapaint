@@ -13,6 +13,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     import org.libspark.gunyarapaint.framework.AuxLineView;
     import org.libspark.gunyarapaint.framework.AuxPixelView;
+    import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
     import org.libspark.gunyarapaint.framework.modules.DropperModule;
     import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
@@ -32,7 +33,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_auxPixel.visible = false;
             // 透明画像、キャンバス本体、補助線(直線および斜線)の順番に追加される
             addChild(transparent);
-            addChild(app.canvasView);
+            app.layers.setView(this);
             addChild(m_auxLine);
             addChild(m_auxPixel);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
@@ -104,7 +105,7 @@ package org.libspark.gunyarapaint.ui.v1
         private function onRemove(event:Event):void
         {
             var app:IApplication = IApplication(Application.application);
-            removeMouseEvents(app.canvasView);
+            app.layers.removeView(this);
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
             var dispatcher:IEventDispatcher = IEventDispatcher(app);
             dispatcher.removeEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
@@ -114,16 +115,16 @@ package org.libspark.gunyarapaint.ui.v1
         private function onMouseDown(event:MouseEvent):void
         {
             var app:gunyarapaint = gunyarapaint(Application.application);
-            var cv:Sprite = app.canvasView;
+            var layers:LayerBitmapCollection = app.layers;
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
                 app.module.start(event.localX, event.localY);
-                cv.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-                cv.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-                cv.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+                layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+                layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+                layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
-                removeMouseEvents(cv);
+                removeMouseEvents(layers);
                 Alert.show(e.message, app.moduleName);
             }
         }
@@ -137,14 +138,14 @@ package org.libspark.gunyarapaint.ui.v1
         private function onMouseUp(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
-            removeMouseEvents(app.canvasView);
+            removeMouseEvents(app.layers);
             app.module.stop(event.localX, event.localY);
         }
         
         private function onMouseOut(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
-            removeMouseEvents(app.canvasView);
+            removeMouseEvents(app.layers);
             app.module.interrupt(event.localX, event.localY);
         }
         
@@ -154,11 +155,11 @@ package org.libspark.gunyarapaint.ui.v1
             module.wheel(event.localX, event.localY, event.delta);
         }
         
-        private function removeMouseEvents(cv:Sprite):void
+        private function removeMouseEvents(layers:LayerBitmapCollection):void
         {
-            cv.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-            cv.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-            cv.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+            layers.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            layers.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            layers.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
         }
         
         [Embed(source="../../../../../../imgs/icon_dropper.png")]

@@ -134,11 +134,6 @@
                 return m_recorder.height;
             }
             
-            public function get canvasView():Sprite
-            {
-                return m_recorder.view;
-            }
-            
             public function get commitCount():uint
             {
                 return m_commit;
