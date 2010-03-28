@@ -118,16 +118,17 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onModuleChangeAfter(event:CanvasModuleEvent):void
         {
-            var module:ICanvasModule = IApplication(Application.application).canvasModule;
+            var app:IApplication = IApplication(Application.application);
+            var module:ICanvasModule = app.canvasModule;
             if (module is MovableCanvasModule)
                 addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
             CursorManager.removeCursor(CursorManager.currentCursorID);
             switch (module.name) {
                 case DropperModule.DROPPER:
-                    CursorManager.setCursor(m_dropperIcon);
+                    CursorManager.setCursor(Application.application.dropperIcon);
                     break;
                 case MovableCanvasModule.MOVABLE_CANVAS:
-                    CursorManager..setCursor(m_handOpenIcon);
+                    CursorManager..setCursor(Application.application.handOpenIcon);
                     break;
             }
         }
@@ -191,12 +192,6 @@ package org.libspark.gunyarapaint.ui.v1
             layers.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             layers.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
         }
-        
-        [Embed(source="../../../../../../imgs/icon_dropper.png")]
-        private var m_dropperIcon:Class;
-        
-        [Embed(source="../../../../../../imgs/icon_hand_open.png")]
-        private var m_handOpenIcon:Class;
         
         private var m_auxLine:AuxLineView;
         private var m_auxPixel:AuxPixelView;

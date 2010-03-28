@@ -516,8 +516,8 @@
         
         <!-- tools -->
         <mx:Button id="colorPickerButton" x="21.5" y="235" label="色選択画面" width="65" paddingLeft="0" paddingRight="0" buttonDown="onClickColorPicker(event)"/>
-        <mx:Button id="dropperButton" x="5" y="260" toggle="true"  icon="@Embed(source='../../../../../../imgs/icon_dropper.png')" width="22" paddingLeft="0" paddingRight="0" change="onSelectDropper(event)"/>
-        <mx:Button id="handtoolButton" x="31" y="260" toggle="true"  icon="@Embed(source='../../../../../../imgs/icon_hand_open.png')" width="22" paddingLeft="0" paddingRight="0" change="onSelectHandTool(event)"/>
+        <mx:Button id="dropperButton" x="5" y="260" toggle="true" icon="{Application.application.dropperIcon}" width="22" paddingLeft="0" paddingRight="0" change="onSelectDropper(event)"/>
+        <mx:Button id="handtoolButton" x="31" y="260" toggle="true" icon="{Application.application.handOpenIcon}" width="22" paddingLeft="0" paddingRight="0" change="onSelectHandTool(event)"/>
         <mx:Button id="eraserButton" x="56" y="260" toggle="true" label="消" width="22" paddingLeft="0" paddingRight="0" change="onSelectEraser(event)"/>
         <mx:Button id="dotButton" x="81" y="260" toggle="true" label="ド" width="22" paddingLeft="0" paddingRight="0" change="onSelectDot(event)"/>
         

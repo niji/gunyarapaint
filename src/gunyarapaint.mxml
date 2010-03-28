@@ -43,21 +43,22 @@
             private var m_commit:uint;
             private var m_windows:Vector.<IController>;
             
-            private var basex:uint = 0;
-            private var basey:uint = 0;
-            private var baseWidth:uint = 0;
-            private var baseHeight:uint = 0;
-            
             private var oekakiId:uint;
             private var redirectUrl:String;
-            
-            //private var _logger:GPLogger;
             
             private const MAX_CANVAS_WIDTH:uint = 500;
             private const MAX_CANVAS_HEIGHT:uint = 500;
             private const MIN_CANVAS_WIDTH:uint = 16;
             private const MIN_CANVAS_HEIGHT:uint = 16;
             private const DEBUG:Boolean = true;
+            
+            [Bindable]
+            [Embed(source="../assets/images/icon_dropper.png")]
+            public var dropperIcon:Class;
+            
+            [Bindable]
+            [Embed(source="../assets/images/icon_hand_open.png")]
+            public var handOpenIcon:Class;
             
             public const ALERT_TITLE:String = 'お絵カキコ';
             
@@ -483,7 +484,7 @@
         <mx:Object label="除外" data="{BlendMode.SUBTRACT}" />
         <mx:Object label="反転" data="{BlendMode.INVERT}" />
     </mx:ArrayCollection>
-    <mx:Image source="@Embed('./gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10"/>
+    <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10"/>
     <ui:FormController id="formController" title="投稿フォーム"  x="10" y="10" height="169" width="486"/>
     <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
     <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペン" height="450" />
