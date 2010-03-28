@@ -255,8 +255,6 @@
                 else {
                     width = int(parameters['canvasWidth']);
                     height = int(parameters['canvasHeight']);
-                    width = 0;
-                    height = 0;
                     if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
                         Alert.show('キャンバスサイズが小さすぎます。', ALERT_TITLE);
                         enabled = false;
