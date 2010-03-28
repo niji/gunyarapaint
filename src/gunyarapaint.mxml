@@ -36,22 +36,6 @@
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             
-            private var m_bytes:ByteArray;
-            private var m_recorder:Recorder;
-            private var m_context:CanvasModuleContext;
-            private var m_module:ICanvasModule;
-            private var m_commit:uint;
-            private var m_windows:Vector.<IController>;
-            
-            private var oekakiId:uint;
-            private var redirectUrl:String;
-            
-            private const MAX_CANVAS_WIDTH:uint = 500;
-            private const MAX_CANVAS_HEIGHT:uint = 500;
-            private const MIN_CANVAS_WIDTH:uint = 16;
-            private const MIN_CANVAS_HEIGHT:uint = 16;
-            private const DEBUG:Boolean = true;
-            
             [Bindable]
             [Embed(source="../assets/images/icon_dropper.png")]
             public var dropperIcon:Class;
@@ -61,6 +45,12 @@
             public var handOpenIcon:Class;
             
             public const ALERT_TITLE:String = 'お絵カキコ';
+            
+            private const MAX_CANVAS_WIDTH:uint = 500;
+            private const MAX_CANVAS_HEIGHT:uint = 500;
+            private const MIN_CANVAS_WIDTH:uint = 16;
+            private const MIN_CANVAS_HEIGHT:uint = 16;
+            private const DEBUG:Boolean = true;
             
             public function setCanvasModule(value:String):void
             {
@@ -469,6 +459,16 @@
             {
                 return stage.focus is mx.core.UITextField;
             }
+            
+            private var m_bytes:ByteArray;
+            private var m_recorder:Recorder;
+            private var m_context:CanvasModuleContext;
+            private var m_module:ICanvasModule;
+            private var m_commit:uint;
+            private var m_windows:Vector.<IController>;
+            
+            private var oekakiId:uint;
+            private var redirectUrl:String;
         ]]>
     </mx:Script>
     <mx:ArrayCollection id="blendModes">
