@@ -44,7 +44,7 @@
             [Embed(source="../assets/images/icon_hand_open.png")]
             public var handOpenIcon:Class;
             
-            public const ALERT_TITLE:String = 'お絵カキコ';
+            public const ALERT_TITLE:String = "お絵カキコ";
             
             private const MAX_CANVAS_WIDTH:uint = 500;
             private const MAX_CANVAS_HEIGHT:uint = 500;
@@ -195,25 +195,25 @@
             {
                 if (DEBUG) {
                     /*
-                    parameters['oekakiId'] = 23724;
-                    parameters['baseImgUrl'] = 'http://dic.nicovideo.jp/oekaki_layers/23724';
-                    parameters['baseImgInfoUrl'] = 'http://dic.nicovideo.jp/oekaki_info/23724';
+                    parameters["oekakiId"] = 23724;
+                    parameters["baseImgUrl"] = "http://dic.nicovideo.jp/oekaki_layers/23724";
+                    parameters["baseImgInfoUrl"] = "http://dic.nicovideo.jp/oekaki_info/23724";
                     */
-                    parameters['postUrl'] = 'http://dic.dev.nicovideo.jp/';
-                    parameters['cookie'] = 'cookie';
-                    parameters['magic'] = 'magic';
-                    parameters['redirectUrl'] = 'http://dic.dev.nicovideo.jp/';
-                    parameters['undoBufferSize'] = 16;
-                    parameters['canvasWidth'] = 417;
-                    parameters['canvasHeight'] = 317;
+                    parameters["postUrl"] = "http://dic.dev.nicovideo.jp/";
+                    parameters["cookie"] = "cookie";
+                    parameters["magic"] = "magic";
+                    parameters["redirectUrl"] = "http://dic.dev.nicovideo.jp/";
+                    parameters["undoBufferSize"] = 16;
+                    parameters["canvasWidth"] = 417;
+                    parameters["canvasHeight"] = 317;
                 }
                 
-                if (parameters['postUrl'] &&
-                    parameters['cookie'] &&
-                    parameters['magic'] &&
-                    parameters['redirectUrl']) {
+                if (parameters["postUrl"] &&
+                    parameters["cookie"] &&
+                    parameters["magic"] &&
+                    parameters["redirectUrl"]) {
                     //postOekakiButton.enabled = true;
-                    redirectUrl = parameters['redirectUrl'];
+                    redirectUrl = parameters["redirectUrl"];
                 }
             }
             
@@ -222,7 +222,7 @@
                 if (DEBUG) {
                     // debug buttons
                     //logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
-                    versionLabel.text += 'debug';
+                    versionLabel.text += "debug";
                     //logPlayButton.visible = true;
                     //checkPngButton.visible = true;
                 }
@@ -237,31 +237,31 @@
                 var width:uint = 0;
                 var height:uint = 0;
                 var undoBufferSize:uint = 0;
-                undoBufferSize = int(parameters['undoBufferSize']);
+                undoBufferSize = int(parameters["undoBufferSize"]);
                 if (undoBufferSize < 0) {
-                    Alert.show('最大アンドゥ回数が少なすぎます。', ALERT_TITLE);   
+                    Alert.show("最大アンドゥ回数が少なすぎます。", ALERT_TITLE);   
                     enabled = true;
                     return;
                 }
                 else if (undoBufferSize > 32) {
-                    Alert.show('最大アンドゥ回数が多すぎます。', ALERT_TITLE);      
+                    Alert.show("最大アンドゥ回数が多すぎます。", ALERT_TITLE);      
                     enabled = true;
                     return;
                 }
-                if (parameters['oekakiId'] && parameters['baseImgUrl']) {
-                    oekakiId = uint(parameters['oekakiId']);
-                    //new Com().loadURL(parameters['baseImgUrl'], getBaseImgHandler);
+                if (parameters["oekakiId"] && parameters["baseImgUrl"]) {
+                    oekakiId = uint(parameters["oekakiId"]);
+                    //new Com().loadURL(parameters["baseImgUrl"], getBaseImgHandler);
                 }
                 else {
-                    width = int(parameters['canvasWidth']);
-                    height = int(parameters['canvasHeight']);
+                    width = int(parameters["canvasWidth"]);
+                    height = int(parameters["canvasHeight"]);
                     if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
-                        Alert.show('キャンバスサイズが小さすぎます。', ALERT_TITLE);
+                        Alert.show("キャンバスサイズが小さすぎます。", ALERT_TITLE);
                         enabled = false;
                         return;
                     }
                     else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-                        Alert.show('キャンバスサイズが大きすぎます。', ALERT_TITLE);
+                        Alert.show("キャンバスサイズが大きすぎます。", ALERT_TITLE);
                         enabled = false;
                         return;
                     }
@@ -272,7 +272,7 @@
                 m_module = m_context.getModule(FreeHandModule.FREE_HAND);
                 m_commit = 0;
                 m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
-                m_context.add(new MovableCanvasModule(m_recorder, canvasController));
+                m_context.registerModule(new MovableCanvasModule(m_recorder, canvasController));
                 m_windows = new Vector.<IController>();
                 m_windows.push(
                     canvasController,
@@ -397,7 +397,7 @@
                             toolController.setRotate(0);
                         break;
                     default:
-                        // Alert('' + evt.keyCode);
+                        // Alert("" + evt.keyCode);
                         break;
                 }
             }
