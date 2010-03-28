@@ -135,7 +135,6 @@ package org.libspark.gunyarapaint.ui.v1
         private function onRemove(event:Event):void
         {
             var app:IApplication = IApplication(Application.application);
-            app.layers.removeView(this);
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
             var dispatcher:IEventDispatcher = IEventDispatcher(app);
             dispatcher.removeEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
