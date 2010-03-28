@@ -16,6 +16,28 @@
             import org.libspark.gunyarapaint.framework.events.UndoEvent;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             
+            public function load(data:Object):void
+            {
+                var point:Object = data.point;
+                move(point.x, point.y);
+                setRotate(data.rotate);
+                setZoom(data.zoom);
+            }
+            
+            public function save(data:Object):void
+            {
+                data.point = new Point(x, y);
+                data.rotate = canvasRotate.value;
+                data.zoom = canvasZoom.value;
+            }
+            
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
+                setRotate(0);
+                setZoom(1);
+            }
+            
             public function setRotate(value:Number):void
             {
                 canvasRotate.value = value;
@@ -32,13 +54,6 @@
                 canvasZoom.value = value;
                 Application.application.canvasController.zoom(value);  
                 canvasZoomValue.text = String(Math.round(n) / 100);
-            }
-            
-            public function resetWindow():void
-            {
-                move(m_initPosition.x, m_initPosition.y);
-                setRotate(0);
-                setZoom(1);
             }
             
             private function onInitialize():void
@@ -161,8 +176,8 @@
         <mx:NumericStepper id="additionalNumberStepper" y="4" value="4" minimum="2" maximum="16" stepSize="1" right="143" height="18" fontSize="8" change="onChangeAuxDivideCount(event)"/>
         <mx:CheckBox id="additionalBoxCheckBox" y="2" label="縦横" right="8" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)"/>
         <mx:CheckBox id="additionalSkewCheckBox" y="18" label="斜め" right="9" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)"/>
-        <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="IApplication(Application.application).module.undo()"/>
-        <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="IApplication(Application.application).module.redo()"/>
+        <mx:Button id="undoButton" y="38" label="アンドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="IApplication(Application.application).canvasModule.undo()"/>
+        <mx:Button id="redoButton" y="38" label="リドゥ" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="IApplication(Application.application).canvasModule.redo()"/>
         <mx:Button id="logPlayButton" y="105" label="ログプレイ" visible="false" right="99"/>
         <mx:Button id="checkPngButton" y="105" label="同一check" visible="false" right="10"/>
         <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)">
@@ -172,8 +187,8 @@
             </mx:ArrayCollection>
         </mx:ComboBox>
         <mx:Button id="windowsResetButton" x="146" y="136" label="ウィンドウ初期状態" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="Application.application.resetWindowsPosition()"/>
-        <mx:Button id="horizontalMirrorButton" x="10" y="111" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).module.horizontalMirror(Painter.ALL_LAYERS)"/>
-        <mx:Button id="verticalMirrorButton" x="10" y="136" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).module.verticalMirror(Painter.ALL_LAYERS)"/>
+        <mx:Button id="horizontalMirrorButton" x="10" y="111" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).canvasModule.horizontalMirror(Painter.ALL_LAYERS)"/>
+        <mx:Button id="verticalMirrorButton" x="10" y="136" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).canvasModule.verticalMirror(Painter.ALL_LAYERS)"/>
         <mx:Button id="passwordButton" x="146" y="111" label="ふっかつのじゅもん" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="onLoad(event)"/>
     </mx:Canvas>
 </mx:TitleWindow>

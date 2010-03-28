@@ -4,6 +4,7 @@ package org.libspark.gunyarapaint.ui.v1
     import flash.geom.Matrix;
     import flash.geom.Point;
     import flash.geom.Rectangle;
+    import flash.utils.ByteArray;
     
     import mx.containers.TitleWindow;
     import mx.controls.HScrollBar;
@@ -52,6 +53,42 @@ package org.libspark.gunyarapaint.ui.v1
             super();
         }
         
+        public function load(data:Object):void
+        {
+            var rect:Object = data.rectangle;
+            move(rect.x, rect.y);
+            width = rect.width;
+            height = rect.height;
+            m_canvas.auxBoxVisible = data.auxBoxVisible;
+            m_canvas.auxSkewVisible = data.auxSkewVisible;
+            m_canvas.auxDivideCount = data.auxDivideCount;
+            m_canvas.auxLineAlpha = data.auxLineAlpha;
+            m_canvas.auxLineColor = data.auxLineColor;
+            m_canvas.enableAuxPixel = data.enableAuxPixel;
+        }
+        
+        public function save(data:Object):void
+        {
+            data.rectangle = new Rectangle(x, y, width, height);
+            data.auxBoxVisible = m_canvas.auxBoxVisible;
+            data.auxSkewVisible = m_canvas.auxSkewVisible;
+            data.auxDivideCount = m_canvas.auxDivideCount;
+            data.auxLineAlpha = m_canvas.auxLineAlpha;
+            data.auxLineColor = m_canvas.auxLineColor;
+            data.enableAuxPixel = m_canvas.enableAuxPixel;
+        }
+        
+        public function resetWindow():void
+        {
+            move(m_initRectangle.x, m_initRectangle.y);
+            width = m_initRectangle.width;
+            height = m_initRectangle.height;
+            rotate(0);
+            transform.matrix = new Matrix(
+                1, 0, 0, 1, m_initRectangle.x, m_initRectangle.y
+            );
+        }
+        
         public function zoom(value:Number):void
         {
             var mag:Number = value >= 1 ? value : (1.0 / (-value + 2));
@@ -80,17 +117,6 @@ package org.libspark.gunyarapaint.ui.v1
             m_canvasX = x;
             m_canvasY = y;
             update();
-        }
-        
-        public function resetWindow():void
-        {
-            move(m_initRectangle.x, m_initRectangle.y);
-            width = m_initRectangle.width;
-            height = m_initRectangle.height;
-            rotate(0);
-            transform.matrix = new Matrix(
-                1, 0, 0, 1, m_initRectangle.x, m_initRectangle.y
-            );
         }
         
         public function get canvasScrollPosition():Point

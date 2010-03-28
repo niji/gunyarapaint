@@ -11,6 +11,23 @@
             
             private var baseImg:BitmapData;
             
+            public function load(data:Object):void
+            {
+                var point:Object = data.point;
+                move(point.x, point.y);
+                fromTextInput.text = data.from;
+                titleTextInput.text = data.title;
+                messageTextArea.text = data.message;
+            }
+            
+            public function save(data:Object):void
+            {
+                data.point = new Point(x, y);
+                data.from = fromTextInput.text;
+                data.title = titleTextInput.text;
+                data.message = messageTextArea.text;
+            }
+            
             public function resetWindow():void
             {
                 move(m_initPosition.x, m_initPosition.y);

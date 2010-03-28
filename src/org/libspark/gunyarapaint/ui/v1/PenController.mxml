@@ -31,6 +31,36 @@
             
             private var m_palette:GridItem;
             
+            public function load(data:Object):void
+            {
+                var app:IApplication = IApplication(Application.application);
+                var pen:Pen = app.pen;
+                var point:Object = data.point;
+                move(point.x, point.y);
+                this.pen = data.state;
+                pen.alpha = data.alpha;
+                pen.color = data.color;
+                pen.thickness = data.thickness;
+                palettes = data.palettes;
+            }
+            
+            public function save(data:Object):void
+            {
+                var app:IApplication = IApplication(Application.application);
+                var pen:Pen = app.pen;
+                data.point = new Point(x, y);
+                data.alpha = pen.alpha;
+                data.color = pen.color;
+                data.thickness = pen.thickness;
+                data.state = app.canvasModule.name;
+                data.palettes = palettes;
+            }
+            
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
+            }
+            
             // Ctrlとかのショートカットキーで変わったペンToolを戻す
             public function reset():void
             {
@@ -43,14 +73,14 @@
                 }
                 else if (eraserButton.selected) {
                     pen = LineModule.LINE;
-                    app.module.blendMode = BlendMode.ERASE;
+                    app.canvasModule.blendMode = BlendMode.ERASE;
                 }
                 else if (dotButton.selected) {
                     pen = PixelModule.PIXEL;
                 }
                 else {
                     pen = String(blendModeComboBox.value);
-                    app.module.blendMode = String(blendModeComboBox.value);
+                    app.canvasModule.blendMode = String(blendModeComboBox.value);
                 }
             }
             
@@ -63,12 +93,7 @@
                 eraserButton.selected = false;
                 dotButton.selected = false;
                 var app:IApplication = IApplication(Application.application);
-                app.setModule(String(penModeComboBox.value));
-            }
-            
-            public function resetWindow():void
-            {
-                move(m_initPosition.x, m_initPosition.y);
+                app.setCanvasModule(String(penModeComboBox.value));
             }
             
             public function get dataForPost():Object
@@ -112,23 +137,27 @@
             
             public function set pen(mode:String):void
             {
+                var app:IApplication = IApplication(Application.application);
                 currentState = mode;
-                IApplication(Application.application).setModule(currentState);
+                app.setCanvasModule(currentState);
             }
             
             public function set currentColor(value:uint):void
             {
-                IApplication(Application.application).module.color = value;
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.color = value;
             }
             
             public function set currentAlpha(value:Number):void
             {
-                IApplication(Application.application).module.alpha = value;
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.alpha = value;
             }
             
             public function set currentThickness(value:uint):void
             {
-                IApplication(Application.application).module.thickness = value;
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.thickness = value;
             }
             
             private function onChangeAlpha(event:PenEvent):void
@@ -242,9 +271,10 @@
             private function onSelectEraser(evt:Event):void
             {
                 if (Button(evt.currentTarget).selected) {
+                    var app:IApplication = IApplication(Application.application);
                     pen = FreeHandModule.FREE_HAND;
                     currentState = "eraser";
-                    IApplication(Application.application).module.blendMode = BlendMode.ERASE;
+                    app.canvasModule.blendMode = BlendMode.ERASE;
                 }
                 else {
                     setDefaultPen();
@@ -262,14 +292,15 @@
             private function onSelectPen(evt:ListEvent):void
             {
                 cancel();
-                var application:IApplication = IApplication(Application.application);
-                application.setModule(String(evt.currentTarget.value));
+                var app:IApplication = IApplication(Application.application);
+                app.setCanvasModule(String(evt.currentTarget.value));
             }
             
             private function onSelectBlendMode(evt:ListEvent):void
             {
                 cancel();
-                IApplication(Application.application).module.blendMode = String(evt.currentTarget.value);
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.blendMode = String(evt.currentTarget.value);
             }
             
             private function onChangeColorSlider(evt:SliderEvent, mode:String):void
@@ -307,7 +338,8 @@
             private function setDefaultPen():void
             {
                 pen = String(penModeComboBox.value);
-                IApplication(Application.application).module.blendMode = String(blendModeComboBox.value);
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.blendMode = String(blendModeComboBox.value);
             }
             
             private var m_initPosition:Point;

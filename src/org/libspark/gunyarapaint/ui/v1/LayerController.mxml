@@ -20,6 +20,23 @@
             
             private static const  NAME:String = "レイヤーツール";
             
+            public function load(data:Object):void
+            {
+                var point:Object = data.point;
+                move(point.x, point.y);
+                update();
+            }
+            
+            public function save(data:Object):void
+            {
+                data.point = new Point(x, y);
+            }
+            
+            public function resetWindow():void
+            {
+                move(m_initPosition.x, m_initPosition.y);
+            }
+            
             public function update():void
             {
                 var layers:LayerBitmapCollection = IApplication(Application.application).layers;
@@ -36,11 +53,6 @@
                         return;
                     }
                 }
-            }
-            
-            public function resetWindow():void
-            {
-                move(m_initPosition.x, m_initPosition.y);
             }
             
             private function onCreateComplete():void
@@ -67,21 +79,23 @@
             
             private function onClickLayer(evt:ListEvent):void
             {
-                var application:IApplication = IApplication(Application.application);
+                var app:IApplication = IApplication(Application.application);
                 var layer:LayerBitmap = LayerBitmap(evt.currentTarget.selectedItem);
-                if (application.layers.currentIndex != layer.index)
-                    application.module.layerIndex = layer.index;
+                if (app.layers.currentIndex != layer.index)
+                    app.canvasModule.layerIndex = layer.index;
             }
             
             private function onCreateLayer(evt:Event):void
             {
-                IApplication(Application.application).module.createLayer();
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.createLayer();
                 update();
             }
             
             private function onCopyLayer(evt:Event):void
             {
-                IApplication(Application.application).module.copyLayer();
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.copyLayer();
                 update();
             }
             
@@ -89,7 +103,8 @@
             {
                 try {
                     // RemoveLayerErrorを捉える必要がある
-                    IApplication(Application.application).module.removeLayer();
+                    var app:IApplication = IApplication(Application.application);
+                    app.canvasModule.removeLayer();
                     update();
                 } catch (e:Error) {
                     Alert.show(e.message, NAME);
@@ -100,7 +115,8 @@
             {
                 try {
                     // MergeLayersErrorを捉える必要がある
-                    IApplication(Application.application).module.mergeLayers();
+                    var app:IApplication = IApplication(Application.application);
+                    app.canvasModule.mergeLayers();
                     update();
                 } catch (e:Error) {
                     Alert.show(e.message, NAME);
@@ -114,25 +130,27 @@
             
             private function onChangeAlphaSlider(evt:SliderEvent):void
             {
-                IApplication(Application.application).module.layerAlpha = evt.value;
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.layerAlpha = evt.value;
             }
             
             private function onSelectBlendMode(evt:ListEvent):void
             {
-                IApplication(Application.application).module.layerBlendMode = String(evt.currentTarget.value);
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.layerBlendMode = String(evt.currentTarget.value);
             }
             
             private function onDragComplete(evt:DragEvent):void
             {
-                var application:IApplication = IApplication(Application.application);
+                var app:IApplication = IApplication(Application.application);
                 var a:Array = (layerDataGrid.dataProvider as ArrayCollection).toArray().reverse();
                 var length:uint = a.length;
-                var layers:LayerBitmapCollection = application.layers;
+                var layers:LayerBitmapCollection = app.layers;
                 for (var i:uint = 0; i < length; i++) {
                     var from:uint = a[i].index;
                     var to:uint = layers.at(i).index;
                     if (a[i].index != to) {
-                        application.module.swapLayers(from, to);
+                        app.canvasModule.swapLayers(from, to);
                         break;
                     }
                 }
