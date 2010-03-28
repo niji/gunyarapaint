@@ -20,30 +20,30 @@
             
             private function onSave():void
             {
-                if (passwordTextArea.text.length > 0) {
+                //if (passwordTextArea.text.length > 0) {
                     var bytes:ByteArray = new ByteArray();
-                    Application.application.save(bytes, passwordTextArea.text);
+                    Application.application.save(bytes);
                     createFileReferenceEvents();
                     m_file.addEventListener(Event.SELECT, onSelectSave);
                     m_file.addEventListener(Event.COMPLETE, onSaveComplete);
                     m_file.save(bytes);
-                }
-                else {
-                    Alert.show("パスワードが入力されていません", ALERT_TITLE);
-                }
+                //}
+                //else {
+                //    Alert.show("パスワードが入力されていません", ALERT_TITLE);
+                //}
             }
             
             private function onLoad():void
             {
-                if (passwordTextArea.text.length > 0) {
+                //if (passwordTextArea.text.length > 0) {
                     createFileReferenceEvents();
                     m_file.addEventListener(Event.SELECT, onSelectLoad);
                     m_file.addEventListener(Event.COMPLETE, onLoadComplete);
                     m_file.browse();
-                }
-                else {
-                    Alert.show("パスワードが入力されていません", ALERT_TITLE);
-                }
+                //}
+                //else {
+                //    Alert.show("パスワードが入力されていません", ALERT_TITLE);
+                //}
             }
             
             private function onSelectLoad(event:Event):void
@@ -63,7 +63,7 @@
                 var file:FileReference = FileReference(event.target);
                 var bytes:ByteArray = file.data;
                 currentState = "";
-                Application.application.load(bytes, passwordTextArea.text);
+                Application.application.load(bytes);
                 removeFileReference();
             }
             
