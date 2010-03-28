@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="300" height="205"
                 implements="org.libspark.gunyarapaint.ui.v1.IController"
-                initialize="onInitialize()" removedFromStage="onRemove()"
-                creationComplete="onCreationComplete()">
+                removedFromStage="onRemove()">
     <mx:Script>
         <![CDATA[
             import mx.core.Application;
@@ -15,6 +14,15 @@
             import org.libspark.gunyarapaint.framework.UndoStack;
             import org.libspark.gunyarapaint.framework.events.UndoEvent;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
+            
+            public function init(app:IApplication):void
+            {
+                var undo:UndoStack = app.undoStack;
+                undo.addEventListener(UndoEvent.UNDO, onChangeUndo);
+                undo.addEventListener(UndoEvent.REDO, onChangeUndo);
+                undo.addEventListener(UndoEvent.PUSH, onChangeUndo);
+                m_initPosition = new Point(x, y);
+            }
             
             public function load(data:Object):void
             {
@@ -54,19 +62,6 @@
                 canvasZoom.value = value;
                 Application.application.canvasController.zoom(value);  
                 canvasZoomValue.text = String(Math.round(n) / 100);
-            }
-            
-            private function onInitialize():void
-            {
-                var undo:UndoStack = IApplication(Application.application).undoStack;
-                undo.addEventListener(UndoEvent.UNDO, onChangeUndo);
-                undo.addEventListener(UndoEvent.REDO, onChangeUndo);
-                undo.addEventListener(UndoEvent.PUSH, onChangeUndo);
-            }
-            
-            private function onCreationComplete():void
-            {
-                m_initPosition = new Point(x, y);
             }
             
             private function onRemove():void

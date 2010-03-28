@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 width="144" height="312"
-                creationComplete="onCreateComplete()"
                 implements="org.libspark.gunyarapaint.ui.v1.IController"
                 xmlns:ui="org.libspark.gunyarapaint.ui.v1.*">
     <mx:Script>
@@ -10,6 +9,7 @@
             import mx.controls.Alert;
             import mx.core.Application;
             import mx.events.DragEvent;
+            import mx.events.FlexEvent;
             import mx.events.ListEvent;
             import mx.events.SliderEvent;
             
@@ -19,6 +19,26 @@
             import org.libspark.gunyarapaint.utils.ComponentResizer;
             
             private static const  NAME:String = "レイヤーツール";
+            
+            public function init(app:IApplication):void
+            {
+                blendModeComboBox.dataProvider = app.supportedBlendModes;
+                update();
+                var layers:LayerBitmapCollection = app.layers;
+                var currentLayerIndex:uint = layers.currentIndex;
+                var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
+                var blendModes:Object = blendModeComboBox.dataProvider;
+                var blendModeLength:uint = blendModes.length;
+                layerDataGrid.selectedIndex = currentLayerIndex;
+                alphaSlider.value = layers.at(currentLayerIndex).alpha;
+                for (var i:uint = 0; i < blendModeLength; i++) {
+                    if (blendModes[i].data == currentLayerBlendMode)
+                        blendModeComboBox.selectedIndex = i;
+                }
+                layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
+                ComponentResizer.addResize(this, new Point(144, 230));
+                m_initPosition = new Point(x, y);
+            }
             
             public function load(data:Object):void
             {
@@ -53,28 +73,6 @@
                         return;
                     }
                 }
-            }
-            
-            private function onCreateComplete():void
-            {
-                var application:IApplication = IApplication(Application.application);
-                blendModeComboBox.dataProvider = application.supportedBlendModes;
-                update();
-                
-                var layers:LayerBitmapCollection = application.layers;
-                var currentLayerIndex:uint = layers.currentIndex;
-                var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
-                var blendModes:Object = blendModeComboBox.dataProvider;
-                var blendModeLength:uint = blendModes.length;
-                layerDataGrid.selectedIndex = currentLayerIndex;
-                alphaSlider.value = layers.at(currentLayerIndex).alpha;
-                for (var i:uint = 0; i < blendModeLength; i++) {
-                    if (blendModes[i].data == currentLayerBlendMode)
-                        blendModeComboBox.selectedIndex = i;
-                }
-                layerDataGrid.addEventListener('describeChange', itemCheckChangeHandler);
-                ComponentResizer.addResize(this, new Point(144, 230));
-                m_initPosition = new Point(x, y);
             }
             
             private function onClickLayer(evt:ListEvent):void

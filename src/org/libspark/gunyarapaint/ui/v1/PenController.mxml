@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450"
                 xmlns:ns1="org.libspark.gunyarapaint.controls.*"
-                implements="org.libspark.gunyarapaint.ui.v1.IController"
-                initialize="onInitialize()"
-                creationComplete="onCreationComplete()">
+                implements="org.libspark.gunyarapaint.ui.v1.IController">
     <mx:Script>
         <![CDATA[
             import mx.containers.GridItem;
@@ -30,6 +28,19 @@
             import org.sepy.events.SPickerEvent;
             
             private var m_palette:GridItem;
+            
+            public function init(app:IApplication):void
+            {
+                // 初回時プレビュー画面は真っ白なのでここで描写を行う必要がある
+                var pen:Pen = app.pen;
+                pen.addEventListener(PenEvent.ALPHA, onChangeAlpha);
+                pen.addEventListener(PenEvent.COLOR, onChangeColor);
+                pen.addEventListener(PenEvent.THICKNESS, onChangeThickness);
+                blendModeComboBox.dataProvider = app.supportedBlendModes;
+                drawPreview(pen.thickness, pen.color, pen.alpha);
+                m_palette = gridItemPalette1;
+                m_initPosition = new Point(x, y);
+            }
             
             public function load(data:Object):void
             {
@@ -101,21 +112,6 @@
                 return [palettes]; // TODO: 現在は１１1パレットのみだけど、配列化する
             }
             
-            public function set application(value:IApplication):void
-            {
-                /*
-                if (_logger.baseInfo) {
-                var a:Array = _logger.baseInfo['pen_details'];
-                if (a) {
-                penDetail.baseImgInfo = a[0];
-                for (var i:uint = 0; i < a.length; i++) {
-                penDetail[i].baseImgInfo = a[i];
-                }
-                }
-                }
-                */
-            }
-            
             public function get palettes():Object
             {
                 var palettes:Array = [];
@@ -185,24 +181,6 @@
                 var value:uint = pen.thickness;
                 thicknessSlider.value = value;
                 drawPreview(value, pen.color, pen.alpha);
-            }
-            
-            private function onInitialize():void
-            {
-                var application:IApplication = IApplication(Application.application);
-                blendModeComboBox.dataProvider = application.supportedBlendModes;
-                // 初回時プレビュー画面は真っ白なのでここで描写を行う必要がある
-                var pen:Pen = application.pen;
-                drawPreview(pen.thickness, pen.color, pen.alpha);
-                pen.addEventListener(PenEvent.ALPHA, onChangeAlpha);
-                pen.addEventListener(PenEvent.COLOR, onChangeColor);
-                pen.addEventListener(PenEvent.THICKNESS, onChangeThickness);
-                m_palette = gridItemPalette1;
-            }
-            
-            private function onCreationComplete():void
-            {
-                m_initPosition = new Point(x, y);
             }
             
             private function onClickPalette(index:uint):void

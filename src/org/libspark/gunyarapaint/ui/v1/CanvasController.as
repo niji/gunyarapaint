@@ -31,13 +31,11 @@ package org.libspark.gunyarapaint.ui.v1
             m_contentContainer.percentWidth = 100;
             m_contentContainer.percentHeight = 100;
             m_contentContainer.addEventListener(MouseEvent.CLICK, onClickContentContainer);
-            
             m_canvasContainer = new Container();
             m_canvasContainer.mouseEnabled = false;
             m_canvasContainer.setStyle("borderStyle", "none");
             m_canvasContainer.horizontalScrollPolicy = "off";
             m_canvasContainer.verticalScrollPolicy = "off";
-            
             m_hScrollBar = new HScrollBar();
             m_vScrollBar = new VScrollBar();
             m_hScrollBar.height = ScrollBar.THICKNESS;
@@ -46,11 +44,31 @@ package org.libspark.gunyarapaint.ui.v1
             m_vScrollBar.addEventListener(ScrollEvent.SCROLL, onScrollVertically);
             m_hScrollBar.lineScrollSize = 1;
             m_vScrollBar.lineScrollSize = 1;
-            
             m_preDegree = 0;
-            
-            addEventListener(FlexEvent.CREATION_COMPLETE, onCreationComplete);
             super();
+        }
+        
+        public function init(app:IApplication):void
+        {
+            setStyle("backgroundColor", 0x0);
+            horizontalScrollPolicy = "off";
+            verticalScrollPolicy = "off";
+            addChild(m_contentContainer);
+            validateNow(); // percentWidth/Height -> width/heightに更新
+            m_canvasContainer.width = m_contentContainer.width - m_vScrollBar.width;
+            m_canvasContainer.height = m_contentContainer.height - m_hScrollBar.height;
+            m_canvasX = m_canvasY = 0;
+            m_canvasScale = 1;
+            m_canvas = new Canvas(app);
+            m_canvasContainer.addChild(m_canvas);
+            m_contentContainer.addChild(m_canvasContainer);
+            m_contentContainer.addChild(m_hScrollBar);
+            m_contentContainer.addChild(m_vScrollBar);
+            m_initRectangle = new Rectangle(x, y, width, height);
+            ComponentResizer.addResize(this, new Point(100, 100));
+            resize();
+            update();
+            addEventListener(ResizeEvent.RESIZE, onResize);
         }
         
         public function load(data:Object):void
@@ -156,35 +174,6 @@ package org.libspark.gunyarapaint.ui.v1
         public function set statusText(value:String):void
         {
             status = value;
-        }
-        
-        private function onCreationComplete(event:FlexEvent):void
-        {
-            setStyle("backgroundColor", 0x0);
-            horizontalScrollPolicy = "off";
-            verticalScrollPolicy = "off";
-            
-            addChild(m_contentContainer);
-            validateNow(); // percentWidth/Height -> width/heightに更新
-            
-            m_canvasContainer.width = m_contentContainer.width - m_vScrollBar.width;
-            m_canvasContainer.height = m_contentContainer.height - m_hScrollBar.height;
-            m_canvasX = m_canvasY = 0;
-            m_canvasScale = 1;
-            
-            m_canvas = new Canvas();
-            m_canvasContainer.addChild(m_canvas);
-            m_contentContainer.addChild(m_canvasContainer);
-            m_contentContainer.addChild(m_hScrollBar);
-            m_contentContainer.addChild(m_vScrollBar);
-            m_initRectangle = new Rectangle(x, y, width, height);
-            ComponentResizer.addResize(this, new Point(100, 100));
-            
-            resize();
-            update();
-            
-            addEventListener(ResizeEvent.RESIZE, onResize);
-            removeEventListener(FlexEvent.CREATION_COMPLETE, onCreationComplete);
         }
         
         private function onScrollHorizontally(evt:ScrollEvent):void

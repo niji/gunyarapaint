@@ -22,9 +22,8 @@ package org.libspark.gunyarapaint.ui.v1
     
     internal class Canvas extends UIComponent
     {
-        public function Canvas()
+        public function Canvas(app:IApplication)
         {
-            var app:IApplication = IApplication(Application.application);
             var rect:Rectangle = new Rectangle(0, 0, app.canvasWidth, app.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_auxLine = new AuxLineView(rect);

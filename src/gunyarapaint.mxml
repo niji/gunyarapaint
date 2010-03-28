@@ -4,7 +4,6 @@
     xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
     layout="absolute" width="100%" height="100%"
     preinitialize="onPreinitialize(event)"
-    creationComplete="onCreationComplete(event)"
     applicationComplete="onApplicationComplete(event)"
     removedFromStage="onRemove(event)"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
@@ -14,6 +13,7 @@
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
+            import mx.core.IFlexDisplayObject;
             import mx.core.UITextField;
             import mx.events.FlexEvent;
             import mx.managers.PopUpManager;
@@ -136,28 +136,22 @@
             {
                 bytes.position = 0;
                 bytes.endian = Endian.BIG_ENDIAN;
-                try {
-                    bytes.inflate();
-                    var dataBytes:ByteArray = bytes.readObject();
-                    var rect:Object = bytes.readObject();
-                    var bitmapBytes:ByteArray = bytes.readObject();
-                    var metadata:Object = bytes.readObject();
-                    var controllerData:Object = bytes.readObject();
-                    var w:uint = rect.width;
-                    var h:uint = rect.height;
-                    var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
-                    bitmapData.setPixels(new Rectangle(0, 0, w, h), bitmapBytes);
-                    m_recorder.load(bitmapData, metadata);
-                    dataBytes.readBytes(m_bytes);
-                    for (var i:String in m_windows) {
-                        var controller:IController = m_windows[i];
-                        var value:Object = controllerData[controller.name];
-                        controller.load(value);
-                    }
-                }
-                catch (e:Error) {
-                    trace(e.message);
-                    Alert.show("指定されたファイルからログを復元することが出来ませんでした", ALERT_TITLE);
+                bytes.inflate();
+                var dataBytes:ByteArray = bytes.readObject();
+                var rect:Object = bytes.readObject();
+                var bitmapBytes:ByteArray = bytes.readObject();
+                var metadata:Object = bytes.readObject();
+                var controllerData:Object = bytes.readObject();
+                var w:uint = rect.width;
+                var h:uint = rect.height;
+                var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
+                bitmapData.setPixels(new Rectangle(0, 0, w, h), bitmapBytes);
+                m_recorder.load(bitmapData, metadata);
+                dataBytes.readBytes(m_bytes);
+                for (var i:String in m_windows) {
+                    var controller:IController = m_windows[i];
+                    var value:Object = controllerData[controller.name];
+                    controller.load(value);
                 }
             }
             
@@ -199,9 +193,6 @@
             
             private function onPreinitialize(event:FlexEvent):void
             {
-                var width:int = 0;
-                var height:int = 0;
-                var undoBufferSize:int = 0;
                 if (DEBUG) {
                     /*
                     parameters['oekakiId'] = 23724;
@@ -217,30 +208,17 @@
                     parameters['canvasHeight'] = 317;
                 }
                 
-                width = int(parameters['canvasWidth']);
-                height = int(parameters['canvasHeight']);
-                undoBufferSize = int(parameters['undoBufferSize']);
-                
-                m_bytes = new ByteArray();
-                m_recorder = Recorder.create(m_bytes, width, height, undoBufferSize);
-                m_context = new CanvasModuleContext(m_recorder);
-                m_module = m_context.getModule(FreeHandModule.FREE_HAND);
-                m_commit = 0;
-                m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
+                if (parameters['postUrl'] &&
+                    parameters['cookie'] &&
+                    parameters['magic'] &&
+                    parameters['redirectUrl']) {
+                    //postOekakiButton.enabled = true;
+                    redirectUrl = parameters['redirectUrl'];
+                }
             }
             
-            private function onCommit(event:CommandEvent):void
+            private function onApplicationComplete(event:FlexEvent):void
             {
-                trace(event.command);
-                m_commit++;
-            }
-            
-            private function onCreationComplete(event:FlexEvent):void
-            {
-                var width:uint = 0;
-                var height:uint = 0;
-                var undoBufferSize:uint = 0;
-                
                 if (DEBUG) {
                     // debug buttons
                     //logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
@@ -256,12 +234,47 @@
                 layerWindow.enabled = false;
                 */
                 
-                // ポップアップさせて、そいつらの初期位置を覚える
-                PopUpManager.addPopUp(canvasController, this);
-                PopUpManager.addPopUp(penController, this);
-                PopUpManager.addPopUp(layerController, this);
-                PopUpManager.addPopUp(toolController, this);
-                PopUpManager.addPopUp(formController, this);
+                var width:uint = 0;
+                var height:uint = 0;
+                var undoBufferSize:uint = 0;
+                undoBufferSize = int(parameters['undoBufferSize']);
+                if (undoBufferSize < 0) {
+                    Alert.show('最大アンドゥ回数が少なすぎます。', ALERT_TITLE);   
+                    enabled = true;
+                    return;
+                }
+                else if (undoBufferSize > 32) {
+                    Alert.show('最大アンドゥ回数が多すぎます。', ALERT_TITLE);      
+                    enabled = true;
+                    return;
+                }
+                if (parameters['oekakiId'] && parameters['baseImgUrl']) {
+                    oekakiId = uint(parameters['oekakiId']);
+                    //new Com().loadURL(parameters['baseImgUrl'], getBaseImgHandler);
+                }
+                else {
+                    width = int(parameters['canvasWidth']);
+                    height = int(parameters['canvasHeight']);
+                    width = 0;
+                    height = 0;
+                    if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
+                        Alert.show('キャンバスサイズが小さすぎます。', ALERT_TITLE);
+                        enabled = false;
+                        return;
+                    }
+                    else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
+                        Alert.show('キャンバスサイズが大きすぎます。', ALERT_TITLE);
+                        enabled = false;
+                        return;
+                    }
+                }
+                m_bytes = new ByteArray();
+                m_recorder = Recorder.create(m_bytes, width, height, undoBufferSize);
+                m_context = new CanvasModuleContext(m_recorder);
+                m_module = m_context.getModule(FreeHandModule.FREE_HAND);
+                m_commit = 0;
+                m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
+                m_context.add(new MovableCanvasModule(m_recorder, canvasController));
                 m_windows = new Vector.<IController>();
                 m_windows.push(
                     canvasController,
@@ -270,52 +283,13 @@
                     toolController,
                     formController
                 );
-                
-                if (parameters['postUrl'] && parameters['cookie'] && parameters['magic'] && parameters['redirectUrl']) {
-                    //postOekakiButton.enabled = true;
-                    redirectUrl = parameters['redirectUrl'];
+                for (var i:String in m_windows) {
+                    var controller:IController = m_windows[i];
+                    controller.init(this);
+                    PopUpManager.addPopUp(IFlexDisplayObject(controller), this);
                 }
-                if (parameters['undoBufferSize']) {
-                    undoBufferSize = int(parameters['undoBufferSize']);
-                    if (undoBufferSize < 0) {
-                        Alert.show('最大アンドゥ回数が少なすぎます。', ALERT_TITLE);      
-                    }
-                    if (undoBufferSize > 32) {
-                        Alert.show('最大アンドゥ回数が多すぎます。', ALERT_TITLE);      
-                    }
-                }
-                else {
-                    return;
-                }
-                if (parameters['oekakiId'] && parameters['baseImgUrl']) {
-                    oekakiId = uint(parameters['oekakiId']);
-                    //new Com().loadURL(parameters['baseImgUrl'], getBaseImgHandler);
-                }
-                else {
-                    if (parameters['canvasWidth'] && parameters['canvasHeight']) {
-                        width = int(parameters['canvasWidth']);
-                        height = int(parameters['canvasHeight']);
-                        if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
-                            Alert.show('キャンバスサイズが小さすぎます。', ALERT_TITLE);
-                            return;
-                        }
-                        if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-                            Alert.show('キャンバスサイズが大きすぎます。', ALERT_TITLE);
-                            return;
-                        }
-                    } else {
-                        return;
-                    }
-                }
-                m_context.add(new MovableCanvasModule(m_recorder, canvasController));
-            }
-            
-            private function onApplicationComplete(event:FlexEvent):void
-            {
-                stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);  
-                stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);  
-                //stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-                //stage.addEventListener(MouseEvent.MOUSE_OUT, onMouseUp); // これを入れるとマズい。
+                stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+                stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
             }
             
             private function onRemove(event:Event):void
@@ -325,6 +299,12 @@
                 stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);  
                 //stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                 //stage.removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+            }
+            
+            private function onCommit(event:CommandEvent):void
+            {
+                trace(event.command);
+                m_commit++;
             }
             
             private function onKeyDown(evt:KeyboardEvent):void
