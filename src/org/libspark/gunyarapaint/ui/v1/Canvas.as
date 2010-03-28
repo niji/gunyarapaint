@@ -50,6 +50,36 @@ package org.libspark.gunyarapaint.ui.v1
             m_auxPixel.update();
         }
         
+        public function get auxBoxVisible():Boolean
+        {
+            return m_auxLine.boxVisible;
+        }
+        
+        public function get auxSkewVisible():Boolean
+        {
+            return m_auxLine.skewVisible;
+        }
+        
+        public function get auxDivideCount():uint
+        {
+            return m_auxLine.divideCount;
+        }
+        
+        public function get auxLineAlpha():Number
+        {
+            return m_auxLine.lineAlpha;
+        }
+        
+        public function get auxLineColor():uint
+        {
+            return m_auxLine.lineColor;
+        }
+        
+        public function get enableAuxPixel():Boolean
+        {
+            return m_auxPixel.visible;
+        }
+        
         public function set auxBoxVisible(value:Boolean):void
         {
             m_auxLine.boxVisible = m_auxPixel.boxVisible = value;
@@ -88,7 +118,7 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onModuleChangeAfter(event:CanvasModuleEvent):void
         {
-            var module:ICanvasModule = IApplication(Application.application).module;
+            var module:ICanvasModule = IApplication(Application.application).canvasModule;
             if (module is MovableCanvasModule)
                 addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
             CursorManager.removeCursor(CursorManager.currentCursorID);
@@ -119,34 +149,34 @@ package org.libspark.gunyarapaint.ui.v1
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
-                app.module.start(event.localX, event.localY);
+                app.canvasModule.start(event.localX, event.localY);
                 layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
                 layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                 layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
                 removeMouseEvents(layers);
-                Alert.show(e.message, app.moduleName);
+                Alert.show(e.message, app.canvasModuleName);
             }
         }
         
         private function onMouseMove(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
-            app.module.move(event.localX, event.localY);
+            app.canvasModule.move(event.localX, event.localY);
         }
         
         private function onMouseUp(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
             removeMouseEvents(app.layers);
-            app.module.stop(event.localX, event.localY);
+            app.canvasModule.stop(event.localX, event.localY);
         }
         
         private function onMouseOut(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
             removeMouseEvents(app.layers);
-            app.module.interrupt(event.localX, event.localY);
+            app.canvasModule.interrupt(event.localX, event.localY);
         }
         
         private function onMouseWheel(event:MouseEvent):void
