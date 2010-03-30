@@ -1,5 +1,6 @@
 package org.libspark.gunyarapaint.ui.v1
 {
+    import flash.display.BitmapData;
     import flash.events.MouseEvent;
     import flash.geom.Matrix;
     import flash.geom.Point;
@@ -135,6 +136,14 @@ package org.libspark.gunyarapaint.ui.v1
             m_canvasX = x;
             m_canvasY = y;
             update();
+        }
+        
+        public function exportBitmapData():BitmapData
+        {
+            var app:IApplication = IApplication(Application.application);
+            var bitmapData:BitmapData = new BitmapData(app.canvasWidth, app.canvasHeight);
+            bitmapData.draw(m_canvas);
+            return bitmapData;
         }
         
         public function get canvasScrollPosition():Point

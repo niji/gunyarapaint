@@ -12,6 +12,8 @@
     alpha="1.0">
     <mx:Script>
         <![CDATA[
+            import com.adobe.images.PNGEncoder;
+            
             import mx.controls.Alert;
             import mx.core.IFlexDisplayObject;
             import mx.core.UITextField;
@@ -184,9 +186,8 @@
                     try {
                         ExternalInterface.call("changeAlertOnUnload", bool);
                     }
-                    catch (e:SecurityError) {
-                    }
                     catch (e:Error) {
+                        Alert.show(e.message, ALERT_TITLE);
                     }
                 }
             }
@@ -346,11 +347,24 @@
                         m_module.shouldDrawFromStartPoint = true;
                         break;
                     // 20090905-haku2 ins end
+                    case 88: // x
+                        exportFile();
+                        break;
                     case 89: // y
-                        m_module.redo();
+                        try {
+                            m_module.redo();
+                        }
+                        catch (e:Error) {
+                            Alert.show("やり直しが出来ません", ALERT_TITLE);
+                        }
                         break;
                     case 90: // z
-                        m_module.undo();
+                        try {
+                            m_module.undo();
+                        }
+                        catch (e:Error) {
+                            Alert.show("巻き戻しが出来ません", ALERT_TITLE);
+                        }
                         break;
                     case 107: // ten key +
                         // +
@@ -438,10 +452,40 @@
                 return stage.focus is mx.core.UITextField;
             }
             
+            private function exportFile():void
+            {
+                if (m_file == null) {
+                    var name:String = (new Date()).getTime() + ".png";
+                    var bitmapData:BitmapData = canvasController.exportBitmapData();
+                    var data:ByteArray = PNGEncoder.encode(bitmapData);
+                    bitmapData.dispose();
+                    m_file = new FileReference();
+                    m_file.addEventListener(Event.CANCEL, onExportCancel);
+                    m_file.addEventListener(Event.COMPLETE, onExportComplete);
+                    m_file.save(data, name);
+                }
+            }
+            
+            private function onExportCancel(event:Event):void
+            {
+                m_file.removeEventListener(Event.CANCEL, onExportCancel);
+                m_file.removeEventListener(Event.COMPLETE, onExportComplete);
+                m_file = null;
+            }
+            
+            private function onExportComplete(event:Event):void
+            {
+                Alert.show("書き込みました", ALERT_TITLE);
+                m_file.removeEventListener(Event.CANCEL, onExportCancel);
+                m_file.removeEventListener(Event.COMPLETE, onExportComplete);
+                m_file = null;
+            }
+            
             private var m_bytes:ByteArray;
             private var m_recorder:Recorder;
             private var m_context:CanvasModuleContext;
             private var m_module:ICanvasModule;
+            private var m_file:FileReference;
             private var m_commit:uint;
             private var m_windows:Vector.<IController>;
             
