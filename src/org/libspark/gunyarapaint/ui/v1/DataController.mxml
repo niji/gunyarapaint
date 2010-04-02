@@ -60,6 +60,12 @@
             }
         ]]>
     </mx:Script>
+    <mx:states>
+        <mx:State name="loadonly">
+            <mx:SetProperty target="{setClipboardButton}" name="enabled" value="false"/>
+            <mx:SetProperty target="{saveButton}" name="enabled" value="false"/>
+        </mx:State>
+    </mx:states>
     <mx:TextArea id="passwordTextArea" x="0" y="0" width="380" height="266" verticalScrollPolicy="on"/>
     <mx:Button id="loadButton" x="10" y="274" label="ふっかつする" click="onLoad()"/>
     <mx:Button id="setClipboardButton" x="124.5" y="274" label="クリップボードにコピー" click="onClipboard()"/>
