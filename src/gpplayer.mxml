@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" minWidth="420" minHeight="355" currentState="ready" applicationComplete="onApplicationComplete(event)">
+    <mx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import mx.core.UIComponent;
+            import mx.core.UITextField;
+            import mx.events.FlexEvent;
+            import mx.events.SliderEvent;
+            import mx.managers.PopUpManager;
+            
+            import org.libspark.gunyarapaint.framework.Painter;
+            import org.libspark.gunyarapaint.framework.Player;
+            import org.libspark.gunyarapaint.framework.events.PlayerEvent;
+            import org.libspark.gunyarapaint.ui.v1.DataController;
+            import org.libspark.gunyarapaint.ui.v1.PNGExporter;
+            
+            public function load(bytes:ByteArray):void
+            {
+                bytes.position = 0;
+                bytes.endian = Endian.BIG_ENDIAN;
+                bytes.inflate();
+                var dataBytes:ByteArray = bytes.readObject();
+                var player:Player = Player.create(dataBytes);
+                player.addEventListener(PlayerEvent.FINISHED, onFinished);
+                updateCanvasWindow(player);
+                updateWindowRectangle(player);
+                currentState = "";
+                if (m_player != null) {
+                    m_player.removeEventListener(PlayerEvent.FINISHED, onFinished);
+                    player.speed = m_player.speed;
+                }
+                m_data = dataBytes;
+                m_player = player;
+            }
+            
+            private function onApplicationComplete(event:FlexEvent):void
+            {
+                m_exporter = new PNGExporter();
+                m_exporter.addEventListener(Event.COMPLETE, onExportComplete);
+                stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            }
+            
+            private function onKeyDown(event:KeyboardEvent):void
+            {
+                if (stage.focus is UITextField)
+                    return;
+                switch (event.keyCode) {
+                    case 88:
+                        var bitmapData:BitmapData = new BitmapData(canvas.width, canvas.height);
+                        bitmapData.draw(canvas);
+                        m_exporter.save(bitmapData);
+                        break;
+                }
+            }
+            
+            private function onPlay():void
+            {
+                m_player.start();
+                currentState = "playing";
+            }
+            
+            private function onPause():void
+            {
+                m_player.pause();
+                currentState = "";
+            }
+            
+            private function onReplay():void
+            {
+                var player:Player = Player.create(m_data);
+                player.addEventListener(PlayerEvent.FINISHED, onFinished);
+                player.speed = m_player.speed;
+                updateCanvasWindow(player);
+                player.start();
+                currentState = "playing";
+                m_player = player;
+            }
+
+            private function onLoad():void
+            {
+                var controller:DataController = new DataController();
+                controller.currentState = "loadonly";
+                PopUpManager.addPopUp(controller, this, true);
+            }
+            
+            private function onChangeSpeed(event:SliderEvent):void
+            {
+                m_player.speed = event.value;
+            }
+            
+            private function onFinished(event:PlayerEvent):void
+            {
+                m_player.removeEventListener(PlayerEvent.FINISHED, onFinished);
+                currentState = "finished";
+            }
+            
+            private function onExportComplete(event:Event):void
+            {
+                Alert.show("PNGへの書き出しが完了しました", "プレイヤー");
+            }
+            
+            private function updateCanvasWindow(player:Player):void
+            {
+                canvas.removeAllChildren();
+                var base:UIComponent = new UIComponent();
+                base.graphics.beginFill(0xffffff);
+                base.graphics.drawRect(0, 0, player.width, player.height);
+                player.layers.setView(base);
+                canvas.addChild(base);
+            }
+            
+            private function updateWindowRectangle(player:Player):void
+            {
+                var canvasWidth:uint = player.width;
+                var canvasHeight:uint = player.height;
+                canvas.width = canvasWidth + 2;
+                canvas.height = canvasHeight + 2;
+                width = canvasWidth + 20;
+                width = width < 420 ? 420 : width;
+                height = canvasWidth + canvas.y + 20;
+                height = height < 137 ? 137 : height; // for express install
+            }
+            
+            private var m_player:Player;
+            private var m_exporter:PNGExporter;
+            private var m_data:ByteArray;
+        ]]>
+    </mx:Script>
+    <mx:states>
+        <mx:State name="playing">
+            <mx:SetProperty target="{playButton}" name="label" value="停止"/>
+            <mx:SetEventHandler target="{playButton}" name="click" handler="onPause()"/>
+        </mx:State>
+        <mx:State name="ready">
+            <mx:SetProperty target="{playButton}" name="enabled" value="false"/>
+            <mx:SetProperty target="{playSpeedHSlider}" name="enabled" value="false"/>
+        </mx:State>
+        <mx:State name="finished">
+            <mx:SetEventHandler target="{playButton}" name="click" handler="onReplay()"/>
+        </mx:State>
+    </mx:states>
+    <mx:Button id="loadButton" x="10" y="9" label="読込" click="onLoad()"/>
+    <mx:Button id="playButton" x="66" y="9" label="再生" click="onPlay()"/>
+    <mx:Label x="122" y="11" text="再生スピード"/>
+    <mx:HSlider id="playSpeedHSlider" x="175" y="8" minimum="1" maximum="501" snapInterval="20" value="21" width="107" change="onChangeSpeed(event)"/>
+    <mx:Canvas id="canvas" x="10" width="400" height="300" y="39" borderStyle="solid"></mx:Canvas>    
+    <mx:Label x="313" y="11" text="{Painter.PAINTER_VERSION_STRING}"/>
+</mx:Application>
