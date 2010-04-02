@@ -18,6 +18,7 @@
   </compiler>
   <applications>
     <application path="gunyarapaint.mxml"/>
+    <application path="gpplayer.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
