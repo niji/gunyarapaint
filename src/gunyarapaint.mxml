@@ -37,6 +37,7 @@
             import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
+            import org.libspark.gunyarapaint.ui.v1.PNGExporter;
             
             [Bindable]
             [Embed(source="../assets/images/icon_dropper.png")]
@@ -274,6 +275,8 @@
                 m_commit = 0;
                 m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
                 m_context.registerModule(new MovableCanvasModule(m_recorder, canvasController));
+                m_exporter = new PNGExporter();
+                m_exporter.addEventListener(Event.COMPLETE, onExportComplete);
                 m_windows = new Vector.<IController>();
                 m_windows.push(
                     canvasController,
@@ -348,7 +351,9 @@
                         break;
                     // 20090905-haku2 ins end
                     case 88: // x
-                        exportFile();
+                        var bitmapData:BitmapData = canvasController.exportBitmapData();
+                        m_exporter.save(bitmapData);
+                        bitmapData.dispose();
                         break;
                     case 89: // y
                         try {
@@ -447,45 +452,21 @@
                 }
             }
             
+            private function onExportComplete(event:Event):void
+            {
+                Alert.show("PNGへの書き出しが完了しました", ALERT_TITLE);
+            }
+            
             private function get isForcusedOnTextField():Boolean
             {
                 return stage.focus is mx.core.UITextField;
-            }
-            
-            private function exportFile():void
-            {
-                if (m_file == null) {
-                    var name:String = (new Date()).getTime() + ".png";
-                    var bitmapData:BitmapData = canvasController.exportBitmapData();
-                    var data:ByteArray = PNGEncoder.encode(bitmapData);
-                    bitmapData.dispose();
-                    m_file = new FileReference();
-                    m_file.addEventListener(Event.CANCEL, onExportCancel);
-                    m_file.addEventListener(Event.COMPLETE, onExportComplete);
-                    m_file.save(data, name);
-                }
-            }
-            
-            private function onExportCancel(event:Event):void
-            {
-                m_file.removeEventListener(Event.CANCEL, onExportCancel);
-                m_file.removeEventListener(Event.COMPLETE, onExportComplete);
-                m_file = null;
-            }
-            
-            private function onExportComplete(event:Event):void
-            {
-                Alert.show("書き込みました", ALERT_TITLE);
-                m_file.removeEventListener(Event.CANCEL, onExportCancel);
-                m_file.removeEventListener(Event.COMPLETE, onExportComplete);
-                m_file = null;
             }
             
             private var m_bytes:ByteArray;
             private var m_recorder:Recorder;
             private var m_context:CanvasModuleContext;
             private var m_module:ICanvasModule;
-            private var m_file:FileReference;
+            private var m_exporter:PNGExporter;
             private var m_commit:uint;
             private var m_windows:Vector.<IController>;
             
