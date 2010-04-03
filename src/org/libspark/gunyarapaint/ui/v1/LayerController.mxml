@@ -15,6 +15,8 @@
             
             import org.libspark.gunyarapaint.framework.LayerBitmap;
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+            import org.libspark.gunyarapaint.framework.UndoStack;
+            import org.libspark.gunyarapaint.framework.events.UndoEvent;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.libspark.gunyarapaint.utils.ComponentResizer;
             
@@ -27,6 +29,9 @@
                 var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
                 var blendModes:Object = blendModeComboBox.dataProvider;
                 var blendModeLength:uint = blendModes.length;
+                var undo:UndoStack = app.undoStack;
+                undo.addEventListener(UndoEvent.UNDO, onChangeUndo);
+                undo.addEventListener(UndoEvent.REDO, onChangeUndo);
                 blendModeComboBox.dataProvider = app.supportedBlendModes;
                 layerDataGrid.selectedIndex = currentLayerIndex;
                 alphaSlider.value = layers.at(currentLayerIndex).alpha;
@@ -138,6 +143,11 @@
                 app.canvasModule.layerBlendMode = String(evt.currentTarget.value);
             }
             
+            private function onChangeUndo(event:UndoEvent):void
+            {
+                update();
+            }
+            
             private function onDragComplete(evt:DragEvent):void
             {
                 var app:IApplication = IApplication(Application.application);
@@ -158,7 +168,7 @@
         ]]>
     </mx:Script>
     <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
-                         itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)">
+                         itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)" selectedIndex="0">
         <ui:columns>
             <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
             <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
