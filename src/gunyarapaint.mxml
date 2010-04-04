@@ -35,6 +35,7 @@
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
             import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
+            import org.libspark.gunyarapaint.ui.v1.CopyrightWindow;
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             import org.libspark.gunyarapaint.ui.v1.PNGExporter;
@@ -224,18 +225,10 @@
                 if (DEBUG) {
                     // debug buttons
                     //logPlayButton.addEventListener(FlexEvent.BUTTON_DOWN, playLogHandler);
-                    versionLabel.text += "debug";
+                    versionLabel.text += " debug build";
                     //logPlayButton.visible = true;
                     //checkPngButton.visible = true;
-                }
-                
-                /*
-                enabled = false;
-                canvasController.enabled = false;
-                penController.enabled = false;
-                layerWindow.enabled = false;
-                */
-                
+                }                
                 var width:uint = 0;
                 var height:uint = 0;
                 var undoBufferSize:uint = 0;
@@ -462,6 +455,11 @@
                 return stage.focus is mx.core.UITextField;
             }
             
+            private function onClickImage():void
+            {
+                PopUpManager.addPopUp(new CopyrightWindow(), this, true);
+            }
+            
             private var m_bytes:ByteArray;
             private var m_recorder:Recorder;
             private var m_context:CanvasModuleContext;
@@ -487,7 +485,7 @@
         <mx:Object label="除外" data="{BlendMode.SUBTRACT}" />
         <mx:Object label="反転" data="{BlendMode.INVERT}" />
     </mx:ArrayCollection>
-    <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10"/>
+    <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
     <ui:FormController id="formController" title="投稿フォーム"  x="10" y="10" height="169" width="486"/>
     <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
     <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペン" height="450" />

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="340" height="208" title="著作権情報"
+                showCloseButton="true" close="onClose()" x="146" y="223">
+    <mx:Script>
+        <![CDATA[
+            import mx.core.Application;
+            import mx.events.FlexEvent;
+            import mx.managers.PopUpManager;
+            private function onClose():void
+            {
+                PopUpManager.removePopUp(this);
+            }
+        ]]>
+    </mx:Script>
+    <mx:Text width="300" height="148" x="10" y="10">
+        <mx:htmlText>
+<![CDATA[2008-2010 Tasuku Suenaga, @haku2, @hikarincl2
+
+This application is based on gunyarapaint
+(<a href="http://www.libspark.org/svn/as3/gunyarapaint/"><font color="#0000ff"><u>http://www.libspark.org/svn/as3/gunyarapaint/</u></font></a>)
+            
+This application uses the part of as3corelib
+(<a href="http://code.google.com/p/as3corelib/"><font color="#0000ff"><u>http://code.google.com/p/as3corelib/</u></font></a>)
+
+This application uses SWFMouseWheel
+(<a href="http://code.google.com/p/swfmousewheel/"><font color="#0000ff"><u>http://code.google.com/p/swfmousewheel/</u></font></a>)]]>
+        </mx:htmlText>
+    </mx:Text>
+</mx:TitleWindow>
