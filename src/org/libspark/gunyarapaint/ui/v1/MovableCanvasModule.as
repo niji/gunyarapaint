@@ -40,6 +40,7 @@ package org.libspark.gunyarapaint.ui.v1
         public function wheel(x:Number, y:Number, delta:int):void
         {
             // チルト操作には対応していない。ショートカットキーで対応する?
+            y ||= m_canvas.canvasScrollPosition.y;
             var toY:Number = y + delta * m_canvas.canvasScale;
             start(x, y);
             move(x, toY);

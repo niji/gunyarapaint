@@ -1,10 +1,13 @@
 package org.libspark.gunyarapaint.ui.v1
 {
+    import com.oysteinwika.ui.SWFMouseWheel;
+    
     import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.IEventDispatcher;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
+    import flash.system.Capabilities;
     
     import mx.controls.Alert;
     import mx.core.Application;
@@ -40,6 +43,17 @@ package org.libspark.gunyarapaint.ui.v1
             var dispatcher:IEventDispatcher = IEventDispatcher(app);
             dispatcher.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
             dispatcher.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
+            // Capabilities.version で OS を判断するのは適切ではないが、
+            // 少なくとも MacOSX ではマウスホイールを正しく感知することが出来無いので対処療法として
+            if (Capabilities.version.indexOf("MAC") >= 0) {
+                SWFMouseWheel.SWFMouseWheelHandler = function(delta:Number):void
+                {
+                    var module:MovableCanvasModule = app.canvasModule as MovableCanvasModule;
+                    if (module != null)
+                        module.wheel(0, 0, delta * 3)
+                };
+                SWFMouseWheel._init();
+            }
             super();
         }
         
