@@ -12,7 +12,7 @@
             }
         ]]>
     </mx:Script>
-    <mx:Text width="300" height="148" x="10" y="10">
+    <mx:Text width="300" height="148" x="10" y="10" selectable="false">
         <mx:htmlText>
 <![CDATA[2008-2010 Tasuku Suenaga, @haku2, @hikarincl2
 
