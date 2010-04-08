@@ -221,6 +221,7 @@ package org.libspark.gunyarapaint.ui.v1
             var maxY:Number = application.canvasHeight * m_canvasScale - m_canvasContainer.height;
             m_canvasX = Math.floor(m_canvasX);
             m_canvasY = Math.floor(m_canvasY);
+            // 移動位置及び最大範囲を調整する
             if (maxX <= 0)
                 maxX = 0;
             if (maxY <= 0)
@@ -233,48 +234,48 @@ package org.libspark.gunyarapaint.ui.v1
                 m_canvasX = maxX;
             if (m_canvasY > maxY)
                 m_canvasY = maxY;
+            // スクロールバーを移動先の位置に設定する
             m_hScrollBar.scrollPosition = m_canvasX;
             m_vScrollBar.scrollPosition = m_canvasY;
+            // 拡大率によってスクロール量を決定する(拡大率が大きい程スクロール量も大きくなる)
             m_hScrollBar.lineScrollSize = m_canvasScale;
             m_vScrollBar.lineScrollSize = m_canvasScale;
-            m_hScrollBar.setScrollProperties(m_canvasContainer.width, 0, maxX, 0);
-            m_vScrollBar.setScrollProperties(m_canvasContainer.height, 0, maxY, 0);
+            // スクロールバーの大きさを決定する(拡大率が大きい程スクロールバーが小さくなる)
+            m_hScrollBar.setScrollProperties(m_canvasContainer.width, 0, maxX);
+            m_vScrollBar.setScrollProperties(m_canvasContainer.height, 0, maxY);
+            // キャンバスを移動させる
             m_canvas.move(-m_canvasX, -m_canvasY);
         }
         
         private function resize():void
         {
             // 仮にサイズを狭める
-            m_canvasContainer.width = m_canvasContainer.height = 
-                m_hScrollBar.width = m_vScrollBar.height = 0;
-            validateNow(); // _contentContainerのサイズを更新
-            
+            m_canvasContainer.width = 0;
+            m_canvasContainer.height = 0;
+            m_hScrollBar.width = 0;
+            m_vScrollBar.height = 0;
+            // _contentContainerのサイズを更新
+            validateNow();
             // それを使って再設定
             var clientWidth:Number = m_contentContainer.width - m_vScrollBar.width;
             var clientHeight:Number = m_contentContainer.height - m_hScrollBar.height;
-            
             m_hScrollBar.width = clientWidth;
             m_vScrollBar.height = clientHeight;
-            
+            // 拡大または縮小したキャンバスのサイズを求める
             var application:IApplication = IApplication(Application.application);
             var canvasWidth:uint = application.canvasWidth;
             var canvasHeight:uint = application.canvasHeight;
-            // TODO: minでいいやん
-            if (canvasWidth * m_canvasScale < clientWidth)
-                m_canvasContainer.width = canvasWidth * m_canvasScale;
-            else
-                m_canvasContainer.width = clientWidth;
-            
-            if (canvasHeight * m_canvasScale < clientHeight)
-                m_canvasContainer.height = canvasHeight * m_canvasScale;
-            else
-                m_canvasContainer.height = clientHeight;          
-            
+            var scaledCanvasWidth:Number = canvasWidth * m_canvasScale;
+            var scaledCanvasHeight:Number = canvasHeight * m_canvasScale;
+            // 拡大または縮小したキャンバスをキャンバスコンテナのサイズに収める必要がある
+            m_canvasContainer.width = scaledCanvasWidth < clientWidth ? scaledCanvasWidth : clientWidth;
+            m_canvasContainer.height = scaledCanvasHeight < clientHeight ? scaledCanvasHeight : clientHeight;                      
             m_hScrollBar.move(0, clientHeight);
             m_vScrollBar.move(clientWidth, 0);
-            
-            m_canvasContainer.move((clientWidth - m_canvasContainer.width) / 2,
-                (clientHeight - m_canvasContainer.height) / 2);
+            m_canvasContainer.move(
+                (clientWidth - m_canvasContainer.width) / 2,
+                (clientHeight - m_canvasContainer.height) / 2
+            );
         }
         
         private var m_canvasContainer:Container; // GPCanvasを直接格納するコンテナ
