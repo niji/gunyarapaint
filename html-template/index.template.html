@@ -13,30 +13,46 @@ body { margin: 0px; overflow:hidden }
 <!--
 function onLoad(event) {
   var vars = {};
+  var query = location.href.split('?')[1];
+  if (query) {
+    var pairs = query.split(/[&;]/);
+    for (var i in pairs) {
+      var pair = pairs[i].split('=');
+      vars[pair[0]] = pair[1];
+    }
+  }
   var params = {
     "allowScriptAccess": "sameDomain",
     "bgcolor": "${bgcolor}",
     "quality": "high"
   };
-  var attrs = {};
+  var attrs = {
+    "id": "${application}",
+    "name": "${application}"
+  };
   swfobject.embedSWF(
     "${swf}.swf",
     "${application}",
     "${width}",
     "${height}",
     "${version_major}.${version_minor}.${version_revision}",
+    "expressInstall.swf",
     vars,
     params,
     attrs
   );
 }
+function onBeforeUnload(event) {
+  if (!event)
+      window.event;
+  event.returnValue = "ぐにゃらペイントを終了しようとしています";
+}
 function changeAlertOnUnload(bool) {
-  return window.confirm("戻りますか?");
 }
 //-->
 </script>
 </head>
-<body scroll="no" onload="onLoad(event)">
+<body onload="onLoad(event)" onbeforeunload="onBeforeUnload(event)">
 <div id="${application}">JavaScriptを有効にする必要があります。</div>
 </body>
 </html>
