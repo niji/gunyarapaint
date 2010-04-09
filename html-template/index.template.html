@@ -3,6 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="robots" content="noindex,nofollow,noarchive" />
 <title>${title}</title>
 <style>
 body { margin: 0px; overflow:hidden }
@@ -16,7 +17,8 @@ function onLoad(event) {
   var query = location.href.split('?')[1];
   if (query) {
     var pairs = query.split(/[&;]/);
-    for (var i in pairs) {
+    var length = pairs.length;
+    for (var i = 0; i < length; i++) {
       var pair = pairs[i].split('=');
       vars[pair[0]] = pair[1];
     }
@@ -42,12 +44,15 @@ function onLoad(event) {
     attrs
   );
 }
+var callBeforeUnload = true;
 function onBeforeUnload(event) {
-  if (!event)
-      window.event;
-  event.returnValue = "ぐにゃらペイントを終了しようとしています";
+  if (callBeforeUnload) {
+    event = event || window.event;
+    return event.returnValue = "ぐにゃらペイントを終了しようとしています。閉じると描いた絵が全て消えてしまいます。";
+  }
 }
-function changeAlertOnUnload(bool) {
+function changeAlertOnUnload(value) {
+  callBeforeUnload = value;
 }
 //-->
 </script>
