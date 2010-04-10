@@ -9,14 +9,12 @@
             import mx.utils.Base64Decoder;
             import mx.utils.Base64Encoder;
             
-            private static const ALERT_TITLE:String = "ふっかつのじゅもん";
-            
             public function set password(value:String):void
             {
                 passwordTextArea.text = value;
             }
             
-            public function onClose():void
+            private function onClose():void
             {
                 PopUpManager.removePopUp(this);
             }
@@ -28,7 +26,7 @@
                 var decoder:Base64Decoder = new Base64Decoder();
                 // ※ネタです
                 if (password == "ザオリク" || password == "ざおりく") {
-                    Alert.show("かんちがいしています", ALERT_TITLE);
+                    Alert.show("かんちがいしています", title);
                 }
                 else {
                     decoder.decode(password);
@@ -39,7 +37,7 @@
                     }
                     catch (e:Error) {
                         trace(e.message);
-                        Alert.show("じゅもんがちがいます", ALERT_TITLE);
+                        Alert.show("じゅもんがちがいます", title);
                     }
                 }
             }
@@ -56,7 +54,7 @@
             private function onClipboard():void
             {
                 System.setClipboard(passwordTextArea.text);
-                Alert.show("ふっかつのじゅもんをクリップボードにコピーしました", ALERT_TITLE);
+                Alert.show("ふっかつのじゅもんをクリップボードにコピーしました", title);
             }
         ]]>
     </mx:Script>

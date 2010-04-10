@@ -90,16 +90,26 @@
             
             private function onCreateLayer(evt:Event):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.createLayer();
-                update();
+                try {
+                    // AddLayerErrorを捉える必要がある
+                    var app:IApplication = IApplication(Application.application);
+                    app.canvasModule.createLayer();
+                    update();
+                } catch (e:Error) {
+                    Alert.show(e.message, NAME);
+                }
             }
             
             private function onCopyLayer(evt:Event):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.copyLayer();
-                update();
+                try {
+                    // AddLayerErrorを捉える必要がある
+                    var app:IApplication = IApplication(Application.application);
+                    app.canvasModule.copyLayer();
+                    update();
+                } catch (e:Error) {
+                    Alert.show(e.message, NAME);
+                }
             }
             
             private function onRemoveLayer(evt:Event):void

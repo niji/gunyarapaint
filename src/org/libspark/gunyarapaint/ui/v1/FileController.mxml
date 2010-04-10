@@ -1,75 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="346" title="ふっかつのじゅもん">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150"
+                title="ぼうけんのしょ"  showCloseButton="true" close="onClose()" x="146" y="223">
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
             import mx.core.Application;
             import mx.managers.PopUpManager;
             
-            private static const ALERT_TITLE:String = "ふっかつのじゅもん";
-            
-            public function set password(value:String):void
+            private function onClose():void
             {
-                passwordTextArea.text = value;
-            }
-            
-            private function onClipboard():void
-            {
-                System.setClipboard(passwordTextArea.text);
+                PopUpManager.removePopUp(this);
             }
             
             private function onSave():void
             {
-                //if (passwordTextArea.text.length > 0) {
-                    var bytes:ByteArray = new ByteArray();
-                    Application.application.save(bytes);
-                    createFileReferenceEvents();
-                    m_file.addEventListener(Event.SELECT, onSelectSave);
-                    m_file.addEventListener(Event.COMPLETE, onSaveComplete);
-                    m_file.save(bytes);
-                //}
-                //else {
-                //    Alert.show("パスワードが入力されていません", ALERT_TITLE);
-                //}
+                var bytes:ByteArray = new ByteArray();
+                Application.application.save(bytes);
+                createFileReferenceEvents();
+                m_file.addEventListener(Event.SELECT, onSelectSave);
+                m_file.addEventListener(Event.COMPLETE, onSaveComplete);
+                m_file.save(bytes);
             }
             
             private function onLoad():void
             {
-                //if (passwordTextArea.text.length > 0) {
-                    createFileReferenceEvents();
-                    m_file.addEventListener(Event.SELECT, onSelectLoad);
-                    m_file.addEventListener(Event.COMPLETE, onLoadComplete);
-                    m_file.browse();
-                //}
-                //else {
-                //    Alert.show("パスワードが入力されていません", ALERT_TITLE);
-                //}
+                createFileReferenceEvents();
+                m_file.addEventListener(Event.SELECT, onSelectLoad);
+                m_file.addEventListener(Event.COMPLETE, onLoadComplete);
+                m_file.browse();
             }
             
             private function onSelectLoad(event:Event):void
             {
                 var file:FileReference = FileReference(event.target);
                 file.load();
-                currentState = "progress";
             }
             
             private function onSelectSave(event:Event):void
             {
-                currentState = "progress";
             }
             
             private function onLoadComplete(event:Event):void
             {
                 var file:FileReference = FileReference(event.target);
                 var bytes:ByteArray = file.data;
-                currentState = "";
                 Application.application.load(bytes);
                 removeFileReference();
             }
             
             private function onSaveComplete(event:Event):void
             {
-                currentState = "";
+                Alert.show("ほぞんせいこう", title);
                 removeFileReference();
             }
             
@@ -78,14 +59,9 @@
                 removeFileReference();
             }
             
-            private function onProgress(event:ProgressEvent):void
-            {
-                progress.setProgress(event.bytesLoaded, event.bytesTotal);
-            }
-            
             private function onError(event:ErrorEvent):void
             {
-                Alert.show(event.text, ALERT_TITLE);
+                Alert.show(event.text, title);
                 removeFileReference();
             }
             
@@ -94,7 +70,6 @@
                 m_file = new FileReference();
                 m_file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
                 m_file.addEventListener(IOErrorEvent.IO_ERROR, onError);
-                m_file.addEventListener(ProgressEvent.PROGRESS, onProgress);
                 m_file.addEventListener(Event.CANCEL, onCancel);
             }
             
@@ -102,7 +77,6 @@
             {
                 m_file.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
                 m_file.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-                m_file.removeEventListener(ProgressEvent.PROGRESS, onProgress);
                 m_file.removeEventListener(Event.CANCEL, onCancel);
                 m_file.removeEventListener(Event.SELECT, onSelectLoad);
                 m_file.removeEventListener(Event.SELECT, onSelectSave);
@@ -117,14 +91,6 @@
             private var m_file:FileReference;
         ]]>
     </mx:Script>
-    <mx:states>
-        <mx:State name="progress">
-            <mx:SetProperty target="{progress}" name="visible" value="true"/>
-        </mx:State>
-    </mx:states>
-    <mx:TextArea id="passwordTextArea" x="0" y="0" width="380" height="266" verticalScrollPolicy="on"/>
-    <mx:Button id="setClipboardButton" x="124.5" y="274" label="クリップボードにコピー" click="onClipboard()"/>
-    <mx:Button id="deserializeButton" x="10" y="274" label="ふっかつする" click="onLoad()"/>
-    <mx:Button x="290" y="274" label="ほぞんする" click="onSave()"/>
-    <mx:ProgressBar x="10" y="238" width="360" enabled="true" id="progress" visible="false"/>
+    <mx:Button id="loadButton" x="57" y="25" label="よみこむ" click="onLoad()"/>
+    <mx:Button id="saveButton" x="52" y="55" label="ほぞんする" click="onSave()"/>
 </mx:TitleWindow>

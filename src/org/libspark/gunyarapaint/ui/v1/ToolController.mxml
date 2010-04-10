@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="300" height="205"
-                implements="org.libspark.gunyarapaint.ui.v1.IController"
-                removedFromStage="onRemove()">
+                implements="org.libspark.gunyarapaint.ui.v1.IController" removedFromStage="onRemove()">
     <mx:Script>
         <![CDATA[
             import mx.core.Application;
@@ -150,9 +149,9 @@
             
             private function onLoad(evt:FlexEvent):void
             {
-                var controller:DataController = new DataController();
+                //var controller:DataController = new DataController();
+                var controller:FileController = new FileController();
                 PopUpManager.addPopUp(controller, this, true);
-                // w.password = gpCanvas.logger.password;
             }
             
             private var m_initPosition:Point;
@@ -184,6 +183,6 @@
         <mx:Button id="windowsResetButton" x="146" y="136" label="ウィンドウ初期状態" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="Application.application.resetWindowsPosition()"/>
         <mx:Button id="horizontalMirrorButton" x="10" y="111" label="全レイヤー左右反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).canvasModule.horizontalMirror(Painter.ALL_LAYERS)"/>
         <mx:Button id="verticalMirrorButton" x="10" y="136" label="全レイヤー上下反転" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).canvasModule.verticalMirror(Painter.ALL_LAYERS)"/>
-        <mx:Button id="passwordButton" x="146" y="111" label="ふっかつのじゅもん" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="onLoad(event)"/>
+        <mx:Button id="passwordButton" x="146" y="111" label="ぼうけんのしょ" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="onLoad(event)"/>
     </mx:Canvas>
 </mx:TitleWindow>
