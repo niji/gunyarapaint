@@ -282,11 +282,12 @@
                 m_commit++;
             }
             
-            private function onKeyDown(evt:KeyboardEvent):void
+            private function onKeyDown(event:KeyboardEvent):void
             {
                 if (isForcusedOnTextField)
                     return;
-                switch (evt.keyCode) {
+                var keyCode:uint = event.keyCode;
+                switch (keyCode) {
                     case Keyboard.CONTROL:
                         penController.pen = DropperModule.DROPPER;
                         break;
@@ -297,7 +298,10 @@
                         break;
                     case 48: // 0
                     case 96: // ten-key 0
-                        evt.shiftKey ? toolController.setRotate(0) : toolController.setZoom(1);
+                        if (event.shiftKey)
+                            toolController.setRotate(0);
+                        else
+                            toolController.setZoom(1);
                         break;
                     case 65: // a
                         // Aキーの状態 = 押下中
@@ -317,12 +321,10 @@
                         // Rキーの状態 = 押下中
                         m_module.shouldDrawFromEndPoint = true;
                         break;
-                    // 20090905-haku2 ins start
                     case 84: // t
                         // Tキーの状態 = 押下中
                         m_module.shouldDrawFromStartPoint = true;
                         break;
-                    // 20090905-haku2 ins end
                     case 88: // x
                         var bitmapData:BitmapData = canvasController.exportBitmapData();
                         m_exporter.save(bitmapData);
@@ -353,8 +355,8 @@
                         toolController.setZoom(toolController.canvasZoom.value - 1);
                         break;
                     case 187:
-                        if (evt.shiftKey)
-                            // +
+                        // +
+                        if (event.shiftKey)
                             toolController.setZoom(toolController.canvasZoom.value + 1);
                         break;
                     case 189:
@@ -370,8 +372,8 @@
                     case 55: // 7
                     case 56: // 8
                     case 57: // 9
-                        if (!evt.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
-                            penController.currentThickness = evt.keyCode - 48;
+                        if (!event.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
+                            penController.currentThickness = keyCode - 48;
                         break;
                     case 97: // ten-key 1
                     case 98: // ten-key 2
@@ -382,14 +384,11 @@
                     case 103: // ten-key 7
                     case 104: // ten-key 8
                     case 105: // ten-key 9
-                        penController.currentThickness = evt.keyCode - 96;
+                        penController.currentThickness = keyCode - 96;
                         break;
                     case 45: // INS
-                        if (!evt.shiftKey)
+                        if (!event.shiftKey)
                             toolController.setRotate(0);
-                        break;
-                    default:
-                        // Alert("" + evt.keyCode);
                         break;
                 }
             }
@@ -421,7 +420,6 @@
                         // Tキーの状態 = 解放
                         m_module.shouldDrawFromStartPoint = false;
                         break;
-                    return;
                 }
             }
             
