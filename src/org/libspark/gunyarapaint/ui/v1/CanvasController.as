@@ -1,6 +1,7 @@
 package org.libspark.gunyarapaint.ui.v1
 {
     import flash.display.BitmapData;
+    import flash.events.EventPhase;
     import flash.events.MouseEvent;
     import flash.geom.Matrix;
     import flash.geom.Point;
@@ -14,6 +15,7 @@ package org.libspark.gunyarapaint.ui.v1
     import mx.core.Application;
     import mx.core.Container;
     import mx.events.FlexEvent;
+    import mx.events.MoveEvent;
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
     
@@ -58,7 +60,10 @@ package org.libspark.gunyarapaint.ui.v1
             validateNow(); // percentWidth/Height -> width/heightに更新
             m_canvasContainer.width = m_contentContainer.width - m_vScrollBar.width;
             m_canvasContainer.height = m_contentContainer.height - m_hScrollBar.height;
+            m_canvasWidth = app.canvasWidth;
+            m_canvasHeight = app.canvasHeight;
             m_canvasX = m_canvasY = 0;
+            m_canvasScaleX = m_canvasScaleY = 0.5;
             m_canvasScale = 1;
             m_canvas = new Canvas(app);
             m_canvasContainer.addChild(m_canvas);
@@ -69,6 +74,7 @@ package org.libspark.gunyarapaint.ui.v1
             ComponentResizer.addResize(this, new Point(100, 100));
             resize();
             update();
+            addEventListener(MoveEvent.MOVE, onMove);
             addEventListener(ResizeEvent.RESIZE, onResize);
         }
         
@@ -110,9 +116,12 @@ package org.libspark.gunyarapaint.ui.v1
         
         public function zoom(value:Number):void
         {
-            var mag:Number = value >= 1 ? value : (1.0 / (-value + 2));
-            m_canvasScale = mag;
-            m_canvas.scaleX = m_canvas.scaleY = mag;
+            var magnification:Number = value >= 1 ? value : (1.0 / (-value + 2));
+            var maxX:Number = m_canvasWidth * magnification - m_canvasContainer.width;
+            var maxY:Number = m_canvasHeight * magnification - m_canvasContainer.height;
+            m_canvasX = m_canvasScaleX * maxX;
+            m_canvasY = m_canvasScaleY * maxY;
+            m_canvas.scaleX = m_canvas.scaleY = m_canvasScale = magnification;
             resize();
             update();
         }
@@ -133,6 +142,10 @@ package org.libspark.gunyarapaint.ui.v1
         
         public function scroll(x:Number, y:Number):void
         {
+            var maxX:Number = m_canvasWidth * m_canvasScale - m_canvasContainer.width;
+            var maxY:Number = m_canvasHeight * m_canvasScale - m_canvasContainer.height;
+            m_canvasScaleX = x / maxX;
+            m_canvasScaleY = x / maxY;
             m_canvasX = x;
             m_canvasY = y;
             update();
@@ -140,8 +153,7 @@ package org.libspark.gunyarapaint.ui.v1
         
         public function exportBitmapData():BitmapData
         {
-            var app:IApplication = IApplication(Application.application);
-            var bitmapData:BitmapData = new BitmapData(app.canvasWidth, app.canvasHeight);
+            var bitmapData:BitmapData = new BitmapData(m_canvasWidth, m_canvasHeight);
             bitmapData.draw(m_canvas);
             return bitmapData;
         }
@@ -185,27 +197,37 @@ package org.libspark.gunyarapaint.ui.v1
             status = value;
         }
         
-        private function onScrollHorizontally(evt:ScrollEvent):void
+        private function onScrollHorizontally(event:ScrollEvent):void
         {
+            var maxX:Number = m_canvasWidth * m_canvasScale - m_canvasContainer.width;
             m_canvasX = m_hScrollBar.scrollPosition;
+            m_canvasScaleX = m_canvasX / maxX;
             update();
         }
         
-        private function onScrollVertically(evt:ScrollEvent):void
+        private function onScrollVertically(event:ScrollEvent):void
         {
+            var maxY:Number = m_canvasHeight * m_canvasScale - m_canvasContainer.height;
             m_canvasY = m_vScrollBar.scrollPosition;
+            m_canvasScaleY = m_canvasY / maxY;
             update();
         }
         
-        private function onResize(evt:ResizeEvent):void
+        private function onResize(event:ResizeEvent):void
         {
             resize();
             update();
         }
         
-        private function onClickContentContainer(e:MouseEvent):void
+        private function onMove(event:MoveEvent):void
         {
-            if (e.eventPhase == flash.events.EventPhase.AT_TARGET) {
+            x = int(x);
+            y = int(y);
+        }
+        
+        private function onClickContentContainer(event:MouseEvent):void
+        {
+            if (event.eventPhase == EventPhase.AT_TARGET) {
                 var pen:Pen = IApplication(Application.application).pen;
                 setStyle("backgroundColor", pen.color);
                 m_canvas.auxLineColor = pen.color;
@@ -216,9 +238,8 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function update():void
         {
-            var application:IApplication = IApplication(Application.application);
-            var maxX:Number = application.canvasWidth * m_canvasScale - m_canvasContainer.width;
-            var maxY:Number = application.canvasHeight * m_canvasScale - m_canvasContainer.height;
+            var maxX:Number = m_canvasWidth * m_canvasScale - m_canvasContainer.width;
+            var maxY:Number = m_canvasHeight * m_canvasScale - m_canvasContainer.height;
             m_canvasX = Math.floor(m_canvasX);
             m_canvasY = Math.floor(m_canvasY);
             // 移動位置及び最大範囲を調整する
@@ -262,16 +283,15 @@ package org.libspark.gunyarapaint.ui.v1
             m_hScrollBar.width = clientWidth;
             m_vScrollBar.height = clientHeight;
             // 拡大または縮小したキャンバスのサイズを求める
-            var application:IApplication = IApplication(Application.application);
-            var canvasWidth:uint = application.canvasWidth;
-            var canvasHeight:uint = application.canvasHeight;
-            var scaledCanvasWidth:Number = canvasWidth * m_canvasScale;
-            var scaledCanvasHeight:Number = canvasHeight * m_canvasScale;
+            var scaledCanvasWidth:Number = m_canvasWidth * m_canvasScale;
+            var scaledCanvasHeight:Number = m_canvasHeight * m_canvasScale;
             // 拡大または縮小したキャンバスをキャンバスコンテナのサイズに収める必要がある
             m_canvasContainer.width = scaledCanvasWidth < clientWidth ? scaledCanvasWidth : clientWidth;
             m_canvasContainer.height = scaledCanvasHeight < clientHeight ? scaledCanvasHeight : clientHeight;                      
+            // スクロールバーを所定の位置に移動
             m_hScrollBar.move(0, clientHeight);
             m_vScrollBar.move(clientWidth, 0);
+            // キャンバスを所定の位置に移動
             m_canvasContainer.move(
                 (clientWidth - m_canvasContainer.width) / 2,
                 (clientHeight - m_canvasContainer.height) / 2
@@ -282,9 +302,13 @@ package org.libspark.gunyarapaint.ui.v1
         private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
         private var m_hScrollBar:HScrollBar; // 横スクロールバー
         private var m_vScrollBar:VScrollBar; // 縦スクロールバー
-        private var m_initRectangle:Rectangle;
-        private var m_canvasX:Number;
-        private var m_canvasY:Number; // キャンバスのスクロール位置
+        private var m_initRectangle:Rectangle; // 初期位置
+        private var m_canvasWidth:Number; // キャンバスの幅 (IApplication#canvasWidth の値をキャッシュする)
+        private var m_canvasHeight:Number; // キャンバスの高さ (IApplication#canvasHeight の値をキャッシュする)
+        private var m_canvasX:Number; // キャンバスのスクロール位置
+        private var m_canvasY:Number; 
+        private var m_canvasScaleX:Number; // 拡大したキャンバスの幅に対する X 座標の相対率
+        private var m_canvasScaleY:Number; // 拡大したキャンバスの高さに対する Y 座標の相対率
         private var m_canvasScale:Number; // キャンバスの倍率
         private var m_preDegree:int; // 前の回転角度
         private var m_scrollDragStartPoint:Point;
