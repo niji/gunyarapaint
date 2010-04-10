@@ -9,17 +9,12 @@
             import mx.utils.Base64Decoder;
             import mx.utils.Base64Encoder;
             
-            public function set password(value:String):void
-            {
-                passwordTextArea.text = value;
-            }
-            
             private function onClose():void
             {
                 PopUpManager.removePopUp(this);
             }
             
-            public function onLoad():void
+            private function onLoad():void
             {
                 var bytes:ByteArray = null;
                 var password:String = passwordTextArea.text;
