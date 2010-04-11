@@ -1,0 +1,56 @@
+<langs>
+  <lang lang="ja_jp">
+    <message>
+      <msgid>Cannot create a layer more than %s</msgid>
+      <msgstr>%s個以上のレイヤーを作成することは出来ません</msgstr>
+    </message>
+    <message>
+      <msgid>Cannot redo any more</msgid>
+      <msgstr>これ以上やり直すことが出来ません</msgstr>
+    </message>
+    <message>
+      <msgid>%s is not found at %s</msgid>
+      <msgstr>コマンド:%sは見つかりません(%s)</msgstr>
+    </message>
+    <message>
+      <msgid>Layer</msgid>
+      <msgstr>レイヤー</msgstr>
+    </message>
+    <message>
+      <msgid>Background</msgid>
+      <msgstr>背景</msgstr>
+    </message>
+    <message>
+      <msgid>The current layer is locked</msgid>
+      <msgstr>現在のレイヤーはロックされています</msgstr>
+    </message>
+    <message>
+      <msgid>Tried loading invalid signature log</msgid>
+      <msgstr>不正な識別子を持つお絵描きログを読み込もうとしました</msgstr>
+    </message>
+    <message>
+      <msgid>Cannot undo any more</msgid>
+      <msgstr>これ以上巻き戻すことが出来ません</msgstr>
+    </message>
+    <message>
+      <msgid>Tried loading not supported version's log (%s)</msgid>
+      <msgstr>サポートされていないお絵描きログを読み込もうとしました</msgstr>
+    </message>
+    <message>
+      <msgid>The current layer is invisible</msgid>
+      <msgstr>現在のレイヤーは不可視です</msgstr>
+    </message>
+    <message>
+      <msgid>Log has been reached to the end</msgid>
+      <msgstr>ログファイルが終端に達しました</msgstr>
+    </message>
+    <message>
+      <msgid>Cannot remove the layer because there is only one layer</msgid>
+      <msgstr>ひとつのレイヤーしか無いため、レイヤーを削除することが出来ません</msgstr>
+    </message>
+    <message>
+      <msgid>Cannot merge layers because there is only one layer or invisible layer is found</msgid>
+      <msgstr>ひとつのレイヤーしか無いか、または不可視のレイヤーが見つかったため、レイヤーの統合が出来ません</msgstr>
+    </message>
+  </lang>
+</langs>

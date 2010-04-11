@@ -3,6 +3,7 @@
     xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
     layout="absolute" width="100%" height="100%"
+    preinitialize="onPreinitialize(event)"
     applicationComplete="onApplicationComplete(event)"
     removedFromStage="onRemove(event)"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
@@ -12,6 +13,7 @@
     <mx:Script>
         <![CDATA[
             import com.adobe.images.PNGEncoder;
+            import com.rails2u.gettext.GetText;
             
             import mx.controls.Alert;
             import mx.core.IFlexDisplayObject;
@@ -25,6 +27,7 @@
             import org.libspark.gunyarapaint.framework.Recorder;
             import org.libspark.gunyarapaint.framework.UndoStack;
             import org.libspark.gunyarapaint.framework.events.CommandEvent;
+            import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
             import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
             import org.libspark.gunyarapaint.framework.modules.CircleModule;
             import org.libspark.gunyarapaint.framework.modules.DropperModule;
@@ -34,6 +37,7 @@
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
             import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
+            import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
             import org.libspark.gunyarapaint.ui.v1.CopyrightWindow;
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
@@ -46,6 +50,10 @@
             [Bindable]
             [Embed(source="../assets/images/icon_hand_open.png")]
             public var handOpenIcon:Class;
+            
+            [Bindable]
+            [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
+            private var languages:Class;
             
             public const ALERT_TITLE:String = "お絵カキコ";
             
@@ -191,6 +199,13 @@
                         Alert.show(e.message, ALERT_TITLE);
                     }
                 }
+            }
+            
+            private function onPreinitialize(event:FlexEvent):void
+            {
+                GetText.locale = parameters["language"] || "ja_jp";
+                GetText.initLangFile(new XML(new languages()));
+                TranslatorRegistry.install(new GetTextTranslator());
             }
             
             private function onApplicationComplete(event:FlexEvent):void
