@@ -521,7 +521,7 @@
                 <mx:Object label="{_('Free hand')}" data="{FreeHandModule.FREE_HAND}" />
                 <mx:Object label="{_('Line')}" data="{LineModule.LINE}" />
                 <mx:Object label="{_('Circle')}" data="{CircleModule.CIRCLE}" />
-                <mx:Object label="{_('Flood fill')]" data="{FloodFillModule.FLOOD_FILL}" />
+                <mx:Object label="{_('Flood fill')}" data="{FloodFillModule.FLOOD_FILL}" />
                 <mx:Object label="{_('Flood fill with transparent')}" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
                 <!--
                 <mx:Object label="{_('Dropper')}" data="" />
