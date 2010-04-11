@@ -55,8 +55,6 @@
             [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
             private var languages:Class;
             
-            public const ALERT_TITLE:String = "お絵カキコ";
-            
             private const MAX_CANVAS_WIDTH:uint = 500;
             private const MAX_CANVAS_HEIGHT:uint = 500;
             private const MIN_CANVAS_WIDTH:uint = 16;
@@ -85,19 +83,19 @@
             {
                 switch (m_module.name) {
                     case CircleModule.CIRCLE:
-                        return "円描画ツール";
+                        return _("Circle module");
                     case DropperModule.DROPPER:
-                        return "スポイトツール";
+                        return _("Dropper module");
                     case FloodFillModule.FLOOD_FILL:
-                        return "塗りつぶしツール";
+                        return _("Flood fill module");
                     case FreeHandModule.FREE_HAND:
-                        return "手書き(消しゴム)ツール";
+                        return _("Freehand (or Eraser) module");
                     case LineModule.LINE:
-                        return "直線ツール";
+                        return _("Line module");
                     case PixelModule.PIXEL:
-                        return "ドットツール";
+                        return _("Pixel module");
                     default:
-                        return "謎のツール";
+                        return _("Unknown module");
                 }
             }
             
@@ -196,7 +194,7 @@
                         ExternalInterface.call("changeAlertOnUnload", bool);
                     }
                     catch (e:Error) {
-                        Alert.show(e.message, ALERT_TITLE);
+                        Alert.show(e.message, m_title);
                     }
                 }
             }
@@ -206,6 +204,7 @@
                 GetText.locale = parameters["language"] || "ja_jp";
                 GetText.initLangFile(new XML(new languages()));
                 TranslatorRegistry.install(new GetTextTranslator());
+                m_title = _("Oekakiko");
             }
             
             private function onApplicationComplete(event:FlexEvent):void
@@ -231,12 +230,12 @@
                     redirectUrl = parameters["redirectUrl"];
                 }
                 if (undoBufferSize < 0) {
-                    Alert.show("最大アンドゥ回数が少なすぎます。", ALERT_TITLE);   
+                    Alert.show(_("Too few count of the max of undo (minimum is %s)", 0), m_title);   
                     enabled = true;
                     return;
                 }
                 else if (undoBufferSize > 32) {
-                    Alert.show("最大アンドゥ回数が多すぎます。", ALERT_TITLE);      
+                    Alert.show(_("Too many count of the max of undo (maximum is %s)", 32), m_title);      
                     enabled = true;
                     return;
                 }
@@ -246,12 +245,12 @@
                 }
                 else {
                     if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
-                        Alert.show("キャンバスサイズが小さすぎます。", ALERT_TITLE);
+                        Alert.show(_("Too small size of the canvas (minimum is %s x %s)", MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
                         enabled = false;
                         return;
                     }
                     else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-                        Alert.show("キャンバスサイズが大きすぎます。", ALERT_TITLE);
+                        Alert.show(_("Too big size of the canvas (maximum is %s x %s)", MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
                         enabled = false;
                         return;
                     }
@@ -350,7 +349,7 @@
                             m_module.redo();
                         }
                         catch (e:Error) {
-                            Alert.show("やり直しが出来ません", ALERT_TITLE);
+                            Alert.show(e.message, m_title);
                         }
                         break;
                     case 90: // z
@@ -358,7 +357,7 @@
                             m_module.undo();
                         }
                         catch (e:Error) {
-                            Alert.show("巻き戻しが出来ません", ALERT_TITLE);
+                            Alert.show(e.message, m_title);
                         }
                         break;
                     case 107: // ten key +
@@ -440,7 +439,7 @@
             
             private function onExportComplete(event:Event):void
             {
-                Alert.show("PNGへの書き出しが完了しました", ALERT_TITLE);
+                Alert.show(_("Exporting the bitmap of the canvas to PNG has been completed."), m_title);
             }
             
             private function get isForcusedOnTextField():Boolean
@@ -460,29 +459,30 @@
             private var m_exporter:PNGExporter;
             private var m_commit:uint;
             private var m_windows:Vector.<IController>;
+            private var m_title:String;
             
             private var oekakiId:uint;
             private var redirectUrl:String;
         ]]>
     </mx:Script>
     <mx:ArrayCollection id="blendModes">
-        <mx:Object label="通常" data="{BlendMode.NORMAL}" />
-        <mx:Object label="比較(暗)" data="{BlendMode.DARKEN}" />
-        <mx:Object label="乗算" data="{BlendMode.MULTIPLY}" />
-        <mx:Object label="比較(明)" data="{BlendMode.LIGHTEN}" />
-        <mx:Object label="スクリーン" data="{BlendMode.SCREEN}" />
-        <mx:Object label="覆い焼き" data="{BlendMode.ADD}" />
-        <mx:Object label="オーバーレイ" data="{BlendMode.OVERLAY}" />
-        <mx:Object label="ハードライト" data="{BlendMode.HARDLIGHT}" />
-        <mx:Object label="差の絶対値" data="{BlendMode.DIFFERENCE}" />
-        <mx:Object label="除外" data="{BlendMode.SUBTRACT}" />
-        <mx:Object label="反転" data="{BlendMode.INVERT}" />
+        <mx:Object label="{_('Normal')}" data="{BlendMode.NORMAL}" />
+        <mx:Object label="{_('Darken')}" data="{BlendMode.DARKEN}" />
+        <mx:Object label="{_('Multiply')}" data="{BlendMode.MULTIPLY}" />
+        <mx:Object label="{_('Lighten')}" data="{BlendMode.LIGHTEN}" />
+        <mx:Object label="{_('Screen')}" data="{BlendMode.SCREEN}" />
+        <mx:Object label="{_('Add')}" data="{BlendMode.ADD}" />
+        <mx:Object label="{_('Overlay')}" data="{BlendMode.OVERLAY}" />
+        <mx:Object label="{_('Hardlight')}" data="{BlendMode.HARDLIGHT}" />
+        <mx:Object label="{_('Difference')}" data="{BlendMode.DIFFERENCE}" />
+        <mx:Object label="{_('Subtract')}" data="{BlendMode.SUBTRACT}" />
+        <mx:Object label="{_('Invert')}" data="{BlendMode.INVERT}" />
     </mx:ArrayCollection>
     <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
-    <ui:FormController id="formController" title="投稿フォーム"  x="10" y="10" height="169" width="486"/>
-    <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
-    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペン" height="450" />
-    <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="キャンバス" />
-    <ui:LayerController x="533" y="223" layout="absolute" title="レイヤー" id="layerController" height="312" />
+    <ui:FormController id="formController" title="{_('Post form')}"  x="10" y="10" height="169" width="486"/>
+    <ui:ToolController id="toolController" left="504" y="10" title="{_('Support tools')}" />
+    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="{_('Brushes')}" height="450" />
+    <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="{_('Canvas')}" />
+    <ui:LayerController x="533" y="223" layout="absolute" title="{_('Layers')}" id="layerController" height="312" />
     <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

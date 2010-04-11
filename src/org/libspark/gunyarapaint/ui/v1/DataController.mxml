@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="346"
-                title="ふっかつのじゅもん" showCloseButton="true" close="onClose()" x="146" y="223">
+                title="{_('The Recovery center')}" showCloseButton="true" close="onClose()" x="146" y="223">
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
@@ -21,7 +21,7 @@
                 var decoder:Base64Decoder = new Base64Decoder();
                 // ※ネタです
                 if (password == "ザオリク" || password == "ざおりく") {
-                    Alert.show("かんちがいしています", title);
+                    Alert.show(_("Rejected."), title);
                 }
                 else {
                     decoder.decode(password);
@@ -32,7 +32,7 @@
                     }
                     catch (e:Error) {
                         trace(e.message);
-                        Alert.show("じゅもんがちがいます", title);
+                        Alert.show(_("Input password is incorrect."), title);
                     }
                 }
             }
@@ -49,7 +49,7 @@
             private function onClipboard():void
             {
                 System.setClipboard(passwordTextArea.text);
-                Alert.show("ふっかつのじゅもんをクリップボードにコピーしました", title);
+                Alert.show("Copied the password to the clipboard ", title);
             }
         ]]>
     </mx:Script>
@@ -60,7 +60,7 @@
         </mx:State>
     </mx:states>
     <mx:TextArea id="passwordTextArea" x="0" y="0" width="380" height="266" verticalScrollPolicy="on"/>
-    <mx:Button id="loadButton" x="10" y="274" label="ふっかつする" click="onLoad()"/>
-    <mx:Button id="setClipboardButton" x="124.5" y="274" label="クリップボードにコピー" click="onClipboard()"/>
-    <mx:Button id="saveButton" x="290" y="274" label="ほぞんする" click="onSave()"/>
+    <mx:Button id="loadButton" x="10" y="274" label="{_('Recover')}" click="onLoad()"/>
+    <mx:Button id="setClipboardButton" x="124.5" y="274" label="{_('Copy to the clipboard')}" click="onClipboard()"/>
+    <mx:Button id="saveButton" x="290" y="274" label="{_('Dump')}" click="onSave()"/>
 </mx:TitleWindow>

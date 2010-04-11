@@ -20,8 +20,6 @@
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.libspark.gunyarapaint.utils.ComponentResizer;
             
-            private static const  NAME:String = "レイヤーツール";
-            
             public function init(app:IApplication):void
             {
                 var layers:LayerBitmapCollection = app.layers;
@@ -91,48 +89,48 @@
             private function onCreateLayer(evt:Event):void
             {
                 try {
-                    // AddLayerErrorを捉える必要がある
+                    // should catch AddLayerError here
                     var app:IApplication = IApplication(Application.application);
                     app.canvasModule.createLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, NAME);
+                    Alert.show(e.message, title);
                 }
             }
             
             private function onCopyLayer(evt:Event):void
             {
                 try {
-                    // AddLayerErrorを捉える必要がある
+                    // should catch AddLayerError here
                     var app:IApplication = IApplication(Application.application);
                     app.canvasModule.copyLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, NAME);
+                    Alert.show(e.message, title);
                 }
             }
             
             private function onRemoveLayer(evt:Event):void
             {
                 try {
-                    // RemoveLayerErrorを捉える必要がある
+                    // should catch RemoveLayerError here
                     var app:IApplication = IApplication(Application.application);
                     app.canvasModule.removeLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, NAME);
+                    Alert.show(e.message, title);
                 }
             }
             
             private function onMergeLayers(evt:Event):void
             {
                 try {
-                    // MergeLayersErrorを捉える必要がある
+                    // should catch MergeLayersError here
                     var app:IApplication = IApplication(Application.application);
                     app.canvasModule.mergeLayers();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, NAME);
+                    Alert.show(e.message, title);
                 }
             }
             
@@ -180,17 +178,17 @@
     <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
                          itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)" selectedIndex="0">
         <ui:columns>
-            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
-            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
-            <!--mx:DataGridColumn headerText="マ" dataField="maskCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/-->
-            <mx:DataGridColumn editable="true" headerText="レイヤ名" dataField="name"/>
+            <mx:DataGridColumn editable="false" headerText="{_('The layer is visible')}" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="{_('The layer is locked')}" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <!--mx:DataGridColumn headerText="{_('Mask the layer')}" dataField="maskCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/-->
+            <mx:DataGridColumn editable="true" headerText="{_('The layer name')}" dataField="name"/>
         </ui:columns>
     </ui:ExtendedDataGrid>
-    <mx:Button x="6" y="246" id="newLayerButton" label="新" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCreateLayer(event)"/>
-    <mx:Button x="36" y="246" id="copyLayerButton" label="複" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCopyLayer(event)"/>
-    <mx:Button x="66" y="246" id="deleteLayerButton" label="削" width="22" paddingLeft="0" paddingRight="0" buttonDown="onRemoveLayer(event)"/>
-    <mx:Button x="96" y="246" id="mergeLayerButton" label="統" width="22" paddingLeft="0" paddingRight="0" buttonDown="onMergeLayers(event)"/>
+    <mx:Button x="6" y="246" id="newLayerButton" label="{_('Create a new layer')}" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCreateLayer(event)"/>
+    <mx:Button x="36" y="246" id="copyLayerButton" label="{_('Copy the layer')}" width="22" paddingLeft="0" paddingRight="0" buttonDown="onCopyLayer(event)"/>
+    <mx:Button x="66" y="246" id="deleteLayerButton" label="{_('Delete the layer')}" width="22" paddingLeft="0" paddingRight="0" buttonDown="onRemoveLayer(event)"/>
+    <mx:Button x="96" y="246" id="mergeLayerButton" label="{_('Merge the layer')}" width="22" paddingLeft="0" paddingRight="0" buttonDown="onMergeLayers(event)"/>
     <mx:ComboBox id="blendModeComboBox" x="0" y="0" width="124" change="onSelectBlendMode(event)"></mx:ComboBox>
-    <mx:Label x="5" y="23" text="透"/>
+    <mx:Label x="5" y="23" text="{_('Transparency of the layer')}"/>
     <mx:HSlider id="alphaSlider" x="18" y="20" width="99" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="onChangeAlphaSlider(event)"/>
 </mx:TitleWindow>

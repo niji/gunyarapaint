@@ -52,5 +52,365 @@
       <msgid>Cannot merge layers because there is only one layer or invisible layer is found</msgid>
       <msgstr>ひとつのレイヤーしか無いか、または不可視のレイヤーが見つかったため、レイヤーの統合が出来ません</msgstr>
     </message>
+    <message>
+      <msgid>Layers</msgid>
+      <msgstr>レイヤーツール</msgstr>
+    </message>
+    <message>
+      <msgid>Invert</msgid>
+      <msgstr>反転</msgstr>
+    </message>
+    <message>
+      <msgid>Rounded square</msgid>
+      <msgstr>角丸つき四角</msgstr>
+    </message>
+    <message>
+      <msgid>Saving data to the file has been completed.</msgid>
+      <msgstr>ファイルの書き出しに成功しました</msgstr>
+    </message>
+    <message>
+      <msgid>Ellipse</msgid>
+      <msgstr>楕円</msgstr>
+    </message>
+    <message>
+      <msgid>Circle module</msgid>
+      <msgstr>円ツール</msgstr>
+    </message>
+    <message>
+      <msgid>Bold</msgid>
+      <msgstr>太</msgstr>
+    </message>
+    <message>
+      <msgid>Recovery center</msgid>
+      <msgstr>ふっかつのじゅもん</msgstr>
+    </message>
+    <message>
+      <msgid>Overlay</msgid>
+      <msgstr>オーバーレイ</msgstr>
+    </message>
+    <message>
+      <msgid>Unknown module</msgid>
+      <msgstr>不明のツール</msgstr>
+    </message>
+    <message>
+      <msgid>Very Bold</msgid>
+      <msgstr>極太</msgstr>
+    </message>
+    <message>
+      <msgid>Auxially Lines</msgid>
+      <msgstr>補助線</msgstr>
+    </message>
+    <message>
+      <msgid>Delete the layer</msgid>
+      <msgstr>削</msgstr>
+    </message>
+    <message>
+      <msgid>Flood fill</msgid>
+      <msgstr>塗りつぶし</msgstr>
+    </message>
+    <message>
+      <msgid>Hardlight</msgid>
+      <msgstr>ハードライト</msgstr>
+    </message>
+    <message>
+      <msgid>Add</msgid>
+      <msgstr>覆い焼き</msgstr>
+    </message>
+    <message>
+      <msgid>Failed your post for something wrong. Post again.</msgid>
+      <msgstr>何らかの原因で投稿に失敗しました。再投稿してください。</msgstr>
+    </message>
+    <message>
+      <msgid>Name</msgid>
+      <msgstr>投稿者名</msgstr>
+    </message>
+    <message>
+      <msgid>Flood fill module</msgid>
+      <msgstr>塗りつぶしツール</msgstr>
+    </message>
+    <message>
+      <msgid>The canvas is not drawn. You should draw the canvas.</msgid>
+      <msgstr>キャンバスが真っ白です。なにか描いてください。</msgstr>
+    </message>
+    <message>
+      <msgid>Line</msgid>
+      <msgstr>直線</msgstr>
+    </message>
+    <message>
+      <msgid>The Recovery center</msgid>
+      <msgstr>ふっかつのじゅもん</msgstr>
+    </message>
+    <message>
+      <msgid>Transparency of the layer</msgid>
+      <msgstr>透</msgstr>
+    </message>
+    <message>
+      <msgid>Divided by lines</msgid>
+      <msgstr>分割</msgstr>
+    </message>
+    <message>
+      <msgid>Darken</msgid>
+      <msgstr>比較(暗)</msgstr>
+    </message>
+    <message>
+      <msgid>Line module</msgid>
+      <msgstr>直線ツール</msgstr>
+    </message>
+    <message>
+      <msgid>Flood fill with transparent</msgid>
+      <msgstr>透明塗りつぶし</msgstr>
+    </message>
+    <message>
+      <msgid>Input password is incorrect.</msgid>
+      <msgstr>じゅもんがちがいます</msgstr>
+    </message>
+    <message>
+      <msgid>Recover</msgid>
+      <msgstr>ふっかつ</msgstr>
+    </message>
+    <message>
+      <msgid>Reset all windows position</msgid>
+      <msgstr>ウィンドウ初期状態</msgstr>
+    </message>
+    <message>
+      <msgid>Brushes</msgid>
+      <msgstr>ペンツール</msgstr>
+    </message>
+    <message>
+      <msgid>Support tools</msgid>
+      <msgstr>補助ツール</msgstr>
+    </message>
+    <message>
+      <msgid>Screen</msgid>
+      <msgstr>スクリーン</msgstr>
+    </message>
+    <message>
+      <msgid>State of the pen</msgid>
+      <msgstr>ペンの状態</msgstr>
+    </message>
+    <message>
+      <msgid>The transparency of the brush</msgid>
+      <msgstr>透</msgstr>
+    </message>
+    <message>
+      <msgid>Square</msgid>
+      <msgstr>四角</msgstr>
+    </message>
+    <message>
+      <msgid>Pixel brush</msgid>
+      <msgstr>ド</msgstr>
+    </message>
+    <message>
+      <msgid>Pixel module</msgid>
+      <msgstr>ドット打ちツール</msgstr>
+    </message>
+    <message>
+      <msgid>Rejected.</msgid>
+      <msgstr>かんちがいしています</msgstr>
+    </message>
+    <message>
+      <msgid>Select color to the palette</msgid>
+      <msgstr>パレットに入れる色を選択してください</msgstr>
+    </message>
+    <message>
+      <msgid>Load</msgid>
+      <msgstr>よみこみ</msgstr>
+    </message>
+    <message>
+      <msgid>Very Thin</msgid>
+      <msgstr>極細</msgstr>
+    </message>
+    <message>
+      <msgid>Mirror vertically to all layers</msgid>
+      <msgstr>全レイヤー上下反転</msgstr>
+    </message>
+    <message>
+      <msgid>Redo count</msgid>
+      <msgstr>リドゥ</msgstr>
+    </message>
+    <message>
+      <msgid>Create a new layer</msgid>
+      <msgstr>新</msgstr>
+    </message>
+    <message>
+      <msgid>Redo</msgid>
+      <msgstr>リドゥ</msgstr>
+    </message>
+    <message>
+      <msgid>Message</msgid>
+      <msgstr>書き込み</msgstr>
+    </message>
+    <message>
+      <msgid>Canvas</msgid>
+      <msgstr>キャンバス</msgstr>
+    </message>
+    <message>
+      <msgid>Lighten</msgid>
+      <msgstr>比較(明)</msgstr>
+    </message>
+    <message>
+      <msgid>Canvas Zoom</msgid>
+      <msgstr>拡大</msgstr>
+    </message>
+    <message>
+      <msgid>The layer is visible</msgid>
+      <msgstr>目</msgstr>
+    </message>
+    <message>
+      <msgid>Difference</msgid>
+      <msgstr>差の絶対値</msgstr>
+    </message>
+    <message>
+      <msgid>Freehand (or Eraser) module</msgid>
+      <msgstr>手書き(消しゴム)ツール</msgstr>
+    </message>
+    <message>
+      <msgid>Post form</msgid>
+      <msgstr>書き込みフォーム</msgstr>
+    </message>
+    <message>
+      <msgid>Divided by pixels</msgid>
+      <msgstr>ピクセル単位</msgstr>
+    </message>
+    <message>
+      <msgid>Title</msgid>
+      <msgstr>絵のタイトル</msgstr>
+    </message>
+    <message>
+      <msgid>Subtract</msgid>
+      <msgstr>除外</msgstr>
+    </message>
+    <message>
+      <msgid>Normal</msgid>
+      <msgstr>通常</msgstr>
+    </message>
+    <message>
+      <msgid>Exporting the bitmap of the canvas to PNG has been completed.</msgid>
+      <msgstr>キャンバスのPNGへの書き出しが完了しました</msgstr>
+    </message>
+    <message>
+      <msgid>Save</msgid>
+      <msgstr>ほぞん</msgstr>
+    </message>
+    <message>
+      <msgid>Eraser brush</msgid>
+      <msgstr>消</msgstr>
+    </message>
+    <message>
+      <msgid>The title is empty.</msgid>
+      <msgstr>絵のタイトルが空です。</msgstr>
+    </message>
+    <message>
+      <msgid>Oekakiko</msgid>
+      <msgstr>お絵カキコ</msgstr>
+    </message>
+    <message>
+      <msgid>Thin</msgid>
+      <msgstr>細</msgstr>
+    </message>
+    <message>
+      <msgid>Merge the layer</msgid>
+      <msgstr>統</msgstr>
+    </message>
+    <message>
+      <msgid>Post!</msgid>
+      <msgstr>お絵カキコする！</msgstr>
+    </message>
+    <message>
+      <msgid>Copy the layer</msgid>
+      <msgstr>複</msgstr>
+    </message>
+    <message>
+      <msgid>Middle</msgid>
+      <msgstr>中</msgstr>
+    </message>
+    <message>
+      <msgid>The load center</msgid>
+      <msgstr>ぼうけんのしょ</msgstr>
+    </message>
+    <message>
+      <msgid>Multiply</msgid>
+      <msgstr>乗算</msgstr>
+    </message>
+    <message>
+      <msgid>Auxiliary box</msgid>
+      <msgstr>縦横</msgstr>
+    </message>
+    <message>
+      <msgid>Add this to my Watchlist</msgid>
+      <msgstr>ウォッチリストに登録</msgstr>
+    </message>
+    <message>
+      <msgid>Copy to the clipboard</msgid>
+      <msgstr>クリップボードにコピー</msgstr>
+    </message>
+    <message>
+      <msgid>The information of copyrights</msgid>
+      <msgstr>著作権情報</msgstr>
+    </message>
+    <message>
+      <msgid>The layer name</msgid>
+      <msgstr>レイヤ名</msgstr>
+    </message>
+    <message>
+      <msgid>Undo</msgid>
+      <msgstr>アンドゥ</msgstr>
+    </message>
+    <message>
+      <msgid>Mirror horizontally to all layers</msgid>
+      <msgstr>全レイヤー左右反転</msgstr>
+    </message>
+    <message>
+      <msgid>Undo count</msgid>
+      <msgstr>アンドゥ</msgstr>
+    </message>
+    <message>
+      <msgid>Dropper</msgid>
+      <msgstr>スポイト</msgstr>
+    </message>
+    <message>
+      <msgid>The message is empty.</msgid>
+      <msgstr>書き込みが空です。</msgstr>
+    </message>
+    <message>
+      <msgid>The layer is locked</msgid>
+      <msgstr>ロ</msgstr>
+    </message>
+    <message>
+      <msgid>Thickness</msgid>
+      <msgstr>太</msgstr>
+    </message>
+    <message>
+      <msgid>Free hand</msgid>
+      <msgstr>手書き</msgstr>
+    </message>
+    <message>
+      <msgid>Select color</msgid>
+      <msgstr>色選択画面</msgstr>
+    </message>
+    <message>
+      <msgid>Dropper module</msgid>
+      <msgstr>スポイトツール</msgstr>
+    </message>
+    <message>
+      <msgid>Canvas Rotation</msgid>
+      <msgstr>角度</msgstr>
+    </message>
+    <message>
+      <msgid>Circle</msgid>
+      <msgstr>円</msgstr>
+    </message>
+    <message>
+      <msgid>Auxiliary skew</msgid>
+      <msgstr>斜め</msgstr>
+    </message>
+    <message>
+      <msgid>Mask the layer</msgid>
+      <msgstr>マ</msgstr>
+    </message>
+    <message>
+      <msgid>Dump</msgid>
+      <msgstr>かきだし</msgstr>
+    </message>
   </lang>
 </langs>

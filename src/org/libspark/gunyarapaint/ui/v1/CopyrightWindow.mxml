@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="340" height="268" title="著作権情報"
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="340" height="268" title="{_('The information of copyrights')}"
                 showCloseButton="true" close="onClose()" x="146" y="223">
     <mx:Script>
         <![CDATA[

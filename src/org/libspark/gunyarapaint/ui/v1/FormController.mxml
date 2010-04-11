@@ -41,14 +41,14 @@
             
             private function postOekakiButtonHandler(evt:Event):void
             {
-                if (titleTextInput.text == '') {
-                    Alert.show('絵のタイトルが空です。', Application.application.ALERT_TITLE);
+                if (titleTextInput.text == "") {
+                    Alert.show(_("The title is empty."), title);
                 }
-                else if (messageTextArea.text == '') {
-                    Alert.show('書き込みが空です。', Application.application.ALERT_TITLE);
+                else if (messageTextArea.text == "") {
+                    Alert.show(_("The message is empty."), title);
                 }
                 else if (Application.application.commitCount == 0) {
-                    Alert.show('絵が描かれていません。お絵かきしてください。', Application.application.ALERT_TITLE);
+                    Alert.show(_("The canvas is not drawn. You should draw the canvas."), title);
                 }
                 else {
                     try {
@@ -71,7 +71,7 @@
                     }
                     catch (e:Error) {
                         Application.application.confirmUnload(true);
-                        Alert.show(e.message, Application.application.ALERT_TITLE);
+                        Alert.show(e.message, title);
                     }
                 }
             }
@@ -81,10 +81,10 @@
                 try {
                     if (com.errStr) {
                         // error
-                        Alert.show(com.errStr, Application.application.ALERT_TITLE);
+                        Alert.show(com.errStr, title);
                     }
-                    else if (com.data.toString() != '') {
-                        Alert.show(com.data.toString(), Application.application.ALERT_TITLE);
+                    else if (com.data.toString() != "") {
+                        Alert.show(com.data.toString(), title);
                     }
                     else {
                         // redirect
@@ -93,7 +93,7 @@
                     }
                 }
                 catch (e:Error) {
-                    Alert.show('何かしらのエラーが起きました…再投稿お願いいたします。', Application.application.ALERT_TITLE);
+                    Alert.show(_("Failed your post for something wrong. Post again."), title);
                 }
                 Application.application.confirmUnload(true);
             }
@@ -117,7 +117,10 @@
             {
                 var info:Object = com.jsonObject;
                 if (!info) {
-                    info = {'width': baseImg.width, 'height': baseImg.height};
+                    info = {
+                        "width": baseImg.width,
+                        "height": baseImg.height
+                    };
                 }
                 //baseImgToCanvas(info['width'], info['height'], parameters['undoBufferSize'], info);
             }
@@ -135,14 +138,14 @@
             private var m_initPosition:Point;
         ]]>
     </mx:Script>
-    <mx:Label x="12" y="7" text="投稿者名"/>
+    <mx:Label x="12" y="7" text="{_('Name')}"/>
     <mx:TextInput id="fromTextInput" x="55" y="3" maxChars="32" fontSize="14" focusThickness="0"/>
-    <mx:Label x="2" y="36" text="絵のタイトル"/>
+    <mx:Label x="2" y="36" text="{_('Title')}"/>
     <mx:TextInput id="titleTextInput" x="55" y="32" maxChars="32" fontSize="14" focusThickness="0" width="406"/>
-    <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="ウォッチリストに登録"/>
-    <mx:Label x="10" y="76" text="書き込み"/>
+    <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="{_('Add this to my Watchlist')}"/>
+    <mx:Label x="10" y="76" text="{_('Message')}"/>
     <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
         <mx:text></mx:text>
     </mx:TextArea>
-    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
+    <mx:Button id="postOekakiButton" x="353" y="7" label="{_('Post!')}" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
 </mx:TitleWindow>
