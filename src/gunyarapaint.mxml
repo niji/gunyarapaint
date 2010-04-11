@@ -101,7 +101,7 @@
             
             public function get supportedBlendModes():Array
             {
-                return blendModes.toArray();
+                return m_blendModes.slice();
             }
             
             public function get layers():LayerBitmapCollection
@@ -205,6 +205,19 @@
                 GetText.initLangFile(new XML(new languages()));
                 TranslatorRegistry.install(new GetTextTranslator());
                 m_title = _("Oekakiko");
+                m_blendModes = [
+                    { "label": _("Normal"),     "data": BlendMode.NORMAL     },
+                    { "label": _("Darken"),     "data": BlendMode.DARKEN     },
+                    { "label": _("Multiply"),   "data": BlendMode.MULTIPLY   },
+                    { "label": _("Lighten"),    "data": BlendMode.LIGHTEN    },
+                    { "label": _("Screen"),     "data": BlendMode.SCREEN     },
+                    { "label": _("Add"),        "data": BlendMode.ADD        },
+                    { "label": _("Overlay"),    "data": BlendMode.OVERLAY    },
+                    { "label": _("Hardlight"),  "data": BlendMode.HARDLIGHT  },
+                    { "label": _("Difference"), "data": BlendMode.DIFFERENCE },
+                    { "label": _("Subtract"),   "data": BlendMode.SUBTRACT   },
+                    { "label": _("Invert"),     "data": BlendMode.INVERT     },
+                ];
             }
             
             private function onApplicationComplete(event:FlexEvent):void
@@ -460,24 +473,12 @@
             private var m_commit:uint;
             private var m_windows:Vector.<IController>;
             private var m_title:String;
+            private var m_blendModes:Array;
             
             private var oekakiId:uint;
             private var redirectUrl:String;
         ]]>
     </mx:Script>
-    <mx:ArrayCollection id="blendModes">
-        <mx:Object label="{_('Normal')}" data="{BlendMode.NORMAL}" />
-        <mx:Object label="{_('Darken')}" data="{BlendMode.DARKEN}" />
-        <mx:Object label="{_('Multiply')}" data="{BlendMode.MULTIPLY}" />
-        <mx:Object label="{_('Lighten')}" data="{BlendMode.LIGHTEN}" />
-        <mx:Object label="{_('Screen')}" data="{BlendMode.SCREEN}" />
-        <mx:Object label="{_('Add')}" data="{BlendMode.ADD}" />
-        <mx:Object label="{_('Overlay')}" data="{BlendMode.OVERLAY}" />
-        <mx:Object label="{_('Hardlight')}" data="{BlendMode.HARDLIGHT}" />
-        <mx:Object label="{_('Difference')}" data="{BlendMode.DIFFERENCE}" />
-        <mx:Object label="{_('Subtract')}" data="{BlendMode.SUBTRACT}" />
-        <mx:Object label="{_('Invert')}" data="{BlendMode.INVERT}" />
-    </mx:ArrayCollection>
     <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
     <ui:FormController id="formController" title="{_('Post form')}"  x="10" y="10" height="169" width="486"/>
     <ui:ToolController id="toolController" left="504" y="10" title="{_('Support tools')}" />

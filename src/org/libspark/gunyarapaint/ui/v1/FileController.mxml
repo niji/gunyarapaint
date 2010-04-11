@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150"
-                title="_('The load center')"  showCloseButton="true" close="onClose()" x="146" y="223">
+                title="{_('The load center')}"  showCloseButton="true" close="onClose()" x="146" y="223">
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
@@ -91,6 +91,6 @@
             private var m_file:FileReference;
         ]]>
     </mx:Script>
-    <mx:Button id="loadButton" x="57" y="25" label="_('Load')" click="onLoad()"/>
-    <mx:Button id="saveButton" x="52" y="55" label="_('Save')" click="onSave()"/>
+    <mx:Button id="loadButton" x="57" y="25" label="{_('Load')}" click="onLoad()"/>
+    <mx:Button id="saveButton" x="52" y="55" label="{_('Save')}" click="onSave()"/>
 </mx:TitleWindow>

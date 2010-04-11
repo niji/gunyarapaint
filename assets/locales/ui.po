@@ -64,7 +64,7 @@ msgstr "投稿者名"
 
 #: FormController.mxml:143
 msgid "Title"
-msgstr "絵のタイトル"
+msgstr "タイトル"
 
 #: FormController.mxml:145
 msgid "Add this to my Watchlist"
@@ -215,7 +215,7 @@ msgid "Canvas Zoom"
 msgstr "拡大"
 
 #: ToolController.mxml:169
-msgid "Auxially Lines"
+msgid "Auxiliary Lines"
 msgstr "補助線"
 
 #: ToolController.mxml:171

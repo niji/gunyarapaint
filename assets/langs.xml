@@ -97,10 +97,6 @@
       <msgstr>極太</msgstr>
     </message>
     <message>
-      <msgid>Auxially Lines</msgid>
-      <msgstr>補助線</msgstr>
-    </message>
-    <message>
       <msgid>Delete the layer</msgid>
       <msgstr>削</msgstr>
     </message>
@@ -274,7 +270,7 @@
     </message>
     <message>
       <msgid>Title</msgid>
-      <msgstr>絵のタイトル</msgstr>
+      <msgstr>タイトル</msgstr>
     </message>
     <message>
       <msgid>Subtract</msgid>
@@ -339,6 +335,10 @@
     <message>
       <msgid>Add this to my Watchlist</msgid>
       <msgstr>ウォッチリストに登録</msgstr>
+    </message>
+    <message>
+      <msgid>Auxiliary Lines</msgid>
+      <msgstr>補助線</msgstr>
     </message>
     <message>
       <msgid>Copy to the clipboard</msgid>
