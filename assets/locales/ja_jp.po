@@ -1,0 +1,52 @@
+# AddLayerError.as
+msgid "Cannot create a layer more than %s"
+msgstr "%s個以上のレイヤーを作成することは出来ません"
+
+# EOLError.as
+msgid "Log has been reached to the end"
+msgstr "ログファイルが終端に達しました"
+
+# InvalidCommandError.as
+msgid "%s is not found at %s"
+msgstr "コマンド:%sは見つかりません(%s)"
+
+# InvalidSignatureError.as
+msgid "Tried loading invalid signature log"
+msgstr "不正な識別子を持つお絵描きログを読み込もうとしました"
+
+# InvisibleLayerError.as
+msgid "The current layer is invisible"
+msgstr "現在のレイヤーは不可視です"
+
+# LockedLayerError.as
+msgid "The current layer is locked"
+msgstr "現在のレイヤーはロックされています"
+
+# MergeLayersError.as
+msgid "Cannot merge layers because there is only one layer or invisible layer is found"
+msgstr "ひとつのレイヤーしか無いか、または不可視のレイヤーが見つかったため、レイヤーの統合が出来ません"
+
+# NotSupportedVersionError.as
+msgid "Tried loading not supported version's log (%s)"
+msgstr "サポートされていないお絵描きログを読み込もうとしました"
+
+# RedoError.as
+msgid "Cannot redo any more"
+msgstr "これ以上やり直すことが出来ません"
+
+# RemoveLayerError.as
+msgid "Cannot remove the layer because there is only one layer"
+msgstr "ひとつのレイヤーしか無いため、レイヤーを削除することが出来ません"
+
+# UndoError.as
+msgid "Cannot undo any more"
+msgstr "これ以上巻き戻すことが出来ません"
+
+# LayerBitmap.as
+msgid "Layer"
+msgstr "レイヤー"
+
+# LayerBitmapCollection.as
+msgid "Background"
+msgstr "背景"
+
