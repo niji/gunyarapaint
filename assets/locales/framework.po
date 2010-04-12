@@ -42,11 +42,15 @@ msgstr "ひとつのレイヤーしか無いため、レイヤーを削除する
 msgid "Cannot undo any more"
 msgstr "これ以上巻き戻すことが出来ません"
 
-# LayerBitmap.as
+# LayerBitmapCollection.as
+msgid "Background"
+msgstr "背景"
+
+# LayerBitmapCollection.as
 msgid "Layer"
 msgstr "レイヤー"
 
 # LayerBitmapCollection.as
-msgid "Background"
-msgstr "背景"
+msgid "Layer %s's copy"
+msgstr "レイヤー%sのコピー"
 
