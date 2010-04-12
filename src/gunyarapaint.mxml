@@ -39,6 +39,7 @@
             import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
             import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
             import org.libspark.gunyarapaint.ui.v1.CopyrightWindow;
+            import org.libspark.gunyarapaint.ui.v1.FileController;
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             import org.libspark.gunyarapaint.ui.v1.PNGExporter;
@@ -455,14 +456,21 @@
                 Alert.show(_("Exporting the bitmap of the canvas to PNG has been completed."), m_title);
             }
             
+            private function onClickImage():void
+            {
+                PopUpManager.addPopUp(new CopyrightWindow(), this, true);
+            }
+            
             private function get isForcusedOnTextField():Boolean
             {
                 return stage.focus is mx.core.UITextField;
             }
             
-            private function onClickImage():void
+            private function openRecoveryWindow(event:FlexEvent):void
             {
-                PopUpManager.addPopUp(new CopyrightWindow(), this, true);
+                //var controller:DataController = new DataController();
+                var controller:FileController = new FileController();
+                PopUpManager.addPopUp(controller, this, true);
             }
             
             private var m_bytes:ByteArray;
@@ -479,11 +487,13 @@
             private var redirectUrl:String;
         ]]>
     </mx:Script>
+    <mx:Button id="windowsResetButton" x="122" y="10" label="{_('Reset all windows position')}" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>
+    <mx:Button id="passwordButton" x="10" y="10" label="{_('Recovery center')}" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="openRecoveryWindow(event)"/>
     <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
-    <ui:FormController id="formController" title="{_('Post form')}"  x="10" y="10" height="169" width="486"/>
+    <ui:FormController id="formController" title="{_('Post form')}"  x="10" y="46"/>
     <ui:ToolController id="toolController" left="504" y="10" title="{_('Support tools')}" />
-    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="{_('Brushes')}" height="450" />
+    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="{_('Brushes')}"/>
     <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="{_('Canvas')}" />
-    <ui:LayerController x="533" y="223" layout="absolute" title="{_('Layers')}" id="layerController" height="312" />
+    <ui:LayerController x="533" y="223" layout="absolute" title="{_('Layers')}" id="layerController" />
     <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

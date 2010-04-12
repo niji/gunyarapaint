@@ -91,6 +91,6 @@
             private var m_file:FileReference;
         ]]>
     </mx:Script>
-    <mx:Button id="loadButton" x="57" y="25" label="{_('Load')}" click="onLoad()"/>
-    <mx:Button id="saveButton" x="52" y="55" label="{_('Save')}" click="onSave()"/>
+    <mx:Button id="loadButton" x="25" y="25" label="{_('Load')}" click="onLoad()" width="128"/>
+    <mx:Button id="saveButton" x="25" y="55" label="{_('Save')}" click="onSave()" width="128"/>
 </mx:TitleWindow>

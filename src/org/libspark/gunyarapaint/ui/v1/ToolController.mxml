@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="300" height="205"
-                implements="org.libspark.gunyarapaint.ui.v1.IController" removedFromStage="onRemove()">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="298" height="203"
+                implements="org.libspark.gunyarapaint.ui.v1.IController">
     <mx:Script>
         <![CDATA[
             import mx.core.Application;
@@ -12,6 +12,7 @@
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.UndoStack;
             import org.libspark.gunyarapaint.framework.events.UndoEvent;
+            import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             
             public function init(app:IApplication):void
@@ -63,21 +64,13 @@
                 canvasZoomValue.text = String(Math.round(n) / 100);
             }
             
-            private function onRemove():void
-            {
-                var undo:UndoStack = IApplication(Application.application).undoStack;
-                undo.removeEventListener(UndoEvent.UNDO, onChangeUndo);
-                undo.removeEventListener(UndoEvent.REDO, onChangeUndo);
-                undo.removeEventListener(UndoEvent.PUSH, onChangeUndo);
-            }
-            
             private function onChangeUndo(event:UndoEvent):void
             {
                 var undoStack:UndoStack = UndoStack(event.target);
                 var undoCount:int = undoStack.undoCount;
                 undoButton.label = _("Undo count");
                 if (undoCount > 0) {
-                    undoButton.label += '(' + undoCount + ')';
+                    undoButton.label += " (" + undoCount + ")";
                     undoButton.enabled = true;
                 }
                 else {
@@ -86,7 +79,7 @@
                 var redoCount:int = undoStack.redoCount;
                 redoButton.label = _("Redo count");
                 if (redoCount > 0) {
-                    redoButton.label += '(' + redoCount + ')';
+                    redoButton.label += " (" + redoCount + ")";
                     redoButton.enabled = true;
                 }
                 else {
@@ -121,14 +114,14 @@
                 Application.application.canvasController.auxDivideCount = uint(evt.value);
             }
             
-            private function onChangeAuxBoxVisible(evt:Event):void
+            private function onChangeAuxBoxVisible(event:Event):void
             {
-                Application.application.canvasController.auxBoxVisible = evt.target.selected;
+                Application.application.canvasController.auxBoxVisible = event.target.selected;
             }
             
-            private function onChangeAuxSkewVisible(evt:Event):void
+            private function onChangeAuxSkewVisible(event:Event):void
             {
-                Application.application.canvasController.auxSkewVisible = evt.target.selected;
+                Application.application.canvasController.auxSkewVisible = event.target.selected;
             }
             
             // 補助線種類の変更
@@ -147,40 +140,49 @@
                 }
             }
             
-            private function onLoad(evt:FlexEvent):void
+            private function onChangeEnableBigPixel(event:Event):void
             {
-                //var controller:DataController = new DataController();
-                var controller:FileController = new FileController();
-                PopUpManager.addPopUp(controller, this, true);
+                var module:ICanvasModule = IApplication(Application.application).canvasModule;
+                module.setCompatibility(Painter.COMPATIBILITY_BIG_PIXEL, event.target.selected);
+            }
+            
+            private function onChangeEnableUndoLayer(event:Event):void
+            {
+                var module:ICanvasModule = IApplication(Application.application).canvasModule;
+                module.setCompatibility(Painter.COMPATIBILITY_UNDO_LAYER, event.target.selected);
             }
             
             private var m_initPosition:Point;
         ]]>
     </mx:Script>
-    <mx:Canvas x="10" y="0" height="163" width="260">
-        <mx:Button id="rotateResetButton" y="63" label="{_('Canvas Rotation')}" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setRotate(0)"/>
-        <mx:Button id="zoomResetButton" y="81" label="{_('Canvas Zoom')}" width="29" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" right="204" buttonDown="setZoom(1)"/>
-        <mx:HSlider id="canvasRotate" y="62" width="152" minimum="-180" maximum="180" snapInterval="5" value="0"  right="49" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)"/>
-        <mx:HSlider id="canvasZoom" y="79" width="152" minimum="-4" maximum="32" snapInterval="0.5" value="1"  right="49" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)"/>
-        <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="18" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
-        <mx:Label y="66" text="°" right="0"/>
-        <mx:TextInput id="canvasZoomValue" y="83" width="32" height="17" right="18" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="onChangeCanvasZoom(event)"/>
-        <mx:Label y="83" text="%" right="0"/>
-        <mx:Label y="4" text="{_('Auxiliary Lines')}" right="199"/>
-        <mx:NumericStepper id="additionalNumberStepper" y="4" value="4" minimum="2" maximum="16" stepSize="1" right="143" height="18" fontSize="8" change="onChangeAuxDivideCount(event)"/>
-        <mx:CheckBox id="additionalBoxCheckBox" y="2" label="{_('Auxiliary box')}" right="8" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)"/>
-        <mx:CheckBox id="additionalSkewCheckBox" y="18" label="{_('Auxiliary skew')}" right="9" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)"/>
-        <mx:Button id="undoButton" y="38" label="{_('Undo')}" enabled="false" paddingLeft="3" paddingRight="3" right="89" buttonDown="IApplication(Application.application).canvasModule.undo()"/>
-        <mx:Button id="redoButton" y="38" label="{_('Redo')}" enabled="false" paddingLeft="3" paddingRight="3" right="12" buttonDown="IApplication(Application.application).canvasModule.redo()"/>
-        <mx:ComboBox y="4" id="additionalTypeComboBox" right="66" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)">
-            <mx:ArrayCollection id="auxTypes">
-                <mx:Object label="{_('Divided by lines')}" data="0" />
-                <mx:Object label="{_('Divided by pixels')}" data="1" />
-            </mx:ArrayCollection>
-        </mx:ComboBox>
-        <mx:Button id="windowsResetButton" x="146" y="136" label="{_('Reset all windows position')}" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="Application.application.resetWindowsPosition()"/>
-        <mx:Button id="horizontalMirrorButton" x="10" y="111" label="{_('Mirror horizontally to all layers')}" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).canvasModule.horizontalMirror(Painter.ALL_LAYERS)"/>
-        <mx:Button id="verticalMirrorButton" x="10" y="136" label="{_('Mirror vertically to all layers')}" width="120" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="IApplication(Application.application).canvasModule.verticalMirror(Painter.ALL_LAYERS)"/>
-        <mx:Button id="passwordButton" x="146" y="111" label="{_('Recovery center')}" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="onLoad(event)"/>
-    </mx:Canvas>
+    <mx:TabNavigator width="100%" height="100%" x="0" y="6">
+        <mx:Canvas width="100%" height="100%" label="補助ツール">
+            <mx:Label y="0" text="{_('Auxiliary Lines')}" x="10"/>
+            <mx:NumericStepper id="additionalNumberStepper" value="4" minimum="2" maximum="16" stepSize="1" right="174" height="18" fontSize="8" change="onChangeAuxDivideCount(event)" y="0"/>
+            <mx:CheckBox id="additionalBoxCheckBox" label="{_('Auxiliary box')}" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)" x="190" y="0"/>
+            <mx:CheckBox id="additionalSkewCheckBox" label="{_('Auxiliary skew')}" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)" x="190" y="15"/>
+            <mx:Button id="undoButton" y="36" label="{_('Undo')}" enabled="false" buttonDown="IApplication(Application.application).canvasModule.undo()" x="36"/>
+            <mx:Button id="redoButton" y="36" label="{_('Redo')}" enabled="false" buttonDown="IApplication(Application.application).canvasModule.redo()" x="136"/>
+            <mx:Button id="rotateResetButton" y="88" label="{_('Canvas Rotation')}" width="45" height="17" buttonDown="setRotate(0)" x="15"/>
+            <mx:Button id="zoomResetButton" label="{_('Canvas Zoom')}" width="45" height="17" buttonDown="setZoom(1)" x="15" y="66"/>
+            <mx:HSlider id="canvasRotate" y="66" width="152" minimum="-180" maximum="180" snapInterval="5" value="0" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)" x="64"/>
+            <mx:HSlider id="canvasZoom" y="87" width="152" minimum="-4" maximum="32" snapInterval="0.5" value="1" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)" x="64"/>
+            <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="28" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
+            <mx:Label y="66" text="°" right="10"/>
+            <mx:TextInput id="canvasZoomValue" y="87" width="32" height="17" right="28" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="onChangeCanvasZoom(event)"/>
+            <mx:Label y="87" text="%" right="10"/>
+            <mx:ComboBox y="2" id="additionalTypeComboBox" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)" x="112">
+                <mx:ArrayCollection id="auxTypes">
+                    <mx:Object label="{_('Divided by lines')}" data="0" />
+                    <mx:Object label="{_('Divided by pixels')}" data="1" />
+                </mx:ArrayCollection>
+            </mx:ComboBox>
+        </mx:Canvas>
+        <mx:Canvas width="100%" height="100%" label="互換性設定">
+            <mx:CheckBox id="enableUndoLayerCheckBox" label="レイヤー作成時アンドゥに入れる" fontSize="9" height="18" change="onChangeEnableUndoLayer(event)" x="10" y="10"/>
+            <!--
+            <mx:CheckBox id="enableBigPixelCheckBox" label="太さに合わせたドット打ちを使えるようにする" fontSize="9" height="18" change="onChangeEnableBigPixel(event)" x="10" y="36" selected="true"/>
+            -->
+        </mx:Canvas>
+    </mx:TabNavigator>
 </mx:TitleWindow>
