@@ -1,12 +1,12 @@
 <langs>
   <lang lang="ja_jp">
     <message>
-      <msgid>Layer %s's copy</msgid>
-      <msgstr>レイヤー%sのコピー</msgstr>
-    </message>
-    <message>
       <msgid>Cannot create a layer more than %s</msgid>
       <msgstr>%s個以上のレイヤーを作成することは出来ません</msgstr>
+    </message>
+    <message>
+      <msgid>%s's copy</msgid>
+      <msgstr>%sのコピー</msgstr>
     </message>
     <message>
       <msgid>Cannot redo any more</msgid>

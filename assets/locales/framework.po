@@ -51,6 +51,6 @@ msgid "Layer"
 msgstr "レイヤー"
 
 # LayerBitmapCollection.as
-msgid "Layer %s's copy"
-msgstr "レイヤー%sのコピー"
+msgid "%s's copy"
+msgstr "%sのコピー"
 
