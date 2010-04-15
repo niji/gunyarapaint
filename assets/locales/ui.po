@@ -357,3 +357,6 @@ msgstr "キャンバス"
 #: ../../../../../gunyarapaint.mxml:486
 msgid "Layers"
 msgstr "レイヤーツール"
+
+msgid "Line with transparent"
+msgstr "透明直線"

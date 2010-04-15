@@ -277,6 +277,10 @@
       <msgstr>タイトル</msgstr>
     </message>
     <message>
+      <msgid>Line with transparent</msgid>
+      <msgstr>透明直線</msgstr>
+    </message>
+    <message>
       <msgid>Subtract</msgid>
       <msgstr>除外</msgstr>
     </message>
