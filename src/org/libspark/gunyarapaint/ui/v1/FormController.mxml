@@ -52,7 +52,7 @@
                 }
                 else {
                     try {
-                        Application.application.confirmUnload(false);
+                        Application.application.shouldAlertOnUnload = false;
                         /*
                         var com:Com = new Com();
                         com.postOekaki(this,
@@ -70,7 +70,7 @@
                         */
                     }
                     catch (e:Error) {
-                        Application.application.confirmUnload(true);
+                        Application.application.shouldAlertOnUnload = true;
                         Alert.show(e.message, title);
                     }
                 }
@@ -95,7 +95,7 @@
                 catch (e:Error) {
                     Alert.show(_("Failed your post for something wrong. Post again."), title);
                 }
-                Application.application.confirmUnload(true);
+                Application.application.shouldAlertOnUnload = true;
             }
             
             private function getBaseImgHandler(com:Com):void

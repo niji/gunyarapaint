@@ -5,7 +5,6 @@
     layout="absolute" width="100%" height="100%"
     preinitialize="onPreinitialize(event)"
     applicationComplete="onApplicationComplete(event)"
-    removedFromStage="onRemove(event)"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
     implements="org.libspark.gunyarapaint.framework.ui.IApplication"
@@ -156,8 +155,10 @@
                 var h:uint = rect.height;
                 var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
                 bitmapData.setPixels(new Rectangle(0, 0, w, h), bitmapBytes);
-                m_recorder.load(bitmapData, metadata);
                 dataBytes.readBytes(m_bytes);
+                m_recorder.load(bitmapData, metadata);
+                m_bytes.position = m_bytes.length;
+                m_module.reset();
                 for (var i:String in m_windows) {
                     var controller:IController = m_windows[i];
                     var value:Object = controllerData[controller.name];
@@ -188,11 +189,11 @@
                 bytes.position = 0;
             }
             
-            public function confirmUnload(bool:Boolean):void
+            public function set shouldAlertOnUnload(value:Boolean):void
             {
                 if (ExternalInterface.available) {
                     try {
-                        ExternalInterface.call("changeAlertOnUnload", bool);
+                        ExternalInterface.call("changeAlertOnUnload", value);
                     }
                     catch (e:Error) {
                         Alert.show(e.message, m_title);
@@ -293,15 +294,6 @@
                 }
                 stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
                 stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-            }
-            
-            private function onRemove(event:Event):void
-            {
-                m_recorder.removeEventListener(CommandEvent.COMMITTED, onCommit);
-                stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);  
-                stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);  
-                //stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-                //stage.removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
             }
             
             private function onCommit(event:CommandEvent):void
