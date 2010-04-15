@@ -32,7 +32,7 @@
                 undo.addEventListener(UndoEvent.UNDO, onChangeUndo);
                 undo.addEventListener(UndoEvent.REDO, onChangeUndo);
                 blendModeComboBox.dataProvider = app.supportedBlendModes;
-                layerDataGrid.selectedIndex = currentLayerIndex;
+                layerDataGrid.selectedIndex = getSelectedIndex(layers);
                 alphaSlider.value = layers.at(currentLayerIndex).alpha;
                 for (var i:uint = 0; i < blendModeLength; i++) {
                     if (blendModes[i].data == currentLayerBlendMode)
@@ -67,7 +67,7 @@
                 var layer:LayerBitmap = layers.at(layers.currentIndex);
                 var currentLayerBlendMode:String = layer.blendMode;
                 layerDataGrid.dataProvider = layers.toDataProvider();
-                layerDataGrid.selectedIndex = layer.index;
+                layerDataGrid.selectedIndex = getSelectedIndex(layers);
                 alphaSlider.value = layer.alpha;
                 var ac:ArrayCollection = blendModeComboBox.dataProvider as ArrayCollection;
                 var length:uint = ac.length;
@@ -173,11 +173,16 @@
                 }
             }
             
+            private function getSelectedIndex(layers:LayerBitmapCollection):uint
+            {
+                return layers.count - layers.currentIndex - 1;
+            }
+            
             private var m_initPosition:Point;
         ]]>
     </mx:Script>
     <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
-                         itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)" selectedIndex="0">
+                         itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)">
         <ui:columns>
             <mx:DataGridColumn editable="false" headerText="{_('The layer is visible')}" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
             <mx:DataGridColumn editable="false" headerText="{_('The layer is locked')}" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
