@@ -33,12 +33,12 @@ package org.libspark.gunyarapaint.ui.v1
             m_auxPixel = new AuxPixelView(rect);
             m_auxLine.visible = true;
             m_auxPixel.visible = false;
+            m_rect = rect;
             // 透明画像、キャンバス本体、補助線(直線および斜線)の順番に追加される
             addChild(transparent);
             app.layers.setView(this);
             addChild(m_auxLine);
             addChild(m_auxPixel);
-            addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             var dispatcher:IEventDispatcher = IEventDispatcher(app);
             dispatcher.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
@@ -146,26 +146,21 @@ package org.libspark.gunyarapaint.ui.v1
             }
         }
         
-        private function onRemove(event:Event):void
-        {
-            var app:IApplication = IApplication(Application.application);
-            removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
-            var dispatcher:IEventDispatcher = IEventDispatcher(app);
-            dispatcher.removeEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
-            dispatcher.removeEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
-        }
-        
         private function onMouseDown(event:MouseEvent):void
         {
             var app:gunyarapaint = gunyarapaint(Application.application);
             var layers:LayerBitmapCollection = app.layers;
             try {
-                // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
-                // 必ず try/catch で囲む必要がある
-                app.canvasModule.start(event.localX, event.localY);
-                layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-                layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-                layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+                var x:Number = event.localX;
+                var y:Number = event.localY;
+                if (m_rect.contains(x, y)) {
+                    // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
+                    // 必ず try/catch で囲む必要がある
+                    app.canvasModule.start(x, y);
+                    layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+                    layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+                    layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+                }
             } catch (e:Error) {
                 removeMouseEvents(layers);
                 Alert.show(e.message, app.canvasModuleName);
@@ -174,8 +169,12 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onMouseMove(event:MouseEvent):void
         {
-            var app:IApplication = IApplication(Application.application);
-            app.canvasModule.move(event.localX, event.localY);
+            var x:Number = event.localX;
+            var y:Number = event.localY;
+            if (m_rect.contains(x, y)) {
+                var app:IApplication = IApplication(Application.application);
+                app.canvasModule.move(x, y);
+            }
         }
         
         private function onMouseUp(event:MouseEvent):void
@@ -207,5 +206,6 @@ package org.libspark.gunyarapaint.ui.v1
         
         private var m_auxLine:AuxLineView;
         private var m_auxPixel:AuxPixelView;
+        private var m_rect:Rectangle;
     }
 }
