@@ -23,6 +23,7 @@
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
             import org.libspark.gunyarapaint.framework.modules.TransparentFloodFill;
+            import org.libspark.gunyarapaint.framework.modules.TransparentLineModule;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.sepy.controls.SColorPicker;
             import org.sepy.events.SPickerEvent;
@@ -522,6 +523,7 @@
                 <mx:Object label="{_('Line')}" data="{LineModule.LINE}" />
                 <mx:Object label="{_('Circle')}" data="{CircleModule.CIRCLE}" />
                 <mx:Object label="{_('Flood fill')}" data="{FloodFillModule.FLOOD_FILL}" />
+                <mx:Object label="{_('Line with transparent')}" data="{TransparentLineModule.TRANSPARENT_LINE}" />
                 <mx:Object label="{_('Flood fill with transparent')}" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
                 <!--
                 <mx:Object label="{_('Dropper')}" data="" />
