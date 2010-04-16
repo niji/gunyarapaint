@@ -163,8 +163,8 @@
             <mx:CheckBox id="additionalSkewCheckBox" label="{_('Auxiliary skew')}" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)" x="190" y="15"/>
             <mx:Button id="undoButton" y="36" label="{_('Undo')}" enabled="false" buttonDown="IApplication(Application.application).canvasModule.undo()" x="36"/>
             <mx:Button id="redoButton" y="36" label="{_('Redo')}" enabled="false" buttonDown="IApplication(Application.application).canvasModule.redo()" x="136"/>
-            <mx:Button id="rotateResetButton" y="88" label="{_('Canvas Rotation')}" width="45" height="17" buttonDown="setRotate(0)" x="15"/>
-            <mx:Button id="zoomResetButton" label="{_('Canvas Zoom')}" width="45" height="17" buttonDown="setZoom(1)" x="15" y="66"/>
+            <mx:Button id="rotateResetButton" y="66" label="{_('Canvas Rotation')}" width="45" height="17" buttonDown="setRotate(0)" x="11"/>
+            <mx:Button id="zoomResetButton" label="{_('Canvas Zoom')}" width="45" height="17" buttonDown="setZoom(1)" x="11" y="87"/>
             <mx:HSlider id="canvasRotate" y="66" width="152" minimum="-180" maximum="180" snapInterval="5" value="0" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)" x="64"/>
             <mx:HSlider id="canvasZoom" y="87" width="152" minimum="-4" maximum="32" snapInterval="0.5" value="1" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)" x="64"/>
             <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="28" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
