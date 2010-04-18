@@ -71,6 +71,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
             m_initRectangle = new Rectangle(x, y, width, height);
+            status = _("Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)", 0, 0, 0, 0, 0, 0);
             ComponentResizer.addResize(this, new Point(100, 100));
             resize();
             update();

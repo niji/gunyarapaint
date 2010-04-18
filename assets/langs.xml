@@ -369,6 +369,10 @@
       <msgstr>全レイヤー左右反転</msgstr>
     </message>
     <message>
+      <msgid>Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)</msgid>
+      <msgstr>座標:(%s, %s) 透明度:%s 色:(%s,%s,%s)</msgstr>
+    </message>
+    <message>
       <msgid>Undo count</msgid>
       <msgstr>アンドゥ</msgstr>
     </message>

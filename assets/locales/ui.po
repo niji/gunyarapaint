@@ -360,3 +360,7 @@ msgstr "レイヤーツール"
 
 msgid "Line with transparent"
 msgstr "透明直線"
+
+msgid "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)"
+msgstr "座標:(%s, %s) 透明度:%s 色:(%s,%s,%s)"
+

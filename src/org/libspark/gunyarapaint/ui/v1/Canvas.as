@@ -18,6 +18,7 @@ package org.libspark.gunyarapaint.ui.v1
     import org.libspark.gunyarapaint.framework.AuxPixelView;
     import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
+    import org.libspark.gunyarapaint.framework.modules.CanvasModule;
     import org.libspark.gunyarapaint.framework.modules.DropperModule;
     import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
@@ -40,6 +41,7 @@ package org.libspark.gunyarapaint.ui.v1
             addChild(m_auxLine);
             addChild(m_auxPixel);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
             var dispatcher:IEventDispatcher = IEventDispatcher(app);
             dispatcher.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
             dispatcher.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
@@ -151,12 +153,13 @@ package org.libspark.gunyarapaint.ui.v1
             var app:gunyarapaint = gunyarapaint(Application.application);
             var layers:LayerBitmapCollection = app.layers;
             try {
+                var canvasModule:ICanvasModule = app.canvasModule;
                 var x:Number = event.localX;
                 var y:Number = event.localY;
                 if (m_rect.contains(x, y)) {
                     // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                     // 必ず try/catch で囲む必要がある
-                    app.canvasModule.start(x, y);
+                    canvasModule.start(x, y);
                     layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
                     layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                     layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
@@ -175,6 +178,23 @@ package org.libspark.gunyarapaint.ui.v1
                 var app:IApplication = IApplication(Application.application);
                 app.canvasModule.move(x, y);
             }
+        }
+        
+        private function onMouseMove2(event:MouseEvent):void
+        {
+            var app:IApplication = IApplication(Application.application);
+            var x:Number = event.localX;
+            var y:Number = event.localY;
+            var color:uint = app.canvasModule.getPixel32(x, y);
+            var status:String = _(
+                "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)",
+                x, y,
+                Number(((color >> 24) & 0xff) / 255).toPrecision(2),
+                ((color >> 16) & 0xff),
+                ((color >> 8) & 0xff),
+                ((color >> 0) & 0xff)
+            );
+            Application.application.canvasController.statusText = status;
         }
         
         private function onMouseUp(event:MouseEvent):void
