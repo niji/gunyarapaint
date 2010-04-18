@@ -126,6 +126,13 @@ package org.libspark.gunyarapaint.ui.v1
             m_auxPixel.visible = value ? true : false;
         }
         
+        public function set enablePixelInfo(value:Boolean):void
+        {
+            removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
+            if (value)
+                addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
+        }
+        
         private function onModuleChangeBefore(event:CanvasModuleEvent):void
         {
             removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);

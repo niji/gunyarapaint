@@ -47,6 +47,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_vScrollBar.addEventListener(ScrollEvent.SCROLL, onScrollVertically);
             m_hScrollBar.lineScrollSize = 1;
             m_vScrollBar.lineScrollSize = 1;
+            m_statusDefault = _("Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)", 0, 0, 0, 0, 0, 0);
             m_preDegree = 0;
             super();
         }
@@ -71,7 +72,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
             m_initRectangle = new Rectangle(x, y, width, height);
-            status = _("Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)", 0, 0, 0, 0, 0, 0);
+            status = m_statusDefault;
             ComponentResizer.addResize(this, new Point(100, 100));
             resize();
             update();
@@ -193,6 +194,12 @@ package org.libspark.gunyarapaint.ui.v1
             m_canvas.updateAuxViews();
         }
         
+        public function set enablePixelInfo(value:Boolean):void
+        {
+            status = value ? m_statusDefault : "";
+            m_canvas.enablePixelInfo = value;
+        }
+        
         public function set statusText(value:String):void
         {
             status = value;
@@ -299,6 +306,7 @@ package org.libspark.gunyarapaint.ui.v1
             );
         }
         
+        private var m_statusDefault:String;
         private var m_canvasContainer:Container; // GPCanvasを直接格納するコンテナ
         private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
         private var m_hScrollBar:HScrollBar; // 横スクロールバー
