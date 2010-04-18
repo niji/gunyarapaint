@@ -38,13 +38,12 @@ package org.libspark.gunyarapaint.ui.v1
             // 透明画像、キャンバス本体、補助線(直線および斜線)の順番に追加される
             addChild(transparent);
             app.layers.setView(this);
+            app.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
+            app.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
             addChild(m_auxLine);
             addChild(m_auxPixel);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
-            var dispatcher:IEventDispatcher = IEventDispatcher(app);
-            dispatcher.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
-            dispatcher.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
             // Capabilities.version で OS を判断するのは適切ではないが、
             // 少なくとも MacOSX ではマウスホイールを正しく感知することが出来無いので対処療法として
             if (Capabilities.version.indexOf("MAC") >= 0) {
@@ -140,17 +139,18 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onModuleChangeAfter(event:CanvasModuleEvent):void
         {
-            var app:IApplication = IApplication(Application.application);
+            var application:Object = Application.application;
+            var app:IApplication = IApplication(application);
             var module:ICanvasModule = app.canvasModule;
             if (module is MovableCanvasModule)
                 addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
             CursorManager.removeCursor(CursorManager.currentCursorID);
             switch (module.name) {
                 case DropperModule.DROPPER:
-                    CursorManager.setCursor(Application.application.dropperIcon);
+                    CursorManager.setCursor(application.dropperIcon);
                     break;
                 case MovableCanvasModule.MOVABLE_CANVAS:
-                    CursorManager..setCursor(Application.application.handOpenIcon);
+                    CursorManager.setCursor(application.handOpenIcon);
                     break;
             }
         }
@@ -189,7 +189,8 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onMouseMove2(event:MouseEvent):void
         {
-            var app:IApplication = IApplication(Application.application);
+            var application:Object = Application.application;
+            var app:IApplication = IApplication(application);
             var x:Number = event.localX;
             var y:Number = event.localY;
             var color:uint = app.canvasModule.getPixel32(x, y);
@@ -201,7 +202,7 @@ package org.libspark.gunyarapaint.ui.v1
                 ((color >> 8) & 0xff),
                 ((color >> 0) & 0xff)
             );
-            Application.application.canvasController.statusText = status;
+            application.canvasController.statusText = status;
         }
         
         private function onMouseUp(event:MouseEvent):void
