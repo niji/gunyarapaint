@@ -8,7 +8,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     public final class MovableCanvasModule extends CanvasModule implements ICanvasModule
     {
-        public static const MOVABLE_CANVAS:String = "movableCanvas";
+        public static const MOVABLE_CANVAS:String = "org.libspark.gunyarapaint.ui.v1.movableCanvas";
         
         public function MovableCanvasModule(recorder:Recorder, canvas:CanvasController)
         {
