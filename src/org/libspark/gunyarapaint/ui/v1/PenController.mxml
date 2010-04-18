@@ -135,8 +135,8 @@
             public function set pen(mode:String):void
             {
                 var app:IApplication = IApplication(Application.application);
-                currentState = mode;
-                app.setCanvasModule(currentState);
+                currentState = mode.split(".").pop();
+                app.setCanvasModule(mode);
             }
             
             public function set currentColor(value:uint):void
