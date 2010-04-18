@@ -65,11 +65,13 @@
             {
                 if (hasEventListener(CanvasModuleEvent.BEFORE_CHANGE))
                     dispatchEvent(new CanvasModuleEvent(CanvasModuleEvent.BEFORE_CHANGE));
+                m_module.unload();
                 m_module = m_context.getModule(value);
                 if (m_module == null) {
                     throw new IllegalOperationError(value
                         + " is not the ICanvasModule implemented module");
                 }
+                m_module.load();
                 if (hasEventListener(CanvasModuleEvent.AFTER_CHANGE))
                     dispatchEvent(new CanvasModuleEvent(CanvasModuleEvent.AFTER_CHANGE));
             }
