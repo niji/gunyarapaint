@@ -158,7 +158,7 @@
                 var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
                 bitmapData.setPixels(new Rectangle(0, 0, w, h), bitmapBytes);
                 dataBytes.readBytes(m_bytes);
-                m_recorder.load(bitmapData, metadata);
+                m_recorder.layers.load(bitmapData, metadata);
                 m_bytes.position = m_bytes.length;
                 m_module.reset();
                 for (var i:String in m_windows) {
@@ -173,7 +173,7 @@
                 var bitmapData:BitmapData = m_recorder.newLayerBitmapData;
                 var metadata:Object = {};
                 var rect:Rectangle = bitmapData.rect;
-                m_recorder.save(bitmapData, metadata);
+                m_recorder.layers.save(bitmapData, metadata);
                 bytes.endian = Endian.BIG_ENDIAN;
                 bytes.writeObject(m_bytes);
                 bytes.writeObject(rect);
