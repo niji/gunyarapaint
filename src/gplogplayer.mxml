@@ -108,7 +108,7 @@
                 }
                 m_log.position = 0;
                 m_player = Player.create(m_log);
-                m_player.load(m_layerImage, m_metadata);
+                m_player.layers.load(m_layerImage, m_metadata);
                 canvas.removeAllChildren();
                 var temp:UIComponent = new UIComponent();
                 var g:Graphics = temp.graphics;
