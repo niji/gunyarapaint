@@ -17,6 +17,7 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="gplogplayer.mxml"/>
     <application path="gunyarapaint.mxml"/>
     <application path="gpplayer.mxml"/>
   </applications>
