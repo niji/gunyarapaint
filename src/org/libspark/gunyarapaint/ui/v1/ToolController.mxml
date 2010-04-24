@@ -28,6 +28,7 @@
             {
                 var point:Object = data.point;
                 move(point.x, point.y);
+                updateUndoCount(IApplication(Application.application).undoStack);
                 setRotate(data.rotate);
                 setZoom(data.zoom);
             }
@@ -67,24 +68,7 @@
             private function onChangeUndo(event:UndoEvent):void
             {
                 var undoStack:UndoStack = UndoStack(event.target);
-                var undoCount:int = undoStack.undoCount;
-                undoButton.label = _("Undo count");
-                if (undoCount > 0) {
-                    undoButton.label += " (" + undoCount + ")";
-                    undoButton.enabled = true;
-                }
-                else {
-                    undoButton.enabled = false;
-                }
-                var redoCount:int = undoStack.redoCount;
-                redoButton.label = _("Redo count");
-                if (redoCount > 0) {
-                    redoButton.label += " (" + redoCount + ")";
-                    redoButton.enabled = true;
-                }
-                else {
-                    redoButton.enabled = false;
-                }
+                updateUndoCount(undoStack);
             }
             
             // 数値入力で拡大率指定
@@ -155,6 +139,28 @@
             {
                 var module:ICanvasModule = IApplication(Application.application).canvasModule;
                 module.setCompatibility(Painter.COMPATIBILITY_UNDO_LAYER, event.target.selected);
+            }
+            
+            private function updateUndoCount(undoStack:UndoStack):void
+            {
+                var undoCount:int = undoStack.undoCount;
+                undoButton.label = _("Undo count");
+                if (undoCount > 0) {
+                    undoButton.label += " (" + undoCount + ")";
+                    undoButton.enabled = true;
+                }
+                else {
+                    undoButton.enabled = false;
+                }
+                var redoCount:int = undoStack.redoCount;
+                redoButton.label = _("Redo count");
+                if (redoCount > 0) {
+                    redoButton.label += " (" + redoCount + ")";
+                    redoButton.enabled = true;
+                }
+                else {
+                    redoButton.enabled = false;
+                }
             }
             
             private var m_initPosition:Point;
