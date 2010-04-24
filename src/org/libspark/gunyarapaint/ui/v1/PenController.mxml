@@ -73,27 +73,51 @@
                 move(m_initPosition.x, m_initPosition.y);
             }
             
-            // Ctrlとかのショートカットキーで変わったペンToolを戻す
-            public function reset():void
+            public function saveState():void
+            {
+                if (m_state == STATE_NONE) {
+                    if (dropperButton.selected) {
+                        m_state = STATE_DROPPER;
+                    }
+                    else if (handtoolButton.selected) {
+                        m_state = STATE_HANDTOOL;
+                    }
+                    else if (eraserButton.selected) {
+                        m_state = STATE_ERASER;
+                    }
+                    else if (dotButton.selected) {
+                        m_state = STATE_DOT;
+                    }
+                    else {
+                        m_state = STATE_OTHER;
+                    }
+                }
+            }
+            
+            public function loadState():void
             {
                 var app:IApplication = IApplication(Application.application);
-                if (dropperButton.selected) {
-                    pen = DropperModule.DROPPER;
+                switch (m_state) {
+                    case STATE_DROPPER:
+                        pen = DropperModule.DROPPER;
+                        break;
+                    case STATE_HANDTOOL:
+                        pen = MovableCanvasModule.MOVABLE_CANVAS;
+                        break;
+                    case STATE_ERASER:
+                        pen = FreeHandModule.FREE_HAND;
+                        currentState = "eraser";
+                        app.canvasModule.blendMode = BlendMode.ERASE;
+                        break;
+                    case STATE_DOT:
+                        pen = PixelModule.PIXEL;
+                        break;
+                    default:
+                        pen = String(penModeComboBox.value);
+                        app.canvasModule.blendMode = String(blendModeComboBox.value);
+                        break;
                 }
-                else if (handtoolButton.selected) {
-                    currentState = MovableCanvasModule.MOVABLE_CANVAS;
-                }
-                else if (eraserButton.selected) {
-                    pen = LineModule.LINE;
-                    app.canvasModule.blendMode = BlendMode.ERASE;
-                }
-                else if (dotButton.selected) {
-                    pen = PixelModule.PIXEL;
-                }
-                else {
-                    pen = String(blendModeComboBox.value);
-                    app.canvasModule.blendMode = String(blendModeComboBox.value);
-                }
+                m_state = STATE_NONE;
             }
             
             // 全てのボタンを非選択状態にしてコンボボックス内にあるペンを有効にする
@@ -321,7 +345,15 @@
                 app.canvasModule.blendMode = String(blendModeComboBox.value);
             }
             
+            private const STATE_NONE:uint = 0;
+            private const STATE_DROPPER:uint = 1;
+            private const STATE_HANDTOOL:uint = 2;
+            private const STATE_ERASER:uint = 3;
+            private const STATE_DOT:uint = 4;
+            private const STATE_OTHER:uint = 5;
+            
             private var m_initPosition:Point;
+            private var m_state:uint = STATE_NONE;
         ]]>
     </mx:Script>
     

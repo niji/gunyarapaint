@@ -285,11 +285,11 @@
                 var keyCode:uint = event.keyCode;
                 switch (keyCode) {
                     case Keyboard.CONTROL:
+                        penController.saveState();
                         penController.pen = DropperModule.DROPPER;
                         break;
-                    case Keyboard.SHIFT:
-                        break;
                     case Keyboard.SPACE:
+                        penController.saveState();
                         penController.pen = MovableCanvasModule.MOVABLE_CANVAS;
                         break;
                     case 48: // 0
@@ -395,10 +395,8 @@
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
-                        penController.reset();
-                        break;
                     case Keyboard.SPACE:
-                        penController.reset();
+                        penController.loadState();
                         break;
                     case 65: // a
                         // Aキーの状態 = 解放
