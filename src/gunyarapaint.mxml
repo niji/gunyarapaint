@@ -37,6 +37,7 @@
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
             import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
             import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
+            import org.libspark.gunyarapaint.ui.v1.ApplicationData;
             import org.libspark.gunyarapaint.ui.v1.CopyrightWindow;
             import org.libspark.gunyarapaint.ui.v1.FileController;
             import org.libspark.gunyarapaint.ui.v1.IController;
@@ -145,50 +146,23 @@
             
             public function load(bytes:ByteArray):void
             {
-                bytes.position = 0;
-                bytes.endian = Endian.BIG_ENDIAN;
-                bytes.inflate();
-                var dataBytes:ByteArray = bytes.readObject();
-                var rect:Object = bytes.readObject();
-                var bitmapBytes:ByteArray = bytes.readObject();
-                var metadata:Object = bytes.readObject();
-                var controllerData:Object = bytes.readObject();
-                var w:uint = rect.width;
-                var h:uint = rect.height;
-                var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
-                bitmapData.setPixels(new Rectangle(0, 0, w, h), bitmapBytes);
-                dataBytes.readBytes(m_bytes);
-                m_recorder.layers.load(bitmapData, metadata);
-                m_bytes.position = m_bytes.length;
+                var appData:ApplicationData = new ApplicationData(
+                    m_recorder.layers,
+                    m_recorder.undoStack,
+                    m_windows
+                );
+                appData.load(bytes, m_bytes);
                 m_module.reset();
-                for (var i:String in m_windows) {
-                    var controller:IController = m_windows[i];
-                    var value:Object = controllerData[controller.name];
-                    controller.load(value);
-                }
             }
             
             public function save(bytes:ByteArray):void
             {
-                var bitmapData:BitmapData = m_recorder.newLayerBitmapData;
-                var metadata:Object = {};
-                var rect:Rectangle = bitmapData.rect;
-                m_recorder.layers.save(bitmapData, metadata);
-                bytes.endian = Endian.BIG_ENDIAN;
-                bytes.writeObject(m_bytes);
-                bytes.writeObject(rect);
-                bytes.writeObject(bitmapData.getPixels(rect));
-                bytes.writeObject(metadata);
-                var controllerData:Object = {};
-                for (var i:String in m_windows) {
-                    var value:Object = {};
-                    var controller:IController = m_windows[i];
-                    controller.save(value);
-                    controllerData[controller.name] = value;
-                }
-                bytes.writeObject(controllerData);
-                bytes.deflate();
-                bytes.position = 0;
+                var appData:ApplicationData = new ApplicationData(
+                    m_recorder.layers,
+                    m_recorder.undoStack,
+                    m_windows
+                );
+                appData.save(bytes, m_bytes);
             }
             
             public function set shouldAlertOnUnload(value:Boolean):void
