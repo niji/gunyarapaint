@@ -7,6 +7,16 @@ package org.libspark.gunyarapaint.ui.v1
     
     import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
     import org.libspark.gunyarapaint.framework.UndoStack;
+    
+    //
+    // 1:uint version
+    // n:ByteArray logData
+    // n:Rectangle rectangle
+    // n:Vector.<uint> pixelData
+    // n:Object metadata
+    // n:Object undoData
+    // n:Object controllerData
+    //
 
     public final class ApplicationData
     {
@@ -27,16 +37,16 @@ package org.libspark.gunyarapaint.ui.v1
             bytes.endian = Endian.BIG_ENDIAN;
             bytes.inflate();
             var version:uint = bytes.readUnsignedByte();
-            var dataBytes:ByteArray = bytes.readObject();
+            var dataBytes:ByteArray = ByteArray(bytes.readObject());
             var rect:Object = bytes.readObject();
-            var bitmapBytes:ByteArray = bytes.readObject();
+            var pixels:Vector.<uint> = Vector.<uint>(bytes.readObject());
             var metadata:Object = bytes.readObject();
             var undoData:Object = bytes.readObject();
             var controllerData:Object = bytes.readObject();
             var w:uint = rect.width;
             var h:uint = rect.height;
             var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
-            bitmapData.setPixels(new Rectangle(0, 0, w, h), bitmapBytes);
+            bitmapData.setVector(new Rectangle(0, 0, w, h), pixels);
             dataBytes.readBytes(toBytes);
             m_layers.load(bitmapData, metadata);
             m_undoStack.load(undoData);
@@ -61,7 +71,7 @@ package org.libspark.gunyarapaint.ui.v1
             bytes.writeByte(VERSION);
             bytes.writeObject(fromBytes);
             bytes.writeObject(rect);
-            bytes.writeObject(bitmapData.getPixels(rect));
+            bytes.writeObject(bitmapData.getVector(rect));
             bytes.writeObject(metadata);
             bytes.writeObject(undoData);
             var controllerData:Object = {};
