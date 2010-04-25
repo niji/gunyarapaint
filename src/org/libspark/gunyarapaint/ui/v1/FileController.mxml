@@ -91,6 +91,11 @@
             private var m_file:FileReference;
         ]]>
     </mx:Script>
+    <mx:states>
+        <mx:State name="loadonly">
+            <mx:SetProperty target="{saveButton}" name="enabled" value="false"/>
+        </mx:State>
+    </mx:states>
     <mx:Button id="loadButton" x="25" y="25" label="{_('Load')}" click="onLoad()" width="128"/>
     <mx:Button id="saveButton" x="25" y="55" label="{_('Save')}" click="onSave()" width="128"/>
 </mx:TitleWindow>
