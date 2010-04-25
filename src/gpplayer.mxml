@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" minWidth="420" minHeight="355" currentState="ready" applicationComplete="onApplicationComplete(event)">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" minWidth="420" minHeight="355"
+                currentState="ready" preinitialize="onPreinitialize(event)" applicationComplete="onApplicationComplete(event)">
     <mx:Script>
         <![CDATA[
+            import com.rails2u.gettext.GetText;
+            
             import mx.controls.Alert;
             import mx.core.UIComponent;
             import mx.core.UITextField;
@@ -12,26 +15,45 @@
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Player;
             import org.libspark.gunyarapaint.framework.events.PlayerEvent;
-            import org.libspark.gunyarapaint.ui.v1.DataController;
+            import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
+            import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
+            import org.libspark.gunyarapaint.ui.v1.FileController;
             import org.libspark.gunyarapaint.ui.v1.PNGExporter;
+            
+            [Bindable]
+            [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
+            private var languages:Class;
             
             public function load(bytes:ByteArray):void
             {
-                bytes.position = 0;
-                bytes.endian = Endian.BIG_ENDIAN;
-                bytes.inflate();
-                var dataBytes:ByteArray = bytes.readObject();
-                var player:Player = Player.create(dataBytes);
-                player.addEventListener(PlayerEvent.FINISHED, onFinished);
-                updateCanvasWindow(player);
-                updateWindowRectangle(player);
-                currentState = "";
-                if (m_player != null) {
-                    m_player.removeEventListener(PlayerEvent.FINISHED, onFinished);
-                    player.speed = m_player.speed;
+                try {
+                    bytes.position = 0;
+                    bytes.endian = Endian.BIG_ENDIAN;
+                    bytes.inflate();
+                    bytes.readUnsignedByte();
+                    var dataBytes:ByteArray = bytes.readObject();
+                    var player:Player = Player.create(dataBytes);
+                    player.addEventListener(PlayerEvent.FINISHED, onFinished);
+                    updateCanvasWindow(player);
+                    updateWindowRectangle(player);
+                    currentState = "";
+                    if (m_player != null) {
+                        m_player.removeEventListener(PlayerEvent.FINISHED, onFinished);
+                        player.speed = m_player.speed;
+                    }
+                    m_data = dataBytes;
+                    m_player = player;
                 }
-                m_data = dataBytes;
-                m_player = player;
+                catch (e:Error) {
+                    Alert.show(e.message);
+                }
+            }
+            
+            private function onPreinitialize(event:FlexEvent):void
+            {
+                GetText.locale = parameters["language"] || "ja_jp";
+                GetText.initLangFile(new XML(new languages()));
+                TranslatorRegistry.install(new GetTextTranslator());
             }
             
             private function onApplicationComplete(event:FlexEvent):void
@@ -79,7 +101,7 @@
 
             private function onLoad():void
             {
-                var controller:DataController = new DataController();
+                var controller:FileController = new FileController();
                 controller.currentState = "loadonly";
                 PopUpManager.addPopUp(controller, this, true);
             }
