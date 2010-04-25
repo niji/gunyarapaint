@@ -146,23 +146,33 @@
             
             public function load(bytes:ByteArray):void
             {
-                var appData:ApplicationData = new ApplicationData(
-                    m_recorder.layers,
-                    m_recorder.undoStack,
-                    m_windows
-                );
-                appData.load(bytes, m_bytes);
-                m_module.reset();
+                try {
+                    var appData:ApplicationData = new ApplicationData(
+                        m_recorder.layers,
+                        m_recorder.undoStack,
+                        m_windows
+                    );
+                    appData.load(bytes, m_bytes);
+                    m_module.reset();
+                }
+                catch (e:Error) {
+                    Alert.show(e.message, m_title);
+                }
             }
             
             public function save(bytes:ByteArray):void
             {
-                var appData:ApplicationData = new ApplicationData(
-                    m_recorder.layers,
-                    m_recorder.undoStack,
-                    m_windows
-                );
-                appData.save(bytes, m_bytes);
+                try {
+                    var appData:ApplicationData = new ApplicationData(
+                        m_recorder.layers,
+                        m_recorder.undoStack,
+                        m_windows
+                    );
+                    appData.save(bytes, m_bytes);
+                }
+                catch (e:Error) {
+                    Alert.show(e.message, m_title);
+                }
             }
             
             public function set shouldAlertOnUnload(value:Boolean):void
