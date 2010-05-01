@@ -1,46 +1,98 @@
+#: gunyarapaint.mxml:89
+msgid "Circle module"
+msgstr "円ツール"
+
+#: gunyarapaint.mxml:91
+msgid "Dropper module"
+msgstr "スポイトツール"
+
+#: gunyarapaint.mxml:93
+msgid "Flood fill module"
+msgstr "塗りつぶしツール"
+
+#: gunyarapaint.mxml:95
+msgid "Freehand (or Eraser) module"
+msgstr "手書き(消しゴム)ツール"
+
+#: gunyarapaint.mxml:97
+msgid "Line module"
+msgstr "直線ツール"
+
+#: gunyarapaint.mxml:99
+msgid "Pixel module"
+msgstr "ドットツール"
+
+#: gunyarapaint.mxml:101
+msgid "Unknown module"
+msgstr "不明なツール"
+
+#: gunyarapaint.mxml:195
+msgid "Oekakiko"
+msgstr "お絵カキコ"
+
+#: gunyarapaint.mxml:197
+msgid "Normal"
+msgstr "通常"
+
+#: gunyarapaint.mxml:198
+msgid "Darken"
+msgstr "比較(暗)"
+
+#: gunyarapaint.mxml:199
+msgid "Multiply"
+msgstr "乗算"
+
+#: gunyarapaint.mxml:200
+msgid "Lighten"
+msgstr "比較(明)"
+
+#: gunyarapaint.mxml:201
+msgid "Screen"
+msgstr "スクリーン"
+
+#: gunyarapaint.mxml:202
+msgid "Add"
+msgstr "覆い焼き"
+
+#: gunyarapaint.mxml:203
+msgid "Overlay"
+msgstr "オーバーレイ"
+
+#: gunyarapaint.mxml:204
+msgid "Hardlight"
+msgstr "ハードライト"
+
+#: gunyarapaint.mxml:205
+msgid "Difference"
+msgstr "差の絶対値"
+
+#: gunyarapaint.mxml:206
+msgid "Subtract"
+msgstr "除外"
+
+#: gunyarapaint.mxml:207
+msgid "Invert"
+msgstr "反転"
+
+#: gunyarapaint.mxml:432
+msgid "Exporting the bitmap of the canvas to PNG has been completed."
+msgstr "キャンバスのPNGへの書き出しが完了しました。"
+
 #: CopyrightWindow.mxml:2
 msgid "The information of copyrights"
 msgstr "著作権情報"
 
-#: DataController.mxml:3
-msgid "The Recovery center"
-msgstr "ふっかつのじゅもん"
-
-#: DataController.mxml:24
+#: DataController.mxml:23
 msgid "Rejected."
 msgstr "かんちがいしています"
 
-#: DataController.mxml:35
+#: DataController.mxml:34
 msgid "Input password is incorrect."
 msgstr "じゅもんがちがいます"
 
-#: DataController.mxml:63
-msgid "Recover"
-msgstr "ふっかつ"
-
-#: DataController.mxml:64
-msgid "Copy to the clipboard"
-msgstr "クリップボードにコピー"
-
-#: DataController.mxml:65
-msgid "Dump"
-msgstr "かきだし"
-
-#: FileController.mxml:3
-msgid "The load center"
-msgstr "ぼうけんのしょ"
-
-#: FileController.mxml:53
+#: FileController.mxml:52
 msgid "Saving data to the file has been completed."
-msgstr "ファイルの書き出しに成功しました"
-
-#: FileController.mxml:94
-msgid "Load"
-msgstr "よみこみ"
-
-#: FileController.mxml:95
-msgid "Save"
-msgstr "ほぞん"
+msgstr "ファイルの書き出しに成功しました。"
 
 #: FormController.mxml:45
 msgid "The title is empty."
@@ -58,309 +110,17 @@ msgstr "キャンバスが真っ白です。なにか描いてください。"
 msgid "Failed your post for something wrong. Post again."
 msgstr "何らかの原因で投稿に失敗しました。再投稿してください。"
 
-#: FormController.mxml:141
-msgid "Name"
-msgstr "投稿者名"
-
-#: FormController.mxml:143
-msgid "Title"
-msgstr "タイトル"
-
-#: FormController.mxml:145
-msgid "Add this to my Watchlist"
-msgstr "ウォッチリストに登録"
-
-#: FormController.mxml:146
-msgid "Message"
-msgstr "書き込み"
-
-#: FormController.mxml:150
-msgid "Post!"
-msgstr "お絵カキコする！"
-
-#: LayerController.mxml:183
-msgid "The layer is visible"
-msgstr "目"
-
-#: LayerController.mxml:184
-msgid "The layer is locked"
-msgstr "ロ"
-
-#: LayerController.mxml:185
-msgid "Mask the layer"
-msgstr "マ"
-
-#: LayerController.mxml:186
-msgid "The layer name"
-msgstr "レイヤ名"
-
-#: LayerController.mxml:189
-msgid "Create a new layer"
-msgstr "新"
-
-#: LayerController.mxml:190
-msgid "Copy the layer"
-msgstr "複"
-
-#: LayerController.mxml:191
-msgid "Delete the layer"
-msgstr "削"
-
-#: LayerController.mxml:192
-msgid "Merge the layer"
-msgstr "統"
-
-#: LayerController.mxml:194
-msgid "Transparency of the layer"
-msgstr "透"
-
-#: PenController.mxml:202
+#: PenController.mxml:227
 msgid "Select color to the palette"
 msgstr "パレットに入れる色を選択してください"
 
-#: PenController.mxml:422
-msgid "State of the pen"
-msgstr "ペンの状態"
-
-#: PenController.mxml:427
-msgid "Thickness"
-msgstr "太"
-
-#: PenController.mxml:429
-msgid "Very Thin"
-msgstr "極細"
-
-#: PenController.mxml:430
-msgid "Thin"
-msgstr "細"
-
-#: PenController.mxml:431
-msgid "Middle"
-msgstr "中"
-
-#: PenController.mxml:432
-msgid "Bold"
-msgstr "太"
-
-#: PenController.mxml:433
-msgid "Very Bold"
-msgstr "極太"
-
-#: PenController.mxml:496
-msgid "Select color"
-msgstr "色選択画面"
-
-#: PenController.mxml:499
-msgid "Eraser brush"
-msgstr "消"
-
-#: PenController.mxml:500
-msgid "Pixel brush"
-msgstr "ド"
-
-#: PenController.mxml:503
-msgid "The transparency of the brush"
-msgstr "透"
-
-#: PenController.mxml:521
-msgid "Free hand"
-msgstr "手書き"
-
-#: PenController.mxml:522
-msgid "Line"
-msgstr "直線"
-
-#: PenController.mxml:523
-msgid "Circle"
-msgstr "円"
-
-#: PenController.mxml:524
-msgid "Flood fill"
-msgstr "塗りつぶし"
-
-#: PenController.mxml:525
-msgid "Flood fill with transparent"
-msgstr "透明塗りつぶし"
-
-#: PenController.mxml:527
-msgid "Dropper"
-msgstr "スポイト"
-
-#: PenController.mxml:528
-msgid "Square"
-msgstr "四角"
-
-#: PenController.mxml:529
-msgid "Ellipse"
-msgstr "楕円"
-
-#: PenController.mxml:530
-msgid "Rounded square"
-msgstr "角丸つき四角"
-
-#: ToolController.mxml:78
+#: ToolController.mxml:147
 msgid "Undo count"
 msgstr "アンドゥ"
 
-#: ToolController.mxml:87
+#: ToolController.mxml:156
 msgid "Redo count"
 msgstr "リドゥ"
 
-#: ToolController.mxml:161
-msgid "Canvas Rotation"
-msgstr "角度"
-
-#: ToolController.mxml:162
-msgid "Canvas Zoom"
-msgstr "拡大"
-
-#: ToolController.mxml:169
-msgid "Auxiliary Lines"
-msgstr "補助線"
-
-#: ToolController.mxml:171
-msgid "Auxiliary box"
-msgstr "縦横"
-
-#: ToolController.mxml:172
-msgid "Auxiliary skew"
-msgstr "斜め"
-
-#: ToolController.mxml:173
-msgid "Undo"
-msgstr "アンドゥ"
-
-#: ToolController.mxml:174
-msgid "Redo"
-msgstr "リドゥ"
-
-#: ToolController.mxml:177
-msgid "Divided by lines"
-msgstr "分割"
-
-#: ToolController.mxml:178
-msgid "Divided by pixels"
-msgstr "ピクセル単位"
-
-#: ToolController.mxml:181
-msgid "Reset all windows position"
-msgstr "ウィンドウ初期状態"
-
-#: ToolController.mxml:182
-msgid "Mirror horizontally to all layers"
-msgstr "全レイヤー左右反転"
-
-#: ToolController.mxml:183
-msgid "Mirror vertically to all layers"
-msgstr "全レイヤー上下反転"
-
-#: ToolController.mxml:184
-msgid "Recovery center"
-msgstr "ふっかつのじゅもん"
-
-#: ../../../../../gunyarapaint.mxml:86
-msgid "Circle module"
-msgstr "円ツール"
-
-#: ../../../../../gunyarapaint.mxml:88
-msgid "Dropper module"
-msgstr "スポイトツール"
-
-#: ../../../../../gunyarapaint.mxml:90
-msgid "Flood fill module"
-msgstr "塗りつぶしツール"
-
-#: ../../../../../gunyarapaint.mxml:92
-msgid "Freehand (or Eraser) module"
-msgstr "手書き(消しゴム)ツール"
-
-#: ../../../../../gunyarapaint.mxml:94
-msgid "Line module"
-msgstr "直線ツール"
-
-#: ../../../../../gunyarapaint.mxml:96
-msgid "Pixel module"
-msgstr "ドット打ちツール"
-
-#: ../../../../../gunyarapaint.mxml:98
-msgid "Unknown module"
-msgstr "不明のツール"
-
-#: ../../../../../gunyarapaint.mxml:207
-msgid "Oekakiko"
-msgstr "お絵カキコ"
-
-#: ../../../../../gunyarapaint.mxml:442
-msgid "Exporting the bitmap of the canvas to PNG has been completed."
-msgstr "キャンバスのPNGへの書き出しが完了しました"
-
-#: ../../../../../gunyarapaint.mxml:469
-msgid "Normal"
-msgstr "通常"
-
-#: ../../../../../gunyarapaint.mxml:470
-msgid "Darken"
-msgstr "比較(暗)"
-
-#: ../../../../../gunyarapaint.mxml:471
-msgid "Multiply"
-msgstr "乗算"
-
-#: ../../../../../gunyarapaint.mxml:472
-msgid "Lighten"
-msgstr "比較(明)"
-
-#: ../../../../../gunyarapaint.mxml:473
-msgid "Screen"
-msgstr "スクリーン"
-
-#: ../../../../../gunyarapaint.mxml:474
-msgid "Add"
-msgstr "覆い焼き"
-
-#: ../../../../../gunyarapaint.mxml:475
-msgid "Overlay"
-msgstr "オーバーレイ"
-
-#: ../../../../../gunyarapaint.mxml:476
-msgid "Hardlight"
-msgstr "ハードライト"
-
-#: ../../../../../gunyarapaint.mxml:477
-msgid "Difference"
-msgstr "差の絶対値"
-
-#: ../../../../../gunyarapaint.mxml:478
-msgid "Subtract"
-msgstr "除外"
-
-#: ../../../../../gunyarapaint.mxml:479
-msgid "Invert"
-msgstr "反転"
-
-#: ../../../../../gunyarapaint.mxml:482
-msgid "Post form"
-msgstr "書き込みフォーム"
-
-#: ../../../../../gunyarapaint.mxml:483
-msgid "Support tools"
-msgstr "補助ツール"
-
-#: ../../../../../gunyarapaint.mxml:484
-msgid "Brushes"
-msgstr "ペンツール"
-
-#: ../../../../../gunyarapaint.mxml:485
-msgid "Canvas"
-msgstr "キャンバス"
-
-#: ../../../../../gunyarapaint.mxml:486
-msgid "Layers"
-msgstr "レイヤーツール"
-
-msgid "Line with transparent"
-msgstr "透明直線"
-
 msgid "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)"
 msgstr "座標:(%s, %s) 不透明度:%s 色:(%s,%s,%s)"
-
