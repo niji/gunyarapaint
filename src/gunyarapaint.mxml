@@ -463,13 +463,13 @@
             private var redirectUrl:String;
         ]]>
     </mx:Script>
-    <mx:Button id="windowsResetButton" x="122" y="10" label="{_('Reset all windows position')}" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>
-    <mx:Button id="passwordButton" x="10" y="10" label="{_('Recovery center')}" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="openRecoveryWindow(event)"/>
+    <mx:Button id="windowsResetButton" x="122" y="10" label="ウィンドウ初期状態" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>
+    <mx:Button id="passwordButton" x="10" y="10" label="ふっかつのじゅもん" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="openRecoveryWindow(event)"/>
     <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
-    <ui:FormController id="formController" title="{_('Post form')}"  x="10" y="46"/>
-    <ui:ToolController id="toolController" left="504" y="10" title="{_('Support tools')}" />
-    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="{_('Brushes')}"/>
-    <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="{_('Canvas')}" />
-    <ui:LayerController x="533" y="223" layout="absolute" title="{_('Layers')}" id="layerController" />
+    <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="46"/>
+    <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
+    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペンツール"/>
+    <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="キャンバス" />
+    <ui:LayerController x="533" y="223" layout="absolute" title="レイヤーツール" id="layerController" />
     <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5"/>
 </mx:Application>

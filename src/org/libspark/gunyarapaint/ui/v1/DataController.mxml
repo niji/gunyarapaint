@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="346"
-                title="{_('The Recovery center')}" showCloseButton="true" close="onClose()" x="146" y="223">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="346" showCloseButton="true" close="onClose()" x="146" y="223">
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
@@ -60,7 +59,7 @@
         </mx:State>
     </mx:states>
     <mx:TextArea id="passwordTextArea" x="0" y="0" width="380" height="266" verticalScrollPolicy="on"/>
-    <mx:Button id="loadButton" x="10" y="274" label="{_('Recover')}" click="onLoad()"/>
-    <mx:Button id="setClipboardButton" x="124.5" y="274" label="{_('Copy to the clipboard')}" click="onClipboard()"/>
-    <mx:Button id="saveButton" x="290" y="274" label="{_('Dump')}" click="onSave()"/>
+    <mx:Button id="loadButton" x="10" y="274" label="ふっかつ" click="onLoad()"/>
+    <mx:Button id="setClipboardButton" x="124.5" y="274" label="クリップボードにコピー" click="onClipboard()"/>
+    <mx:Button id="saveButton" x="290" y="274" label="かきだし" click="onSave()"/>
 </mx:TitleWindow>

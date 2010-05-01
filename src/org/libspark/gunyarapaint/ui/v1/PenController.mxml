@@ -452,18 +452,18 @@
     <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="108" height="410">
         
         <!-- preview -->
-        <mx:Label x="3" y="10" text="{_('State of the pen')}" width="53.5"/>
+        <mx:Label x="3" y="10" text="ペンの状態" width="53.5"/>
         <mx:Canvas x="64.5" y="1" width="30" height="30" id="previewCanvas" borderStyle="solid" borderThickness="1" borderColor="#000000">
         </mx:Canvas>
         
         <!-- thickness -->
-        <mx:Label x="3" y="28" text="{_('Thickness')}"/>
+        <mx:Label x="3" y="28" text="太"/>
         <mx:HSlider x="16" y="28" width="87" minimum="1" maximum="30" snapInterval="1" height="12" value="3" id="thicknessSlider" change="currentThickness = event.value"/>
-        <mx:Button x="2" y="47" label="{_('Very Thin')}" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="currentThickness = 1"/>
-        <mx:Button x="23" y="47" label="{_('Thin')}" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="currentThickness = 3"/>
-        <mx:Button x="44" y="47" label="{_('Middle')}" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="currentThickness = 10"/>
-        <mx:Button x="65" y="47" label="{_('Bold')}" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="currentThickness = 20"/>
-        <mx:Button x="86" y="47" label="{_('Very Bold')}" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="currentThickness = 30"/>
+        <mx:Button x="2" y="47" label="極細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="currentThickness = 1"/>
+        <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="currentThickness = 3"/>
+        <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="currentThickness = 10"/>
+        <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="currentThickness = 20"/>
+        <mx:Button x="86" y="47" label="極太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="currentThickness = 30"/>
         
         <!-- color palette -->
         <mx:Grid id="paletteGrid" x="15" y="73" borderStyle="none" borderColor="#000000" borderThickness="1" horizontalGap="4" verticalGap="3">
@@ -526,14 +526,14 @@
         </mx:Grid>
         
         <!-- tools -->
-        <mx:Button id="colorPickerButton" x="21.5" y="235" label="{_('Select color')}" width="65" paddingLeft="0" paddingRight="0" buttonDown="onClickColorPicker(event)"/>
+        <mx:Button id="colorPickerButton" x="21.5" y="235" label="色選択画面" width="65" paddingLeft="0" paddingRight="0" buttonDown="onClickColorPicker(event)"/>
         <mx:Button id="dropperButton" x="5" y="260" toggle="true" icon="{Application.application.dropperIcon}" width="22" paddingLeft="0" paddingRight="0" change="onSelectDropper(event)"/>
         <mx:Button id="handtoolButton" x="31" y="260" toggle="true" icon="{Application.application.handOpenIcon}" width="22" paddingLeft="0" paddingRight="0" change="onSelectHandTool(event)"/>
-        <mx:Button id="eraserButton" x="56" y="260" toggle="true" label="{_('Eraser brush')}" width="22" paddingLeft="0" paddingRight="0" change="onSelectEraser(event)"/>
-        <mx:Button id="dotButton" x="81" y="260" toggle="true" label="{_('Pixel brush')}" width="22" paddingLeft="0" paddingRight="0" change="onSelectDot(event)"/>
+        <mx:Button id="eraserButton" x="56" y="260" toggle="true" label="消" width="22" paddingLeft="0" paddingRight="0" change="onSelectEraser(event)"/>
+        <mx:Button id="dotButton" x="81" y="260" toggle="true" label="ド" width="22" paddingLeft="0" paddingRight="0" change="onSelectDot(event)"/>
         
         <!-- alpha -->
-        <mx:Label x="3" y="285" text="{_('The transparency of the brush')}"/>
+        <mx:Label x="3" y="285" text="透"/>
         <mx:Label x="1" y="295" text="{alphaSlider.value}" width="28" enabled="false" fontSize="8"/>
         <mx:HSlider id ="alphaSlider" x="20" y="282" width="87" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="currentAlpha = event.value"/>
         
@@ -551,17 +551,16 @@
         <!-- line method/blend mode -->
         <mx:ComboBox id="penModeComboBox" x="6" y="356" width="96" change="onSelectPen(event)">
             <mx:ArrayCollection>
-                <mx:Object label="{_('Free hand')}" data="{FreeHandModule.FREE_HAND}" />
-                <mx:Object label="{_('Line')}" data="{LineModule.LINE}" />
-                <mx:Object label="{_('Circle')}" data="{CircleModule.CIRCLE}" />
-                <mx:Object label="{_('Flood fill')}" data="{FloodFillModule.FLOOD_FILL}" />
-                <mx:Object label="{_('Line with transparent')}" data="{TransparentLineModule.TRANSPARENT_LINE}" />
-                <mx:Object label="{_('Flood fill with transparent')}" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
+                <mx:Object label="手書き" data="{FreeHandModule.FREE_HAND}" />
+                <mx:Object label="直線" data="{LineModule.LINE}" />
+                <mx:Object label="円" data="{CircleModule.CIRCLE}" />
+                <mx:Object label="塗りつぶし" data="{FloodFillModule.FLOOD_FILL}" />
+                <mx:Object label="透明直線" data="{TransparentLineModule.TRANSPARENT_LINE}" />
+                <mx:Object label="透明塗りつぶし" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
                 <!--
-                <mx:Object label="{_('Dropper')}" data="" />
-                <mx:Object label="{_('Square')}" data="" />
-                <mx:Object label="{_('Ellipse')}" data="" />
-                <mx:Object label="{_('Rounded square')}" data="" />
+                <mx:Object label="四角" data="" />
+                <mx:Object label="楕円" data="" />
+                <mx:Object label="角丸つき四角" data="" />
                 -->
             </mx:ArrayCollection>
         </mx:ComboBox>

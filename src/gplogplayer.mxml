@@ -19,6 +19,7 @@
             {
                 var url:String = parameters["oelogUrl"];
                 m_finished = true;
+                m_continue = false;
                 if (url) {
                     var com:Com = new Com();
                     com.sendGetUrlRequest(url, onResponseLog);
@@ -58,6 +59,7 @@
             private function onResponseMetadata(com:Com):void
             {
                 m_metadata = com.jsonObject;
+                m_continue = true;
                 play();
             }
             
@@ -105,10 +107,12 @@
                         "height": m_layerImage.height,
                         "undoBufferSize": 16
                     };
+                    m_continue = true;
                 }
                 m_log.position = 0;
                 m_player = Player.create(m_log);
-                m_player.layers.load(m_layerImage, m_metadata);
+                if (m_continue)
+                    m_player.layers.load(m_layerImage, m_metadata);
                 canvas.removeAllChildren();
                 var temp:UIComponent = new UIComponent();
                 var g:Graphics = temp.graphics;
@@ -149,6 +153,7 @@
             private var m_layerImage:BitmapData;
             private var m_metadata:Object;
             private var m_player:Player;
+            private var m_continue:Boolean;
             private var m_finished:Boolean;
         ]]>
     </mx:Script>

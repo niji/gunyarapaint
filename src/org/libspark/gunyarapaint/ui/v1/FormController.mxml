@@ -138,14 +138,14 @@
             private var m_initPosition:Point;
         ]]>
     </mx:Script>
-    <mx:Label x="12" y="7" text="{_('Name')}"/>
+    <mx:Label x="2" y="9" text="投稿者名"/>
     <mx:TextInput id="fromTextInput" x="55" y="3" maxChars="32" fontSize="14" focusThickness="0"/>
-    <mx:Label x="2" y="36" text="{_('Title')}"/>
+    <mx:Label x="2" y="38" text="タイトル"/>
     <mx:TextInput id="titleTextInput" x="55" y="32" maxChars="32" fontSize="14" focusThickness="0" width="406"/>
-    <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="{_('Add this to my Watchlist')}"/>
-    <mx:Label x="10" y="76" text="{_('Message')}"/>
+    <mx:CheckBox id="watchlistCheckBox" x="223" y="7" label="ウォッチリストに登録"/>
+    <mx:Label x="2" y="76" text="書き込み"/>
     <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
         <mx:text></mx:text>
     </mx:TextArea>
-    <mx:Button id="postOekakiButton" x="353" y="7" label="{_('Post!')}" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
+    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
 </mx:TitleWindow>
