@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+                title="ニコニコ大百科通信班" x="168" y="86"
+                showCloseButton="false" width="288" height="104" backgroundColor="#FFFFFF" layout="absolute" horizontalAlign="center">
+    <mx:ProgressBar id="progressBar" x="10" y="12" label="カキコ中…" labelPlacement="center" width="248"/>
+    <mx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import mx.core.Application;
+            import mx.events.FlexEvent;
+            import mx.managers.PopUpManager;
+            
+            import org.libspark.gunyarapaint.ui.v1.net.Parameters;
+            import org.libspark.gunyarapaint.ui.v1.net.Request;
+            
+            public function post(parameters:Parameters):void
+            {
+                var request:Request = new Request();
+                request.addEventListener(ProgressEvent.PROGRESS, onProgress);
+                request.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                request.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
+                request.addEventListener(Event.COMPLETE, onComplete);
+                m_request = request;
+                try {
+                    request.post(Application.application.parameters.postUrl, parameters);
+                }
+                catch (e:Error) {
+                    removeEvents();
+                    throw e;
+                }
+            }
+            
+            private function onProgress(event:ProgressEvent):void
+            {
+                progressBar.setProgress(event.bytesLoaded, event.bytesTotal);
+            }
+            
+            private function onComplete(event:Event):void
+            {
+                
+                try {
+                    var data:String = String(m_request.data);
+                    if (data != "") {
+                        Alert.show(data, title);
+                    }
+                    else {
+                        m_request.redirect(Application.application.parameters.redirectUrl);
+                    }
+                }
+                catch (e:Error) {
+                    Alert.show(_("Failed your post for something wrong. Try again."), title);
+                }
+                finally {
+                    removeEvents();
+                }
+                Application.application.shouldAlertOnUnload = true;
+            }
+            
+            private function onIOError(event:IOErrorEvent):void
+            {
+                removeEvents();
+                Alert.show(_("IO error has occured. Try again: %s", event.text));
+            }
+            
+            private function onSecurityError(event:SecurityErrorEvent):void
+            {
+                removeEvents();
+                Alert.show(_("Security error has occured. This error should not be occured: %s", event.text));
+            }
+            
+            private function onButtonDown(event:FlexEvent):void
+            {
+                m_request.close();
+                removeEvents();
+                Alert.show(_("Requested post has been canceled, but the post will not be able to rollback."));
+            }
+            
+            private function removeEvents():void
+            {
+                m_request.removeEventListener(ProgressEvent.PROGRESS, onProgress);
+                m_request.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                m_request.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
+                m_request.removeEventListener(Event.COMPLETE, onComplete);
+                PopUpManager.removePopUp(this);
+            }
+            
+            private var m_request:Request;
+        ]]>
+    </mx:Script>
+    <mx:Button id="cancelButton" x="95.5" y="36" label="キャンセル" buttonDown="onButtonDown(event)" />
+</mx:TitleWindow>

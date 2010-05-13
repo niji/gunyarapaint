@@ -43,6 +43,7 @@
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             import org.libspark.gunyarapaint.ui.v1.PNGExporter;
+            import org.libspark.gunyarapaint.ui.v1.net.Parameters;
             
             [Bindable]
             [Embed(source="../assets/images/icon_dropper.png")]
@@ -173,6 +174,18 @@
                 catch (e:Error) {
                     Alert.show(e.message, m_title);
                 }
+            }
+            
+            public function fillParameters(param:Parameters):void
+            {
+                if (Application.application.commitCount == 0)
+                    throw new ArgumentError(_("The canvas is not drawn. You should draw the canvas."));
+                param.cookie = parameters.cookie;
+                param.magic = parameters.magic;
+                param.refererId = parameters.oekakiId;
+                //param.imageBytes = 
+                //param.logBytes = 
+                //param.layerImageBytes =
             }
             
             public function set shouldAlertOnUnload(value:Boolean):void

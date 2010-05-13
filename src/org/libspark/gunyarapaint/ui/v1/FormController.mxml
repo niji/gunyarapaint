@@ -6,8 +6,11 @@
         <![CDATA[
             import mx.controls.Alert;
             import mx.core.Application;
+            import mx.managers.PopUpManager;
             
             import org.libspark.gunyarapaint.framework.ui.IApplication;
+            import org.libspark.gunyarapaint.ui.v1.net.Parameters;
+            import org.libspark.gunyarapaint.ui.v1.net.Request;
             import org.libspark.nicopedia.Com;
             
             private var baseImg:BitmapData;
@@ -41,61 +44,21 @@
             
             private function postOekakiButtonHandler(evt:Event):void
             {
-                if (titleTextInput.text == "") {
-                    Alert.show(_("The title is empty."), title);
-                }
-                else if (messageTextArea.text == "") {
-                    Alert.show(_("The message is empty."), title);
-                }
-                else if (Application.application.commitCount == 0) {
-                    Alert.show(_("The canvas is not drawn. You should draw the canvas."), title);
-                }
-                else {
-                    try {
-                        Application.application.shouldAlertOnUnload = false;
-                        /*
-                        var com:Com = new Com();
-                        com.postOekaki(this,
-                        parameters['postUrl'],
-                        parameters['magic'],
-                        parameters['cookie'],
-                        fromTextInput.text,
-                        titleTextInput.text,
-                        messageTextArea.text,
-                        watchlistCheckBox.selected,
-                        oekakiId,
-                        new ByteArray(), //_logger.dataForPost,
-                        commCompleteHandler
-                        );
-                        */
-                    }
-                    catch (e:Error) {
-                        Application.application.shouldAlertOnUnload = true;
-                        Alert.show(e.message, title);
-                    }
-                }
-            }
-            
-            private function commCompleteHandler(com:Com):void
-            {
+                Application.application.shouldAlertOnUnload = false;
                 try {
-                    if (com.errStr) {
-                        // error
-                        Alert.show(com.errStr, title);
-                    }
-                    else if (com.data.toString() != "") {
-                        Alert.show(com.data.toString(), title);
-                    }
-                    else {
-                        // redirect
-                        //Com.redirect(redirectUrl);
-                        return;
-                    }
+                    var parameters:Parameters = new Parameters();
+                    parameters.name = fromTextInput.text;
+                    parameters.message = messageTextArea.text;
+                    parameters.title = titleTextInput.text;
+                    Application.application.fillParameters(parameters);
+                    var window:RequestWindow = new RequestWindow();
+                    PopUpManager.addPopUp(window, this);
+                    window.post(parameters);
                 }
                 catch (e:Error) {
-                    Alert.show(_("Failed your post for something wrong. Post again."), title);
+                    Application.application.shouldAlertOnUnload = true;
+                    Alert.show(e.message, title);
                 }
-                Application.application.shouldAlertOnUnload = true;
             }
             
             private function getBaseImgHandler(com:Com):void
@@ -147,5 +110,5 @@
     <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
         <mx:text></mx:text>
     </mx:TextArea>
-    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" enabled="false" buttonDown="postOekakiButtonHandler(event)"/>
+    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" buttonDown="postOekakiButtonHandler(event)"/>
 </mx:TitleWindow>
