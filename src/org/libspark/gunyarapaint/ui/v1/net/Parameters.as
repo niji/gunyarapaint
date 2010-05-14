@@ -29,6 +29,8 @@ package org.libspark.gunyarapaint.ui.v1.net
         
         public var logBytes:ByteArray;
         
+        public var logCount:uint;
+        
         public var metadata:Object;
         
         public function serialize():ByteArray
@@ -39,7 +41,6 @@ package org.libspark.gunyarapaint.ui.v1.net
                 throw new ArgumentError(_("The message is empty."));
             var vars:URLVariables = new URLVariables();
             var bytes:ByteArray = new ByteArray();
-            var data:ByteArray = new ByteArray();
             var info:ByteArray = new ByteArray();
             info.writeUTFBytes(JSON.encode(metadata));
             vars.cookie = cookie;
@@ -49,7 +50,7 @@ package org.libspark.gunyarapaint.ui.v1.net
             vars.MESSAGE = message;
             vars.watchlist = shouldAddWatchList ? "t" : "";
             vars.ref_oekaki_id = refererId;
-            vars.log_count = metadata.log_count;
+            vars.log_count = logCount;
             var encoded:String = vars.toString();
             bytes.writeUTFBytes(":" + encoded.length + "=" + encoded);
             bytes.writeUTFBytes("&IMAGE:" + imageBytes.length + "=");
@@ -58,7 +59,7 @@ package org.libspark.gunyarapaint.ui.v1.net
             bytes.writeBytes(logBytes);
             bytes.writeUTFBytes("&IMAGE_LAYERS:" + layerImageBytes.length + "=");
             bytes.writeBytes(layerImageBytes);
-            bytes.writeUTFBytes("&IMAGE_INFO:" + data.length);
+            bytes.writeUTFBytes("&IMAGE_INFO:" + info.length + "=");
             bytes.writeBytes(info);
             return bytes;
         }

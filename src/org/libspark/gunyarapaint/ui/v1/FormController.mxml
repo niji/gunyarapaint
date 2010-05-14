@@ -42,7 +42,7 @@
                 move(m_initPosition.x, m_initPosition.y);
             }
             
-            private function postOekakiButtonHandler(evt:Event):void
+            private function onPost(evt:Event):void
             {
                 Application.application.shouldAlertOnUnload = false;
                 try {
@@ -50,6 +50,7 @@
                     parameters.name = fromTextInput.text;
                     parameters.message = messageTextArea.text;
                     parameters.title = titleTextInput.text;
+                    parameters.shouldAddWatchList = watchlistCheckBox.selected;
                     Application.application.fillParameters(parameters);
                     var window:RequestWindow = new RequestWindow();
                     PopUpManager.addPopUp(window, this);
@@ -59,43 +60,6 @@
                     Application.application.shouldAlertOnUnload = true;
                     Alert.show(e.message, title);
                 }
-            }
-            
-            private function getBaseImgHandler(com:Com):void
-            {
-                baseImg = Bitmap(com.content).bitmapData;
-                /*
-                if (parameters['baseImgInfoUrl']) {
-                new Com().sendGetUrlRequest(parameters['baseImgInfoUrl'], getBaseImgInfoHandler);
-                } else {
-                // 画像のサイズがそのままwidth/height
-                // このロジックは通らなくなっているはずだが、移行措置のため残してある。
-                // 消してもよい。
-                baseImgToCanvas(baseImg.width, baseImg.height, parameters['undoBufferSize'], null);
-                }
-                */
-            }
-            
-            private function getBaseImgInfoHandler(com:Com):void
-            {
-                var info:Object = com.jsonObject;
-                if (!info) {
-                    info = {
-                        "width": baseImg.width,
-                        "height": baseImg.height
-                    };
-                }
-                //baseImgToCanvas(info['width'], info['height'], parameters['undoBufferSize'], info);
-            }
-            
-            private function baseImgToCanvas(width:uint, height:uint, undoBufferSize:uint, baseInfo:Object):void
-            {
-                /*
-                _logger = GPLogger.createForDraw(width, height, undoBufferSize,
-                baseImg, baseInfo);
-                canvasWindow.logger = _logger;
-                */
-                enabled = true;
             }
             
             private var m_initPosition:Point;
@@ -110,5 +74,5 @@
     <mx:TextArea id="messageTextArea" x="55" y="61" width="406" height="61" fontSize="14" focusThickness="0">
         <mx:text></mx:text>
     </mx:TextArea>
-    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" buttonDown="postOekakiButtonHandler(event)"/>
+    <mx:Button id="postOekakiButton" x="353" y="7" label="お絵カキコする！" fillAlphas="[1.0, 1.0, 1.0, 1.0]" fillColors="[#FFFFFF, #FF9999, #FFFFFF, #FFCCCC]" buttonDown="onPost(event)"/>
 </mx:TitleWindow>

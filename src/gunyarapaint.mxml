@@ -12,6 +12,8 @@
     <mx:Script>
         <![CDATA[
             import com.adobe.images.PNGEncoder;
+            import com.adobe.serialization.json.JSON;
+            import com.adobe.serialization.json.JSONParseError;
             import com.rails2u.gettext.GetText;
             
             import mx.controls.Alert;
@@ -178,14 +180,29 @@
             
             public function fillParameters(param:Parameters):void
             {
-                if (Application.application.commitCount == 0)
-                    throw new ArgumentError(_("The canvas is not drawn. You should draw the canvas."));
+                //if (commitCount == 0)
+                //    throw new ArgumentError(_("The canvas is not drawn. You should draw the canvas."));
+                if (!parameters.postUrl    ||
+                    !parameters.cookie     ||
+                    !parameters.magic      ||
+                    !parameters.redirectUrl)
+                    throw new ArgumentError(_("Request cannot accept for the invalid state. This error should not be occured"));
+                var layers:LayerBitmapCollection = m_recorder.layers;
+                var bitmapData:BitmapData = canvasController.exportBitmapData();
+                var layerBitmap:BitmapData = layers.newLayerBitmapData;
+                var metadata:Object = {};
+                layers.save(layerBitmap, metadata);
+                metadata.log_count = commitCount;
+                metadata.pen_details = penController.dataForPost;
+                metadata.undo_buffer_size = m_recorder.undoStack.size;
                 param.cookie = parameters.cookie;
                 param.magic = parameters.magic;
                 param.refererId = parameters.oekakiId;
-                //param.imageBytes = 
-                //param.logBytes = 
-                //param.layerImageBytes =
+                param.imageBytes = PNGEncoder.encode(bitmapData);
+                param.layerImageBytes = PNGEncoder.encode(layerBitmap);
+                param.logBytes = m_recorder.bytes;
+                param.logCount = commitCount;
+                param.metadata = metadata;
             }
             
             public function set shouldAlertOnUnload(value:Boolean):void
@@ -198,6 +215,33 @@
                         Alert.show(e.message, m_title);
                     }
                 }
+            }
+            
+            private function openRecoveryWindow(event:FlexEvent):void
+            {
+                //var controller:DataController = new DataController();
+                var controller:FileController = new FileController();
+                PopUpManager.addPopUp(controller, this, true);
+            }
+            
+            private function restoreCanvas(metadata:Object):void
+            {
+                m_recorder.layers.load(m_baseImage, metadata);
+                penController.palettes = metadata.pen_details[0];
+                layerController.update();
+                enabled = true;
+            }
+            
+            private function addLoaderEvents(loader:EventDispatcher):void
+            {
+                loader.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
+            }
+            
+            private function removeLoaderEvents(loader:EventDispatcher):void
+            {
+                loader.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
             }
             
             private function onPreinitialize(event:FlexEvent):void
@@ -227,35 +271,34 @@
                 var height:int = int(parameters["canvasHeight"]);
                 var undoBufferSize:uint = int(parameters["undoBufferSize"]);
                 if (DEBUG) {
-                    parameters["postUrl"] = "http://dic.dev.nicovideo.jp/";
-                    parameters["cookie"] = "cookie";
-                    parameters["magic"] = "magic";
-                    parameters["redirectUrl"] = "http://dic.dev.nicovideo.jp/";
+                    parameters.postUrl = "http://127.0.0.1/";
+                    parameters.redirectUrl = "http://127.0.0.1/";
+                    parameters.baseImgUrl = "http://127.0.0.1/";
+                    parameters.baseImgInfoUrl = "http://127.0.0.1/";
+                    parameters.oekakiId = 0;
+                    parameters.cookie = "cookie";
+                    parameters.magic = "magic";
                     width ||= 317;
                     height ||= 317;
                     undoBufferSize ||= 16;
                     versionLabel.text += " debug build";
                 }
-                if (parameters["postUrl"] &&
-                    parameters["cookie"] &&
-                    parameters["magic"] &&
-                    parameters["redirectUrl"]) {
-                    //postOekakiButton.enabled = true;
-                    redirectUrl = parameters["redirectUrl"];
-                }
                 if (undoBufferSize < 0) {
                     Alert.show(_("Too few count of the max of undo (minimum is %s)", 0), m_title);   
-                    enabled = true;
+                    enabled = false;
                     return;
                 }
                 else if (undoBufferSize > 32) {
                     Alert.show(_("Too many count of the max of undo (maximum is %s)", 32), m_title);      
-                    enabled = true;
+                    enabled = false;
                     return;
                 }
                 if (parameters["oekakiId"] && parameters["baseImgUrl"]) {
-                    oekakiId = uint(parameters["oekakiId"]);
-                    //new Com().loadURL(parameters["baseImgUrl"], getBaseImgHandler);
+                    var loader:Loader = new Loader();
+                    enabled = false;
+                    addLoaderEvents(loader.contentLoaderInfo);
+                    loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadImage);
+                    loader.load(new URLRequest(parameters.baseImgUrl));
                 }
                 else {
                     if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
@@ -450,18 +493,61 @@
                 PopUpManager.addPopUp(new CopyrightWindow(), this, true);
             }
             
+            private function onLoadImage(event:Event):void
+            {
+                var loaderInfo:LoaderInfo = LoaderInfo(event.target);
+                loaderInfo.removeEventListener(Event.COMPLETE, onLoadImage);
+                removeLoaderEvents(loaderInfo);
+                m_baseImage = Bitmap(loaderInfo.content).bitmapData;
+                if (parameters["baseImgInfoUrl"]) {
+                    var loader:URLLoader = new URLLoader();
+                    addLoaderEvents(loader);
+                    loader.addEventListener(Event.COMPLETE, onLoadImageInfo);
+                    loader.load(new URLRequest(parameters.baseImgInfoUrl));
+                }
+                else {
+                    restoreCanvas({});
+                }
+            }
+            
+            private function onLoadImageInfo(event:Event):void
+            {
+                var loader:URLLoader = URLLoader(event.target);
+                var metadata:Object = null;
+                loader.removeEventListener(Event.COMPLETE, onLoadImageInfo);
+                removeLoaderEvents(loader);
+                try {
+                    metadata = JSON.decode(String(loader.data));
+                }
+                catch (e:JSONParseError) {
+                    trace(e.message);
+                }
+                if (!metadata)
+                    metadata = {
+                        "width": m_baseImage.width,
+                        "height": m_baseImage.height
+                    };
+                restoreCanvas(metadata);
+            }
+            
+            private function onIOError(event:IOErrorEvent):void
+            {
+                removeLoaderEvents(EventDispatcher(event.target));
+                Alert.show(_("IO error has occured. Try again: %s", event.text));
+            }
+            
+            private function onSecurityError(event:SecurityErrorEvent):void
+            {
+                removeLoaderEvents(EventDispatcher(event.target));
+                Alert.show(_("Security error has occured. This error should not be occured: %s", event.text));
+            }
+            
             private function get isForcusedOnTextField():Boolean
             {
                 return stage.focus is mx.core.UITextField;
             }
             
-            private function openRecoveryWindow(event:FlexEvent):void
-            {
-                //var controller:DataController = new DataController();
-                var controller:FileController = new FileController();
-                PopUpManager.addPopUp(controller, this, true);
-            }
-            
+            private var m_baseImage:BitmapData;
             private var m_bytes:ByteArray;
             private var m_recorder:Recorder;
             private var m_context:CanvasModuleContext;
@@ -471,9 +557,6 @@
             private var m_windows:Vector.<IController>;
             private var m_title:String;
             private var m_blendModes:Array;
-            
-            private var oekakiId:uint;
-            private var redirectUrl:String;
         ]]>
     </mx:Script>
     <mx:Button id="windowsResetButton" x="122" y="10" label="ウィンドウ初期状態" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>

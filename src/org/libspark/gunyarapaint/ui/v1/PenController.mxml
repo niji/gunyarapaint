@@ -28,6 +28,8 @@
             import org.sepy.controls.SColorPicker;
             import org.sepy.events.SPickerEvent;
             
+            public static const MAX_PALETTE:uint = 21;
+            
             private var m_palette:GridItem;
             
             public function init(app:IApplication):void
@@ -140,7 +142,7 @@
             public function get palettes():Object
             {
                 var palettes:Array = [];
-                for (var i:uint = 1; i < 21; i++) {
+                for (var i:uint = 1; i <= MAX_PALETTE; i++) {
                     var gridItem:GridItem = GridItem(this["gridItemPalette" + i]);
                     palettes.push(gridItem.getStyle("backgroundColor"));
                 }
@@ -149,7 +151,7 @@
             
             public function set palettes(value:Object):void
             {
-                for (var i:uint = 1; i < 21; i++) {
+                for (var i:uint = 1; i <= MAX_PALETTE; i++) {
                     var palette:uint = value["palettes"][i - 1];
                     var gridItem:GridItem = GridItem(this["gridItemPalette" + i]);
                     gridItem.setStyle("backgroundColor", palette);
