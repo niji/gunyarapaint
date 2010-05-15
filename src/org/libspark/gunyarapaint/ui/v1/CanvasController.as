@@ -21,7 +21,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     import org.libspark.gunyarapaint.framework.Pen;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
-    import org.libspark.gunyarapaint.utils.ComponentResizer;
+    import org.libspark.gunyarapaint.ui.utils.ComponentResizer;
     
     public class CanvasController extends TitleWindow implements IController
     {

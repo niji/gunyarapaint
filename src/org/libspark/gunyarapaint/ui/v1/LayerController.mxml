@@ -19,7 +19,7 @@
             import org.libspark.gunyarapaint.framework.UndoStack;
             import org.libspark.gunyarapaint.framework.events.UndoEvent;
             import org.libspark.gunyarapaint.framework.ui.IApplication;
-            import org.libspark.gunyarapaint.utils.ComponentResizer;
+            import org.libspark.gunyarapaint.ui.utils.ComponentResizer;
             
             public function init(app:IApplication):void
             {
