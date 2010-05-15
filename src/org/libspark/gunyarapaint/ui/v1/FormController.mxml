@@ -11,7 +11,6 @@
             import org.libspark.gunyarapaint.framework.ui.IApplication;
             import org.libspark.gunyarapaint.ui.v1.net.Parameters;
             import org.libspark.gunyarapaint.ui.v1.net.Request;
-            import org.libspark.nicopedia.Com;
             
             private var baseImg:BitmapData;
             

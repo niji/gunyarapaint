@@ -6,6 +6,8 @@
                 creationComplete="onCreationComplete()" enabled="false">
     <mx:Script>
         <![CDATA[
+            import com.adobe.serialization.json.JSON;
+            
             import mx.controls.Alert;
             import mx.core.UIComponent;
             import mx.events.SliderEvent;
@@ -13,7 +15,7 @@
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Player;
             import org.libspark.gunyarapaint.framework.events.PlayerEvent;
-            import org.libspark.nicopedia.Com;
+            import org.libspark.gunyarapaint.ui.v1.net.Request;
             
             private function onCreationComplete():void
             {
@@ -21,8 +23,9 @@
                 m_finished = true;
                 m_continue = false;
                 if (url) {
-                    var com:Com = new Com();
-                    com.sendGetUrlRequest(url, onResponseLog);
+                    m_request = new Request();
+                    m_request.addEventListener(Event.COMPLETE, onResponseLog);
+                    m_request.get(url);
                     currentState = "loading";
                 }
                 else {
@@ -30,25 +33,34 @@
                 }
             }
             
-            private function onResponseLog(com:Com):void
+            private function onResponseLog(event:Event):void
             {
-                m_log = com.data;
+                var urlLoader:URLLoader = URLLoader(event.target);
+                urlLoader.removeEventListener(Event.COMPLETE, onResponseLog);
+                m_log = urlLoader.data;
                 m_log.uncompress();
                 var url:String = parameters["baseImgUrl"];
                 if (url) {
-                    com.loadURL(url, onResponseLayerImage);
+                    var loader:Loader = new Loader();
+                    m_request.loader = loader.contentLoaderInfo;
+                    m_request.addEventListener(Event.COMPLETE, onResponseLayerImage);
+                    m_request.load(url);
                 }
                 else {
                     play();
                 }
             }
             
-            private function onResponseLayerImage(com:Com):void
+            private function onResponseLayerImage(event:Event):void
             {
-                m_layerImage = Bitmap(com.content).bitmapData;
+                var loader:LoaderInfo = LoaderInfo(event.target);
+                loader.removeEventListener(Event.COMPLETE, onResponseLayerImage);
+                m_layerImage = Bitmap(loader.content).bitmapData;
                 var url:String = parameters["baseImgInfoUrl"];
                 if (url) {
-                    com.sendGetUrlRequest(url, onResponseMetadata);
+                    m_request.loader = new URLLoader();
+                    m_request.addEventListener(Event.COMPLETE, onResponseMetadata);
+                    m_request.get(url);
                 }
                 else {
                     // 旧バージョン
@@ -56,9 +68,11 @@
                 }
             }
             
-            private function onResponseMetadata(com:Com):void
+            private function onResponseMetadata(event:Event):void
             {
-                m_metadata = com.jsonObject;
+                var loader:URLLoader = URLLoader(event.target);
+                loader.removeEventListener(Event.COMPLETE, onResponseMetadata);
+                m_metadata = JSON.decode(String(loader.data));
                 m_continue = true;
                 play();
             }
@@ -153,6 +167,7 @@
             private var m_layerImage:BitmapData;
             private var m_metadata:Object;
             private var m_player:Player;
+            private var m_request:Request;
             private var m_continue:Boolean;
             private var m_finished:Boolean;
         ]]>

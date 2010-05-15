@@ -39,12 +39,12 @@
             {
                 
                 try {
-                    var data:String = String(m_request.data);
+                    var data:String = String(URLLoader(m_request.loader).data);
                     if (data != "") {
                         Alert.show(data, title);
                     }
                     else {
-                        m_request.redirect(Application.application.parameters.redirectUrl);
+                        Request.redirect(Application.application.parameters.redirectUrl);
                     }
                 }
                 catch (e:Error) {
@@ -70,7 +70,7 @@
             
             private function onButtonDown(event:FlexEvent):void
             {
-                m_request.close();
+                URLLoader(m_request.loader).close();
                 removeEvents();
                 Alert.show(_("Requested post has been canceled, but the post will not be able to rollback."));
             }
