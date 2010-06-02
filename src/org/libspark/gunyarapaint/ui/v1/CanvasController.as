@@ -66,7 +66,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_canvasX = m_canvasY = 0;
             m_canvasScaleX = m_canvasScaleY = 0.5;
             m_canvasScale = 1;
-            m_canvas = new Canvas(app);
+            m_canvas = new Canvas(app, this);
             m_canvasContainer.addChild(m_canvas);
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
@@ -235,7 +235,7 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onClickContentContainer(event:MouseEvent):void
         {
-            if (event.eventPhase == EventPhase.AT_TARGET) {
+            if (event.eventPhase == EventPhase.AT_TARGET && event.shiftKey) {
                 var pen:Pen = IApplication(Application.application).pen;
                 setStyle("backgroundColor", pen.color);
                 m_canvas.auxLineColor = pen.color;

@@ -2,9 +2,6 @@ package org.libspark.gunyarapaint.ui.v1
 {
     import com.oysteinwika.ui.SWFMouseWheel;
     
-    import flash.display.Sprite;
-    import flash.events.Event;
-    import flash.events.IEventDispatcher;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     import flash.system.Capabilities;
@@ -18,7 +15,6 @@ package org.libspark.gunyarapaint.ui.v1
     import org.libspark.gunyarapaint.framework.AuxPixelView;
     import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
-    import org.libspark.gunyarapaint.framework.modules.CanvasModule;
     import org.libspark.gunyarapaint.framework.modules.DropperModule;
     import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
@@ -26,7 +22,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     internal class Canvas extends UIComponent
     {
-        public function Canvas(app:IApplication)
+        public function Canvas(app:IApplication, parent:CanvasController)
         {
             var rect:Rectangle = new Rectangle(0, 0, app.canvasWidth, app.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
@@ -44,6 +40,7 @@ package org.libspark.gunyarapaint.ui.v1
             addChild(m_auxPixel);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
+			parent.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             // Capabilities.version で OS を判断するのは適切ではないが、
             // 少なくとも MacOSX ではマウスホイールを正しく感知することが出来無いので対処療法として
             if (Capabilities.version.indexOf("MAC") >= 0) {
@@ -157,20 +154,33 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onMouseDown(event:MouseEvent):void
         {
+			var x:Number = 0;
+			var y:Number = 0;
+			// Canvasは CanvasControllerに対する子供にあたるので、
+			// 親(CanvasController)への伝播を停止する
+			if (event.currentTarget == this) {
+				x = event.localX;
+				y = event.localY;
+				event.stopPropagation();
+			}
+			else {
+				// Shiftキーを押していた場合CanvasControllerが
+				// 担当する処理なので、スキップするようにする
+				if (event.shiftKey)
+					return;
+				x = mouseX;
+				y = mouseY;
+			}
             var app:gunyarapaint = gunyarapaint(Application.application);
             var layers:LayerBitmapCollection = app.layers;
             try {
                 var canvasModule:ICanvasModule = app.canvasModule;
-                var x:Number = event.localX;
-                var y:Number = event.localY;
-                if (m_rect.contains(x, y)) {
-                    // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
-                    // 必ず try/catch で囲む必要がある
-                    canvasModule.start(x, y);
-                    layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-                    layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-                    layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-                }
+				// 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
+				// 必ず try/catch で囲む必要がある
+				canvasModule.start(x, y);
+				layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
                 removeMouseEvents(layers);
                 Alert.show(e.message, app.canvasModuleName);
