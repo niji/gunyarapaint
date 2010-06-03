@@ -79,15 +79,15 @@
                 }
             }
             
-            private function onClickLayer(evt:ListEvent):void
+            private function onClickLayer(event:ListEvent):void
             {
                 var app:IApplication = IApplication(Application.application);
-                var layer:LayerBitmap = LayerBitmap(evt.currentTarget.selectedItem);
+                var layer:LayerBitmap = LayerBitmap(event.currentTarget.selectedItem);
                 if (app.layers.currentIndex != layer.index)
                     app.canvasModule.layerIndex = layer.index;
             }
             
-            private function onCreateLayer(evt:Event):void
+            private function onCreateLayer(event:Event):void
             {
                 try {
                     // should catch AddLayerError here
@@ -99,7 +99,7 @@
                 }
             }
             
-            private function onCopyLayer(evt:Event):void
+            private function onCopyLayer(event:Event):void
             {
                 try {
                     // should catch AddLayerError here
@@ -111,7 +111,7 @@
                 }
             }
             
-            private function onRemoveLayer(evt:Event):void
+            private function onRemoveLayer(event:Event):void
             {
                 try {
                     // should catch RemoveLayerError here
@@ -123,7 +123,7 @@
                 }
             }
             
-            private function onMergeLayers(evt:Event):void
+            private function onMergeLayers(event:Event):void
             {
                 try {
                     // should catch MergeLayersError here
@@ -135,21 +135,21 @@
                 }
             }
             
-            private function itemCheckChangeHandler(evt:Event):void
+            private function itemCheckChangeHandler(event:Event):void
             {
                 // do nothing...
             }
             
-            private function onChangeAlphaSlider(evt:SliderEvent):void
+            private function onChangeAlphaSlider(event:SliderEvent):void
             {
                 var app:IApplication = IApplication(Application.application);
-                app.canvasModule.layerAlpha = evt.value;
+                app.canvasModule.layerAlpha = event.value;
             }
             
-            private function onSelectBlendMode(evt:ListEvent):void
+            private function onSelectBlendMode(event:ListEvent):void
             {
                 var app:IApplication = IApplication(Application.application);
-                app.canvasModule.layerBlendMode = String(evt.currentTarget.value);
+                app.canvasModule.layerBlendMode = String(event.currentTarget.value);
             }
             
             private function onChangeUndo(event:UndoEvent):void
@@ -157,7 +157,13 @@
                 update();
             }
             
-            private function onDragComplete(evt:DragEvent):void
+            private function onDragStart(event:DragEvent):void
+            {
+                var app:IApplication = IApplication(Application.application);
+                m_selectedIndex = getSelectedIndex(app.layers);
+            }
+            
+            private function onDragComplete(event:DragEvent):void
             {
                 var app:IApplication = IApplication(Application.application);
                 var a:Array = ArrayCollection(layerDataGrid.dataProvider).toArray().reverse();
@@ -168,9 +174,12 @@
                     var to:uint = layers.at(i).index;
                     if (a[i].index != to) {
                         app.canvasModule.swapLayers(from, to);
-                        break;
+                        return;
                     }
                 }
+                // レイヤーの入れ替え処理がなかった場合はレイヤーの選択位置に戻すように
+                // (例えばレイヤーウィンドウ外にレイヤーをドラッグした時とか)
+                layerDataGrid.selectedIndex = m_selectedIndex;
             }
             
             private function getSelectedIndex(layers:LayerBitmapCollection):uint
@@ -179,10 +188,11 @@
             }
             
             private var m_initPosition:Point;
+            private var m_selectedIndex:uint;
         ]]>
     </mx:Script>
     <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
-                         itemClick="onClickLayer(event)" dragComplete="onDragComplete(event)">
+                         itemClick="onClickLayer(event)" dragStart="onDragStart(event)" dragComplete="onDragComplete(event)">
         <ui:columns>
             <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
             <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
