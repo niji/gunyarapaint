@@ -177,10 +177,9 @@ package org.libspark.gunyarapaint.ui.v1
             var app:gunyarapaint = gunyarapaint(Application.application);
             var layers:LayerBitmapCollection = app.layers;
             try {
-                var canvasModule:ICanvasModule = app.canvasModule;
 				// 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
 				// 必ず try/catch で囲む必要がある
-				canvasModule.start(x, y);
+				app.canvasModule.start(x, y);
 				layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 				layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 				layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
@@ -192,12 +191,16 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onMouseMove(event:MouseEvent):void
         {
+			var app:IApplication = IApplication(Application.application);
+			// 外側から描画するときにマウスのボタンを押さずとも勝手に描画されてしまう不具合を防ぐ
+			if (!event.buttonDown) {
+				removeMouseEvents(app.layers);
+				return;
+			}
             var x:Number = event.localX;
             var y:Number = event.localY;
-            if (m_rect.contains(x, y)) {
-                var app:IApplication = IApplication(Application.application);
+            if (m_rect.contains(x, y))
                 app.canvasModule.move(x, y);
-            }
         }
         
         private function onMouseMove2(event:MouseEvent):void
@@ -221,8 +224,7 @@ package org.libspark.gunyarapaint.ui.v1
         private function onMouseUp(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
-            removeMouseEvents(app.layers);
-            app.canvasModule.stop(event.localX, event.localY);
+			app.canvasModule.stop(event.localX, event.localY);
         }
         
         private function onMouseOut(event:MouseEvent):void
