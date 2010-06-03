@@ -42,7 +42,7 @@ package org.libspark.gunyarapaint.ui.v1
             addChild(m_auxPixel);
             addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
-			parent.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            parent.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
             // Capabilities.version で OS を判断するのは適切ではないが、
             // 少なくとも MacOSX ではマウスホイールを正しく感知することが出来無いので対処療法として
             if (Capabilities.version.indexOf("MAC") >= 0) {
@@ -156,33 +156,33 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onMouseDown(event:MouseEvent):void
         {
-			var x:Number = 0;
-			var y:Number = 0;
-			// Canvasは CanvasControllerに対する子供にあたるので、
-			// 親(CanvasController)への伝播を停止する
-			if (event.currentTarget == this) {
-				x = event.localX;
-				y = event.localY;
-				event.stopPropagation();
-			}
-			else {
-				// Shiftキーを押していた場合CanvasControllerが
-				// 担当する処理なので、スキップするようにする
-				// また、コンテナクラス(キャンバスの背景)でなければスキップする
-				if (!(event.target is Container) || event.shiftKey)
-					return;
-				x = mouseX;
-				y = mouseY;
-			}
+            var x:Number = 0;
+            var y:Number = 0;
+            // Canvasは CanvasControllerに対する子供にあたるので、
+            // 親(CanvasController)への伝播を停止する
+            if (event.currentTarget == this) {
+                x = event.localX;
+                y = event.localY;
+                event.stopPropagation();
+            }
+            else {
+                // Shiftキーを押していた場合CanvasControllerが
+                // 担当する処理なので、スキップするようにする
+                // また、コンテナクラス(キャンバスの背景)でなければスキップする
+                if (!(event.target is Container) || event.shiftKey)
+                    return;
+                x = mouseX;
+                y = mouseY;
+            }
             var app:gunyarapaint = gunyarapaint(Application.application);
             var layers:LayerBitmapCollection = app.layers;
             try {
-				// 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
-				// 必ず try/catch で囲む必要がある
-				app.canvasModule.start(x, y);
-				layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-				layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+                // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
+                // 必ず try/catch で囲む必要がある
+                app.canvasModule.start(x, y);
+                layers.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+                layers.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+                layers.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
                 removeMouseEvents(layers);
                 Alert.show(e.message, app.canvasModuleName);
@@ -191,12 +191,12 @@ package org.libspark.gunyarapaint.ui.v1
         
         private function onMouseMove(event:MouseEvent):void
         {
-			var app:IApplication = IApplication(Application.application);
-			// 外側から描画するときにマウスのボタンを押さずとも勝手に描画されてしまう不具合を防ぐ
-			if (!event.buttonDown) {
-				removeMouseEvents(app.layers);
-				return;
-			}
+            var app:IApplication = IApplication(Application.application);
+            // 外側から描画するときにマウスのボタンを押さずとも勝手に描画されてしまう不具合を防ぐ
+            if (!event.buttonDown) {
+                removeMouseEvents(app.layers);
+                return;
+            }
             var x:Number = event.localX;
             var y:Number = event.localY;
             if (m_rect.contains(x, y))
@@ -224,7 +224,7 @@ package org.libspark.gunyarapaint.ui.v1
         private function onMouseUp(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
-			app.canvasModule.stop(event.localX, event.localY);
+            app.canvasModule.stop(event.localX, event.localY);
         }
         
         private function onMouseOut(event:MouseEvent):void
