@@ -5,9 +5,11 @@ package org.libspark.gunyarapaint.ui.v1
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     import flash.system.Capabilities;
+    import flash.utils.getQualifiedClassName;
     
     import mx.controls.Alert;
     import mx.core.Application;
+    import mx.core.Container;
     import mx.core.UIComponent;
     import mx.managers.CursorManager;
     
@@ -22,7 +24,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     internal class Canvas extends UIComponent
     {
-        public function Canvas(app:IApplication, parent:CanvasController)
+        public function Canvas(app:IApplication, parent:UIComponent)
         {
             var rect:Rectangle = new Rectangle(0, 0, app.canvasWidth, app.canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
@@ -166,7 +168,8 @@ package org.libspark.gunyarapaint.ui.v1
 			else {
 				// Shiftキーを押していた場合CanvasControllerが
 				// 担当する処理なので、スキップするようにする
-				if (event.shiftKey)
+				// また、コンテナクラス(キャンバスの背景)でなければスキップする
+				if (!(event.target is Container) || event.shiftKey)
 					return;
 				x = mouseX;
 				y = mouseY;
