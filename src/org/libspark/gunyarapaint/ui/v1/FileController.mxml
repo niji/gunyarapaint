@@ -16,7 +16,6 @@
                 var bytes:ByteArray = new ByteArray();
                 Application.application.save(bytes);
                 createFileReferenceEvents();
-                m_file.addEventListener(Event.SELECT, onSelectSave);
                 m_file.addEventListener(Event.COMPLETE, onSaveComplete);
                 m_file.save(bytes);
             }
@@ -33,10 +32,6 @@
             {
                 var file:FileReference = FileReference(event.target);
                 file.load();
-            }
-            
-            private function onSelectSave(event:Event):void
-            {
             }
             
             private function onLoadComplete(event:Event):void
@@ -78,7 +73,6 @@
                 m_file.removeEventListener(IOErrorEvent.IO_ERROR, onError);
                 m_file.removeEventListener(Event.CANCEL, onCancel);
                 m_file.removeEventListener(Event.SELECT, onSelectLoad);
-                m_file.removeEventListener(Event.SELECT, onSelectSave);
                 m_file.removeEventListener(Event.COMPLETE, onLoadComplete);
                 m_file.removeEventListener(Event.COMPLETE, onSaveComplete);
                 m_file = null;

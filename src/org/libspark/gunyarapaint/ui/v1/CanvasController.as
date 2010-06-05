@@ -320,7 +320,6 @@ package org.libspark.gunyarapaint.ui.v1
         private var m_canvasScaleY:Number; // 拡大したキャンバスの高さに対する Y 座標の相対率
         private var m_canvasScale:Number; // キャンバスの倍率
         private var m_preDegree:int; // 前の回転角度
-        private var m_scrollDragStartPoint:Point;
         private var m_canvas:Canvas;
     }
 }

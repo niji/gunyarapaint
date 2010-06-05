@@ -44,6 +44,5 @@ package org.libspark.gunyarapaint.ui.v1
         }
         
         private var m_file:FileReference;
-        private var m_title:String;
     }
 }

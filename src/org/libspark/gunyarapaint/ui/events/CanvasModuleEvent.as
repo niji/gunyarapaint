@@ -14,5 +14,10 @@ package org.libspark.gunyarapaint.ui.events
         {
             super(type, false, false);
         }
+        
+        public override function clone():Event
+        {
+            return new CanvasModuleEvent(type);
+        }
     }
 }

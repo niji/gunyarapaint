@@ -38,7 +38,6 @@
                     if (blendModes[i].data == currentLayerBlendMode)
                         blendModeComboBox.selectedIndex = i;
                 }
-                layerDataGrid.addEventListener("describeChange", itemCheckChangeHandler);
                 ComponentResizer.addResize(this, new Point(144, 230));
                 m_initPosition = new Point(x, y);
                 update();
@@ -133,11 +132,6 @@
                 } catch (e:Error) {
                     Alert.show(e.message, title);
                 }
-            }
-            
-            private function itemCheckChangeHandler(event:Event):void
-            {
-                // do nothing...
             }
             
             private function onChangeAlphaSlider(event:SliderEvent):void
