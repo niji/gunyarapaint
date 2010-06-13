@@ -166,12 +166,12 @@
                 for (var i:uint = 0; i < length; i++) {
                     var from:uint = a[i].index;
                     var to:uint = layers.at(i).index;
-                    if (a[i].index != to) {
+                    if (from != to) {
                         app.canvasModule.swapLayers(from, to);
                         return;
                     }
                 }
-                // レイヤーの入れ替え処理がなかった場合はレイヤーの選択位置に戻すように
+                // レイヤーの入れ替え処理がなかった場合は元のレイヤーの選択位置に戻すように
                 // (例えばレイヤーウィンドウ外にレイヤーをドラッグした時とか)
                 layerDataGrid.selectedIndex = m_selectedIndex;
             }
