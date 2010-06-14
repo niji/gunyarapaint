@@ -18,9 +18,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>[source path] src</name>
+			<name>[source path] GP_COMPAT_COLOR_PICKER_PATH</name>
 			<type>2</type>
-			<locationURI>DOCUMENTS/colorpicker/src</locationURI>
+			<locationURI>GP_COMPAT_COLOR_PICKER_PATH</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
