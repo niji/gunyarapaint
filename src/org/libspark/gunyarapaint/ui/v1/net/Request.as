@@ -15,6 +15,8 @@ package org.libspark.gunyarapaint.ui.v1.net
     
     public final class Request implements IRequest
     {
+        public static const CONTENT_TYPE:String = "application/x-nicopedia-oekaki";
+        
         public function Request()
         {
             m_loader = EventDispatcher(new URLLoader());
@@ -24,7 +26,7 @@ package org.libspark.gunyarapaint.ui.v1.net
         {
             var request:URLRequest = new URLRequest(url);
             request.method = URLRequestMethod.POST;
-            request.contentType = "application/x-nicopedia-oekaki";
+            request.contentType = CONTENT_TYPE;
             request.data = parameters.serialize();
             var loader:URLLoader = URLLoader(m_loader);
             loader.dataFormat = URLLoaderDataFormat.BINARY;
