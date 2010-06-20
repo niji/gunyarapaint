@@ -59,11 +59,14 @@
             [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
             private var languages:Class;
             
+            [Bindable]
+            [Embed(source="../assets/config.xml", mimeType="application/octet-stream")]
+            private var config:Class;
+            
             private const MAX_CANVAS_WIDTH:uint = 500;
             private const MAX_CANVAS_HEIGHT:uint = 500;
             private const MIN_CANVAS_WIDTH:uint = 16;
             private const MIN_CANVAS_HEIGHT:uint = 16;
-            private const DEBUG:Boolean = true;
             
             public function setCanvasModule(value:String):void
             {
@@ -180,8 +183,8 @@
             
             public function fillParameters(param:Parameters):void
             {
-                //if (commitCount == 0)
-                //    throw new ArgumentError(_("The canvas is not drawn. You should draw the canvas."));
+                if (!m_development && commitCount == 0)
+                    throw new ArgumentError(_("The canvas is not drawn. You should draw the canvas."));
                 if (!parameters.postUrl    ||
                     !parameters.cookie     ||
                     !parameters.magic      ||
@@ -226,10 +229,59 @@
             
             private function restoreCanvas(metadata:Object):void
             {
-                m_recorder.layers.load(m_baseImage, metadata);
-                penController.palettes = metadata.pen_details[0];
-                layerController.update();
-                enabled = true;
+                var ready:Boolean = postInitialize();
+                if (ready) {
+                    m_recorder.layers.load(m_baseImage, metadata);
+                    penController.palettes = metadata.pen_details[0];
+                    layerController.update();
+                    enabled = ready;
+                }
+            }
+            
+            private function postInitialize():Boolean
+            {
+                var width:int = int(parameters["canvasWidth"]);
+                var height:int = int(parameters["canvasHeight"]);
+                var undoBufferSize:uint = int(parameters["undoBufferSize"]);
+                if (undoBufferSize < 0) {
+                    Alert.show(_("Too few count of the max of undo (minimum is %s)", 0), m_title);   
+                    return false;
+                }
+                else if (undoBufferSize > 32) {
+                    Alert.show(_("Too many count of the max of undo (maximum is %s)", 32), m_title);      
+                    return false;
+                }
+                else if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
+                    Alert.show(_("Too small size of the canvas (minimum is %s x %s)", MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
+                    return false;
+                }
+                else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
+                    Alert.show(_("Too big size of the canvas (maximum is %s x %s)", MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
+                    return false;
+                }
+                m_bytes = new ByteArray();
+                m_recorder = Recorder.create(m_bytes, width, height, undoBufferSize);
+                m_context = new CanvasModuleContext(m_recorder);
+                m_module = m_context.getModule(FreeHandModule.FREE_HAND);
+                m_commit = 0;
+                m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
+                m_context.registerModule(new MovableCanvasModule(m_recorder, canvasController));
+                m_exporter = new PNGExporter();
+                m_exporter.addEventListener(Event.COMPLETE, onExportComplete);
+                m_windows = new Vector.<IController>(5, true);
+                m_windows[0] = canvasController;
+                m_windows[1] = penController;
+                m_windows[2] = layerController;
+                m_windows[3] = toolController;
+                m_windows[4] = formController;
+                for (var i:String in m_windows) {
+                    var controller:IController = m_windows[i];
+                    controller.init(this);
+                    PopUpManager.addPopUp(IFlexDisplayObject(controller), this);
+                }
+                stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+                stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+                return true;
             }
             
             private function addLoaderEvents(loader:EventDispatcher):void
@@ -246,6 +298,15 @@
             
             private function onPreinitialize(event:FlexEvent):void
             {
+                var configXml:XML = new XML(new config());
+                if (configXml.@stage != "production") {
+                    for each (var item:XML in configXml.children()) {
+                        parameters[item.name()] = item.toString();
+                    }
+                    m_development = true;
+                }
+                // default state is disabled
+                enabled = false;
                 GetText.locale = parameters["language"] || "ja_jp";
                 GetText.initLangFile(new XML(new languages()));
                 TranslatorRegistry.install(new GetTextTranslator());
@@ -267,75 +328,18 @@
             
             private function onApplicationComplete(event:FlexEvent):void
             {
-                var width:int = int(parameters["canvasWidth"]);
-                var height:int = int(parameters["canvasHeight"]);
-                var undoBufferSize:uint = int(parameters["undoBufferSize"]);
-                if (DEBUG) {
-                    parameters.postUrl = "http://127.0.0.1/";
-                    parameters.redirectUrl = "http://127.0.0.1/";
-                    parameters.baseImgUrl = "http://127.0.0.1/";
-                    parameters.baseImgInfoUrl = "http://127.0.0.1/";
-                    parameters.oekakiId = 0;
-                    parameters.cookie = "cookie";
-                    parameters.magic = "magic";
-                    width ||= 317;
-                    height ||= 317;
-                    undoBufferSize ||= 16;
-                    versionLabel.text += " debug build";
-                }
-                if (undoBufferSize < 0) {
-                    Alert.show(_("Too few count of the max of undo (minimum is %s)", 0), m_title);   
-                    enabled = false;
-                    return;
-                }
-                else if (undoBufferSize > 32) {
-                    Alert.show(_("Too many count of the max of undo (maximum is %s)", 32), m_title);      
-                    enabled = false;
-                    return;
-                }
-                if (parameters["oekakiId"] && parameters["baseImgUrl"]) {
+                if (m_development)
+                    versionLabel.text += " with development mode";
+                var oekakiId:uint = uint(parameters["oekakiId"]);
+                if (oekakiId > 0 && parameters["baseImgUrl"]) {
                     var loader:Loader = new Loader();
-                    enabled = false;
                     addLoaderEvents(loader.contentLoaderInfo);
                     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadImage);
                     loader.load(new URLRequest(parameters.baseImgUrl));
                 }
                 else {
-                    if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
-                        Alert.show(_("Too small size of the canvas (minimum is %s x %s)", MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
-                        enabled = false;
-                        return;
-                    }
-                    else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-                        Alert.show(_("Too big size of the canvas (maximum is %s x %s)", MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
-                        enabled = false;
-                        return;
-                    }
+                    enabled = postInitialize();
                 }
-                m_bytes = new ByteArray();
-                m_recorder = Recorder.create(m_bytes, width, height, undoBufferSize);
-                m_context = new CanvasModuleContext(m_recorder);
-                m_module = m_context.getModule(FreeHandModule.FREE_HAND);
-                m_commit = 0;
-                m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
-                m_context.registerModule(new MovableCanvasModule(m_recorder, canvasController));
-                m_exporter = new PNGExporter();
-                m_exporter.addEventListener(Event.COMPLETE, onExportComplete);
-                m_windows = new Vector.<IController>();
-                m_windows.push(
-                    canvasController,
-                    penController,
-                    layerController,
-                    toolController,
-                    formController
-                );
-                for (var i:String in m_windows) {
-                    var controller:IController = m_windows[i];
-                    controller.init(this);
-                    PopUpManager.addPopUp(IFlexDisplayObject(controller), this);
-                }
-                stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-                stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
             }
             
             private function onCommit(event:CommandEvent):void
@@ -557,15 +561,18 @@
             private var m_windows:Vector.<IController>;
             private var m_title:String;
             private var m_blendModes:Array;
+            private var m_development:Boolean;
         ]]>
     </mx:Script>
     <mx:Button id="windowsResetButton" x="122" y="10" label="ウィンドウ初期状態" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>
     <mx:Button id="passwordButton" x="10" y="10" label="ふっかつのじゅもん" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="openRecoveryWindow(event)"/>
+    <!--
     <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
+    -->
     <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="46"/>
     <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
     <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペンツール"/>
     <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="キャンバス" />
     <ui:LayerController x="533" y="223" layout="absolute" title="レイヤーツール" id="layerController" />
-    <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5"/>
+    <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5" click="onClickImage()"/>
 </mx:Application>
