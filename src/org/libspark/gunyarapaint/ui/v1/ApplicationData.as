@@ -8,18 +8,25 @@ package org.libspark.gunyarapaint.ui.v1
     import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
     import org.libspark.gunyarapaint.framework.UndoStack;
     
-    //
-    // 1:uint version
-    // n:ByteArray logData
-    // n:Rectangle rectangle
-    // n:Vector.<uint> pixelData
-    // n:Object metadata
-    // n:Object undoData
-    // n:Object controllerData
-    //
-
+    /**
+     * ふっかつのじゅもんのデータとして保存するクラス.
+     * 
+     * <p>以下のフォーマットに基づいて zlib 形式で圧縮して保存されます。</p>
+     * <pre>
+     * 1:uint          version
+     * n:ByteArray     logData
+     * n:Rectangle     rectangle
+     * n:Vector.<uint> pixelData
+     * n:Object        metadata
+     * n:Object        undoData
+     * n:Object        controllerData
+     * </pre>
+     */
     public final class ApplicationData
     {
+        /**
+         * ログのバージョン番号
+         */
         public static const VERSION:uint = 1;
         
         public function ApplicationData(layers:LayerBitmapCollection,
@@ -31,6 +38,12 @@ package org.libspark.gunyarapaint.ui.v1
             m_controllers = controllers;
         }
         
+        /**
+         * ふっかつのじゅもんを保存します
+         * 
+         * @param bytes お絵描きログ
+         * @param toBytes 保存先となる ByteArray
+         */
         public function load(bytes:ByteArray, toBytes:ByteArray):void
         {
             bytes.position = 0;
@@ -59,6 +72,12 @@ package org.libspark.gunyarapaint.ui.v1
             }
         }
         
+        /**
+         * ふっかつのじゅもんを復元します
+         * 
+         * @param bytes お絵描きログ
+         * @param fromoBytes 保存元となる ByteArray
+         */
         public function save(bytes:ByteArray, fromBytes:ByteArray):void
         {
             var bitmapData:BitmapData = m_layers.newLayerBitmapData;

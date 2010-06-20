@@ -13,6 +13,9 @@ package org.libspark.gunyarapaint.ui.v1.net
     import org.libspark.gunyarapaint.framework.net.IParameters;
     import org.libspark.gunyarapaint.framework.net.IRequest;
     
+    /**
+     * ニコニコ大百科のお絵カキコで必要な通信をまとめたクラス
+     */
     public final class Request implements IRequest
     {
         public static const CONTENT_TYPE:String = "application/x-nicopedia-oekaki";
@@ -22,6 +25,9 @@ package org.libspark.gunyarapaint.ui.v1.net
             m_loader = EventDispatcher(new URLLoader());
         }
         
+        /**
+         * @inheritDoc 
+         */
         public function post(url:String, parameters:IParameters):void
         {
             var request:URLRequest = new URLRequest(url);
@@ -33,6 +39,9 @@ package org.libspark.gunyarapaint.ui.v1.net
             loader.load(request);
         }
         
+        /**
+         * @inheritDoc 
+         */
         public function get(url:String):void
         {
             var request:URLRequest = new URLRequest(url);
@@ -42,6 +51,9 @@ package org.libspark.gunyarapaint.ui.v1.net
             loader.load(request);
         }
         
+        /**
+         * @inheritDoc 
+         */
         public function load(url:String):void
         {
             var request:URLRequest = new URLRequest(url);
@@ -50,6 +62,11 @@ package org.libspark.gunyarapaint.ui.v1.net
             loader.load(request);
         }
         
+        /**
+         * 新しいウィンドウを開いてリダイレクトを実行します
+         * 
+         * @param url リダイレクト先
+         */
         public static function redirect(url:String):void
         {
             var request:URLRequest = new URLRequest();
@@ -89,11 +106,17 @@ package org.libspark.gunyarapaint.ui.v1.net
             return m_loader.willTrigger(type);
         }
         
+        /**
+         * @inheritDoc 
+         */
         public function get loader():EventDispatcher
         {
             return m_loader;
         }
         
+        /**
+         * @inheritDoc 
+         */
         public function set loader(value:EventDispatcher):void
         {
             if (value is LoaderInfo || value is URLLoader)

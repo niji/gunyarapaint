@@ -2,6 +2,9 @@ package org.libspark.gunyarapaint.ui.events
 {
     import flash.events.Event;
     
+    /**
+     * モジュールの変更が行われるときに呼び出されるイベントクラス
+     */
     public final class CanvasModuleEvent extends Event
     {
         internal static const PREFIX:String = "org.libspark.gunyarapaint.ui.events.";

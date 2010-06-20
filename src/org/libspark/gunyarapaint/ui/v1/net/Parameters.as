@@ -6,33 +6,75 @@ package org.libspark.gunyarapaint.ui.v1.net
     import flash.utils.ByteArray;
     
     import org.libspark.gunyarapaint.framework.net.IParameters;
-
+    
+    /**
+     * ニコニコ大百科のお絵カキコの投稿に必要なパラメータクラス
+     */
     public final class Parameters implements IParameters
     {
+        /**
+         * マジックトークン
+         */
         public var magic:String;
         
+        /**
+         * クッキー
+         */
         public var cookie:String;
         
+        /**
+         * お絵カキコの投稿者名
+         */
         public var name:String;
         
+        /**
+         * お絵カキコのタイトル名
+         */
         public var title:String;
         
+        /**
+         * お絵カキコの本文
+         */
         public var message:String;
         
+        /**
+         * ウォッチリストに登録するかどうか
+         */
         public var shouldAddWatchList:Boolean;
         
+        /**
+         * お絵カキコの参照元となるID
+         */
         public var refererId:uint;
         
+        /**
+         * 描いた画像を ByteArray に変換したオブジェクト
+         */
         public var imageBytes:ByteArray;
         
+        /**
+         * 縦に連結したレイヤー画像を ByteArray に変換したオブジェクト
+         */
         public var layerImageBytes:ByteArray;
         
+        /**
+         * 描いた絵のログオブジェクト
+         */
         public var logBytes:ByteArray;
         
+        /**
+         * 描いた絵のログの記録数
+         */
         public var logCount:uint;
         
+        /**
+         * 描いた絵の付随情報
+         */
         public var metadata:Object;
         
+        /**
+         * @inheritDoc
+         */ 
         public function serialize():ByteArray
         {
             if (!title)

@@ -9,9 +9,21 @@ package org.libspark.gunyarapaint.ui.v1
     import flash.utils.ByteArray;
     
     import mx.controls.Alert;
-
+    
+    /**
+     * BitmapData を PNG に変換するクラス.
+     * 
+     * このクラスは FileReference を内部で呼び出すため、暗黙的にイベントが登録され、
+     * ファイルの保存処理が終了すると暗黙的にイベントが解除されます。また、ファイル名は
+     * 現在の時間のタイムスタンプに拡張子である png をつけたものになります。
+     */
     public final class PNGExporter extends EventDispatcher
     {
+        /**
+         * BitmapData を PNG に変換し、ファイルダイアログを呼び出します
+         * 
+         * @param bitmapData 変換対象のビットマップ画像
+         */
         public function save(bitmapData:BitmapData):void
         {
             if (m_file == null) {
