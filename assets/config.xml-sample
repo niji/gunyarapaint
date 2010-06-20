@@ -1,8 +1,8 @@
 <configure stage="production">
-  <postUrl>http://127.0.0.1</postUrl>
-  <redirectUrl>http://127.0.0.1</redirectUrl>
-  <baseImgUrl>http://127.0.0.1</baseImgUrl>
-  <baseImgInfoUrl>http://127.0.0.1</baseImgInfoUrl>
+  <postUrl>http://127.0.0.1/</postUrl>
+  <redirectUrl>http://127.0.0.1/</redirectUrl>
+  <baseImgUrl>http://127.0.0.1/oekaki_layers/1</baseImgUrl>
+  <baseImgInfoUrl>http://127.0.0.1/oekaki_info/1</baseImgInfoUrl>
   <oekakiId>0</oekakiId>
   <cookie>cookie</cookie>
   <magic>magic</magic>
