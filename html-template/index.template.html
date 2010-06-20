@@ -23,6 +23,8 @@ function onLoad(event) {
       vars[pair[0]] = pair[1];
     }
   }
+  vars.canvasWidth = vars.canvasWidth || 317;
+  vars.canvasHeight = vars.canvasHeight || 317;
   var params = {
     "allowScriptAccess": "sameDomain",
     "bgcolor": "${bgcolor}",
