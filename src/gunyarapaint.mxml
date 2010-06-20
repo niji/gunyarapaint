@@ -232,7 +232,8 @@
                 var ready:Boolean = postInitialize();
                 if (ready) {
                     m_recorder.layers.load(m_baseImage, metadata);
-                    penController.palettes = metadata.pen_details[0];
+                    if (metadata.pen_details)
+                        penController.palettes = metadata.pen_details[0];
                     layerController.update();
                     enabled = ready;
                 }
