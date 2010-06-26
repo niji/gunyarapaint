@@ -13,7 +13,6 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="..\..\trunk\colorpicker\src" />
     <class path="..\framework\src" />
   </classpaths>
   <!-- Build options -->
@@ -47,8 +46,8 @@
   </includeLibraries>
   <!-- SWC Libraries -->
   <libraryPaths>
-    <element path="libs" />
     <element path="\framework\bin\framework.swc" />
+    <element path="libs\colorpicker.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
