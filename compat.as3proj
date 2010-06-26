@@ -49,7 +49,6 @@
   <libraryPaths>
     <element path="libs" />
     <element path="\framework\bin\framework.swc" />
-    <element path="\Users\hkrn\src\svn\gunyarapaint\branch\res\as3crypto.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

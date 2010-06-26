@@ -16,11 +16,4 @@
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>[source path] src</name>
-			<type>2</type>
-			<locationURI>GP_COMPAT_COLOR_PICKER_PATH/src</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
