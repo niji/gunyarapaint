@@ -1,2 +1,5 @@
+.fxpProperties
 assets/config.xml
+bin-debug
 bin-release
+obj
