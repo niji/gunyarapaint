@@ -16,10 +16,13 @@
             import com.adobe.serialization.json.JSONParseError;
             import com.rails2u.gettext.GetText;
             
+            import flash.net.navigateToURL;
+            
             import mx.controls.Alert;
             import mx.core.IFlexDisplayObject;
             import mx.core.UITextField;
             import mx.events.FlexEvent;
+            import mx.events.MenuEvent;
             import mx.managers.PopUpManager;
             
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
@@ -349,6 +352,24 @@
                 m_commit++;
             }
             
+            private function onMenuItemClick(event:MenuEvent):void
+            {
+                var selected:String = event.item.@data;
+                switch (selected) {
+                    case "application.about":
+                        PopUpManager.addPopUp(new CopyrightWindow(), this, true);
+                        break;
+                    case "help.article":
+                        navigateToURL(new URLRequest("http://dic.nicovideo.jp/id/377406"));
+                        break;
+                    case "help.bbs":
+                        navigateToURL(new URLRequest("http://nicodic.razil.jp/bugyobo/"));
+                        break;
+                    default:
+                        throw new IllegalOperationError("Invalid menu item selected");
+                }
+            }
+            
             private function onKeyDown(event:KeyboardEvent):void
             {
                 if (isForcusedOnTextField)
@@ -565,15 +586,28 @@
             private var m_development:Boolean;
         ]]>
     </mx:Script>
+    <mx:ApplicationControlBar id="dockBar" dock="true">
+        <mx:MenuBar labelField="@label" itemClick="onMenuItemClick(event)">
+            <mx:XMLList>
+                <menuitem label="ぐにゃらペイント">
+                    <menuitem label="ぐにゃらペイントについて" data="application.about" />
+                </menuitem>
+                <menuitem label="ヘルプ">
+                    <menuitem label="お絵カキコヘルプを見る" data="help.article" />
+                    <menuitem label="不具合・要望掲示板に行く" data="help.bbs" />
+                </menuitem>
+            </mx:XMLList>
+        </mx:MenuBar>
+    </mx:ApplicationControlBar>
     <mx:Button id="windowsResetButton" x="122" y="10" label="ウィンドウ初期状態" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="resetWindowsPosition()"/>
     <mx:Button id="passwordButton" x="10" y="10" label="ふっかつのじゅもん" width="104" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height="17" buttonDown="openRecoveryWindow(event)"/>
     <!--
     <mx:Image source="@Embed('../assets/images/gunyara-paint_logo.png')" alpha="0.5" right="10" bottom="10" click="onClickImage()"/>
     -->
-    <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="46"/>
-    <ui:ToolController id="toolController" left="504" y="10" title="補助ツール" />
-    <ui:PenController id="penController" x="10" y="223" layout="absolute" title="ペンツール"/>
-    <ui:CanvasController id="canvasController" x="146" y="223" width="379" height="410" layout="absolute" title="キャンバス" />
-    <ui:LayerController x="533" y="223" layout="absolute" title="レイヤーツール" id="layerController" />
+    <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="81"/>
+    <ui:ToolController id="toolController" left="504" y="44" title="補助ツール" />
+    <ui:PenController id="penController" x="10" y="255" layout="absolute" title="ペンツール"/>
+    <ui:CanvasController id="canvasController" x="146" y="255" width="379" height="410" layout="absolute" title="キャンバス" />
+    <ui:LayerController x="533" y="255" layout="absolute" title="レイヤーツール" id="layerController" />
     <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5" click="onClickImage()"/>
 </mx:Application>
