@@ -14,6 +14,7 @@
             
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Player;
+            import org.libspark.gunyarapaint.framework.events.PlayerErrorEvent;
             import org.libspark.gunyarapaint.framework.events.PlayerEvent;
             import org.libspark.gunyarapaint.ui.v1.net.Request;
             
@@ -95,8 +96,13 @@
             
             private function onPlayFinished(event:PlayerEvent):void
             {
-                currentState = "stopping";
-                m_finished = true;
+                setFinished();
+            }
+            
+            private function onPlayError(event:PlayerErrorEvent):void
+            {
+                setFinished();
+                Alert.show(event.cause.message);
             }
             
             private function play():void
@@ -110,6 +116,7 @@
                 currentState = "playing";
                 m_player.speed = playSpeedHSlider.value;
                 m_player.addEventListener(PlayerEvent.FINISHED, onPlayFinished);
+                m_player.addEventListener(PlayerErrorEvent.ERROR, onPlayError);
                 m_player.start();
             }
             
@@ -122,6 +129,10 @@
                         "undoBufferSize": 16
                     };
                     m_continue = true;
+                }
+                if (m_player != null) {
+                    m_player.removeEventListener(PlayerEvent.FINISHED, onPlayFinished);
+                    m_player.removeEventListener(PlayerErrorEvent.ERROR, onPlayError);
                 }
                 m_log.position = 0;
                 m_player = Player.create(m_log);
@@ -148,14 +159,17 @@
                 height = height < 137 ? 137 : height; // for express install
             }
             
+            private function setFinished():void
+            {
+                currentState = "stopping";
+                m_finished = true;
+            }
+            
             private function callExternal():void
             {
                 if (ExternalInterface.available) {
                     try {
                         ExternalInterface.call("changeGPLogPlayerRect", width, height);
-                    }
-                    catch (e:SecurityError) {
-                        Alert.show(e.message);
                     }
                     catch (e:Error) {
                         Alert.show(e.message);
