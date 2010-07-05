@@ -232,20 +232,20 @@
             
             private function restoreCanvas(metadata:Object):void
             {
-                var ready:Boolean = postInitialize();
+                var width:int = metadata.width;
+                var height:int = metadata.height;
+                var ready:Boolean = postInitialize(width, height);
                 if (ready) {
                     m_recorder.layers.load(m_baseImage, metadata);
-                    if (metadata.pen_details)
+                    if (metadata.pen_details != null)
                         penController.palettes = metadata.pen_details[0];
                     layerController.update();
                     enabled = ready;
                 }
             }
             
-            private function postInitialize():Boolean
+            private function postInitialize(width:int, height:int):Boolean
             {
-                var width:int = int(parameters["canvasWidth"]);
-                var height:int = int(parameters["canvasHeight"]);
                 var undoBufferSize:uint = int(parameters["undoBufferSize"]);
                 if (undoBufferSize < 0) {
                     Alert.show(_("Too few count of the max of undo (minimum is %s)", 0), m_title);   
@@ -342,7 +342,9 @@
                     loader.load(new URLRequest(parameters.baseImgUrl));
                 }
                 else {
-                    enabled = postInitialize();
+                    var width:int = int(parameters["canvasWidth"]);
+                    var height:int = int(parameters["canvasHeight"]);
+                    enabled = postInitialize(width, height);
                 }
             }
             
@@ -532,7 +534,12 @@
                     loader.load(new URLRequest(parameters.baseImgInfoUrl));
                 }
                 else {
-                    restoreCanvas({});
+                    // FIXME: 消してもいいとあるけど消す?
+                    var metadata:Object = {
+                        "width": m_baseImage.width,
+                        "height": m_baseImage.height
+                    };
+                    restoreCanvas(metadata);
                 }
             }
             
@@ -544,16 +551,12 @@
                 removeLoaderEvents(loader);
                 try {
                     metadata = JSON.decode(String(loader.data));
+                    restoreCanvas(metadata);
                 }
                 catch (e:JSONParseError) {
-                    trace(e.message);
+                    // should not be occured
+                    Alert.show(e.message, e.name);
                 }
-                if (!metadata)
-                    metadata = {
-                        "width": m_baseImage.width,
-                        "height": m_baseImage.height
-                    };
-                restoreCanvas(metadata);
             }
             
             private function onIOError(event:IOErrorEvent):void
