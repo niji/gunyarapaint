@@ -1,87 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150" showCloseButton="true" close="onClose()" x="146" y="223">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150" showCloseButton="true" close="onClose()" x="146" y="223" creationComplete="onCreationComplete()">
     <mx:Script>
         <![CDATA[
             import mx.controls.Alert;
             import mx.core.Application;
             import mx.managers.PopUpManager;
             
-            private function onClose():void
+            private function onCreationComplete():void
             {
-                PopUpManager.removePopUp(this);
-            }
-            
-            private function onSave():void
-            {
-                var bytes:ByteArray = new ByteArray();
-                Application.application.save(bytes);
-                createFileReferenceEvents();
-                m_file.addEventListener(Event.COMPLETE, onSaveComplete);
-                m_file.save(bytes);
+                m_dialog = new FileDialog(title);
+                m_dialog.addEventListener(Event.COMPLETE, onClose);
             }
             
             private function onLoad():void
             {
-                createFileReferenceEvents();
-                m_file.addEventListener(Event.SELECT, onSelectLoad);
-                m_file.addEventListener(Event.COMPLETE, onLoadComplete);
-                m_file.browse();
+                m_dialog.openToLoad();
             }
             
-            private function onSelectLoad(event:Event):void
+            private function onSave():void
             {
-                var file:FileReference = FileReference(event.target);
-                file.load();
+                m_dialog.openToSave();
             }
             
-            private function onLoadComplete(event:Event):void
+            private function onClose():void
             {
-                var file:FileReference = FileReference(event.target);
-                var bytes:ByteArray = file.data;
-                Application.application.load(bytes);
-                removeFileReference();
-            }
-            
-            private function onSaveComplete(event:Event):void
-            {
-                Alert.show(_("Saving data to the file has been completed."), title);
-                removeFileReference();
-            }
-            
-            private function onCancel(event:Event):void
-            {
-                removeFileReference();
-            }
-            
-            private function onError(event:ErrorEvent):void
-            {
-                Alert.show(event.text, title);
-                removeFileReference();
-            }
-            
-            private function createFileReferenceEvents():void
-            {
-                m_file = new FileReference();
-                m_file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
-                m_file.addEventListener(IOErrorEvent.IO_ERROR, onError);
-                m_file.addEventListener(Event.CANCEL, onCancel);
-            }
-            
-            private function removeFileReference():void
-            {
-                m_file.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
-                m_file.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-                m_file.removeEventListener(Event.CANCEL, onCancel);
-                m_file.removeEventListener(Event.SELECT, onSelectLoad);
-                m_file.removeEventListener(Event.COMPLETE, onLoadComplete);
-                m_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-                m_file = null;
                 PopUpManager.removePopUp(this);
+                //dialog.removeEventListener(Event.COMPLETE, onClose);
             }
             
-            // FileReferenceの参照を確実に持つ必要があるため、クラス属性として定義している
-            // そうしないとダイアログを開いた後 Event.COMPLETEのイベントが呼ばれなくなる
-            private var m_file:FileReference;
+            private var m_dialog:FileDialog;
         ]]>
     </mx:Script>
     <mx:states>
