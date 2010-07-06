@@ -579,10 +579,10 @@
         ]]>
     </mx:Script>
     <ui:DockMenu id="dockMenu" />
-    <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="81"/>
+    <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="44"/>
     <ui:ToolController id="toolController" left="504" y="44" title="補助ツール" />
-    <ui:PenController id="penController" x="10" y="255" layout="absolute" title="ペンツール"/>
-    <ui:CanvasController id="canvasController" x="146" y="255" width="379" height="410" layout="absolute" title="キャンバス" />
-    <ui:LayerController x="533" y="255" layout="absolute" title="レイヤーツール" id="layerController" />
+    <ui:PenController id="penController" x="10" y="218" layout="absolute" title="ペンツール"/>
+    <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
+    <ui:LayerController x="533" y="218" layout="absolute" title="レイヤーツール" id="layerController" />
     <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5" click="onClickImage()"/>
 </mx:Application>

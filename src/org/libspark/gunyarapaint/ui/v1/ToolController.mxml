@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="298" height="203"
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="298" height="166"
                 implements="org.libspark.gunyarapaint.ui.v1.IController">
     <mx:Script>
         <![CDATA[
@@ -166,28 +166,28 @@
             private var m_initPosition:Point;
         ]]>
     </mx:Script>
-    <mx:TabNavigator width="100%" height="100%" x="0" y="6">
+    <mx:TabNavigator width="100%" height="100%" x="0" y="0">
         <mx:Canvas width="100%" height="100%" label="補助ツール">
-            <mx:Label y="0" text="補助線" x="10"/>
-            <mx:NumericStepper id="additionalNumberStepper" value="4" minimum="2" maximum="16" stepSize="1" right="174" height="18" fontSize="8" change="onChangeAuxDivideCount(event)" y="0"/>
-            <mx:CheckBox id="additionalBoxCheckBox" label="縦横" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)" x="190" y="0"/>
-            <mx:CheckBox id="additionalSkewCheckBox" label="斜め" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)" x="190" y="15"/>
-            <mx:Button id="undoButton" y="36" label="アンドゥ" enabled="false" buttonDown="IApplication(Application.application).canvasModule.undo()" x="36"/>
-            <mx:Button id="redoButton" y="36" label="リドゥ" enabled="false" buttonDown="IApplication(Application.application).canvasModule.redo()" x="136"/>
-            <mx:Button id="rotateResetButton" y="66" label="角度" width="45" height="17" buttonDown="setRotate(0)" x="11"/>
-            <mx:Button id="zoomResetButton" label="拡大" width="45" height="17" buttonDown="setZoom(1)" x="11" y="87"/>
-            <mx:HSlider id="canvasRotate" y="66" width="152" minimum="-180" maximum="180" snapInterval="5" value="0" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)" x="64"/>
-            <mx:HSlider id="canvasZoom" y="87" width="152" minimum="-4" maximum="32" snapInterval="0.5" value="1" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)" x="64"/>
-            <mx:TextInput id="canvasRotateValue" y="66" width="32" height="17" right="28" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
-            <mx:Label y="66" text="°" right="10"/>
-            <mx:TextInput id="canvasZoomValue" y="87" width="32" height="17" right="28" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="onChangeCanvasZoom(event)"/>
-            <mx:Label y="87" text="%" right="10"/>
-            <mx:ComboBox y="2" id="additionalTypeComboBox" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)" x="112">
+            <mx:Label y="0" text="補助線" x="0"/>
+            <mx:NumericStepper id="additionalNumberStepper" value="4" minimum="2" maximum="16" stepSize="1" x="32" height="18" fontSize="8" change="onChangeAuxDivideCount(event)" y="0"/>
+            <mx:ComboBox y="0" id="additionalTypeComboBox" width="70" fontSize="8" height="18" selectedIndex="0" change="onChangeAuxType(event)" x="95">
                 <mx:ArrayCollection id="auxTypes">
                     <mx:Object label="分割" data="0" />
                     <mx:Object label="ピクセル単位" data="1" />
                 </mx:ArrayCollection>
             </mx:ComboBox>
+            <mx:CheckBox id="additionalBoxCheckBox" label="縦横" fontSize="9" height="18" change="onChangeAuxBoxVisible(event)" x="175" y="0"/>
+            <mx:CheckBox id="additionalSkewCheckBox" label="斜め" fontSize="9" height="18" change="onChangeAuxSkewVisible(event)" x="225" y="0"/>
+            <mx:Button id="undoButton" y="24" label="アンドゥ" enabled="false" buttonDown="IApplication(Application.application).canvasModule.undo()" x="10"/>
+            <mx:Button id="redoButton" y="24" label="リドゥ" enabled="false" buttonDown="IApplication(Application.application).canvasModule.redo()" x="110"/>
+            <mx:Button id="rotateResetButton" y="52" label="角度" width="50" height="17" buttonDown="setRotate(0)" x="11"/>
+            <mx:Button id="zoomResetButton" label="拡大" width="50" height="17" buttonDown="setZoom(1)" x="11" y="73"/>
+            <mx:HSlider id="canvasRotate" y="52" width="152" minimum="-180" maximum="180" snapInterval="5" value="0" showDataTip="false" change="setRotate(event.value)" thumbDrag="setRotate(event.value)" x="64"/>
+            <mx:HSlider id="canvasZoom" y="73" width="152" minimum="-4" maximum="32" snapInterval="0.5" value="1" showDataTip="false" change="setZoom(event.value)" thumbDrag="setZoom(event.value)" x="64"/>
+            <mx:TextInput id="canvasRotateValue" y="52" width="32" height="17" right="28" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="onChangeCanvasRotate(event)"/>
+            <mx:Label y="52" text="°" right="10"/>
+            <mx:TextInput id="canvasZoomValue" y="73" width="32" height="17" right="28" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="onChangeCanvasZoom(event)"/>
+            <mx:Label y="73" text="%" right="10"/>
         </mx:Canvas>
         <mx:Canvas width="100%" height="100%" label="互換性設定">
             <mx:CheckBox id="enableUndoLayerCheckBox" label="レイヤー選択をアンドゥに含めない" fontSize="9" height="18" change="onChangeEnableUndoLayer(event)" x="10" y="10"/>

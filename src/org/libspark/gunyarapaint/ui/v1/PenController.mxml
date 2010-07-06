@@ -461,11 +461,11 @@
         <!-- thickness -->
         <mx:Label x="3" y="28" text="太"/>
         <mx:HSlider x="16" y="28" width="87" minimum="1" maximum="30" snapInterval="1" height="12" value="3" id="thicknessSlider" change="currentThickness = event.value"/>
-        <mx:Button x="2" y="47" label="極細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="currentThickness = 1" fontSize="7"/>
+        <mx:Button x="2" y="47" label="極細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="currentThickness = 1" fontSize="6"/>
         <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="currentThickness = 3"/>
         <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="currentThickness = 10"/>
         <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="currentThickness = 20"/>
-        <mx:Button x="86" y="47" label="極太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="currentThickness = 30" fontSize="7"/>
+        <mx:Button x="86" y="47" label="極太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="currentThickness = 30" fontSize="6"/>
         
         <!-- color palette -->
         <mx:Grid id="paletteGrid" x="15" y="73" borderStyle="none" borderColor="#000000" borderThickness="1" horizontalGap="4" verticalGap="3">
