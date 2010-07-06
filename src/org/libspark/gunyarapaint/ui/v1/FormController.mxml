@@ -43,7 +43,6 @@
             
             private function onPost(evt:Event):void
             {
-                Application.application.shouldAlertOnUnload = false;
                 try {
                     var parameters:Parameters = new Parameters();
                     parameters.name = fromTextInput.text;
@@ -56,7 +55,6 @@
                     window.post(parameters);
                 }
                 catch (e:Error) {
-                    Application.application.shouldAlertOnUnload = true;
                     Alert.show(e.message, title);
                 }
             }

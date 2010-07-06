@@ -44,6 +44,7 @@
                         Alert.show(data, title);
                     }
                     else {
+                        Application.application.shouldAlertOnUnload = false;
                         Request.redirect(Application.application.parameters.redirectUrl);
                     }
                 }
@@ -53,7 +54,6 @@
                 finally {
                     removeEvents();
                 }
-                Application.application.shouldAlertOnUnload = true;
             }
             
             private function onIOError(event:IOErrorEvent):void
