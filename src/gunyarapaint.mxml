@@ -248,19 +248,26 @@
             {
                 var undoBufferSize:uint = int(parameters["undoBufferSize"]);
                 if (undoBufferSize < 0) {
-                    Alert.show(_("Too few count of the max of undo (minimum is %s)", 0), m_title);   
+                    Alert.show(_("Too small count of the max of undo.\n" +
+					             "(required is %s and minimum is %s)", 
+                                 undoBufferSize, 0), m_title);   
                     return false;
                 }
                 else if (undoBufferSize > 32) {
-                    Alert.show(_("Too many count of the max of undo (maximum is %s)", 32), m_title);      
+                    Alert.show(_("Too many count of the max of undo.\n" +
+					             "(required is %s and maximum is %s)", undoBufferSize, 32), m_title);      
                     return false;
                 }
                 else if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
-                    Alert.show(_("Too small size of the canvas (minimum is %s x %s)", MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
+                    Alert.show(_("Too small size of the canvas.\n" +
+					             "(required is %s x %s and minimum is %s x %s)\n",
+								 width, height, MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
                     return false;
                 }
                 else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-                    Alert.show(_("Too big size of the canvas (maximum is %s x %s)", MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
+                    Alert.show(_("Too big size of the canvas.\n" +
+					             "(required is %s x %s and minimum is %s x %s)\n",
+                                 MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
                     return false;
                 }
                 m_bytes = new ByteArray();
