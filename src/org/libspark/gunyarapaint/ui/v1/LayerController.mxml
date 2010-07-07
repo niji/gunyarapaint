@@ -65,6 +65,7 @@
                 var layers:LayerBitmapCollection = IApplication(Application.application).layers;
                 var layer:LayerBitmap = layers.at(layers.currentIndex);
                 var currentLayerBlendMode:String = layer.blendMode;
+                layers.resetIndex();
                 layerDataGrid.dataProvider = layers.toDataProvider();
                 layerDataGrid.selectedIndex = getSelectedIndex(layers);
                 alphaSlider.value = layer.alpha;
