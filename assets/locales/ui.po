@@ -110,6 +110,10 @@ msgstr "キャンバスが真っ白です。なにか描いてください。"
 msgid "Failed your post for something wrong. Post again."
 msgstr "何らかの原因で投稿に失敗しました。再投稿してください。"
 
+#: RequestWindow.mxml:75
+msgid "Requested post has been canceled, but the post will not be able to rollback."
+msgstr "投稿がキャンセルされましたが、すでに受け付けられたかもしれません。"
+
 #: PenController.mxml:227
 msgid "Select color to the palette"
 msgstr "パレットに入れる色を選択してください"
@@ -124,3 +128,18 @@ msgstr "リドゥ"
 
 msgid "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)"
 msgstr "座標:(%s, %s) 不透明度:%s 色:(%s,%s,%s)"
+
+msgid "Request cannot accept for the invalid state. This error should not be occured"
+msgstr "不正な状態のため、要求を受け付けられませんでした。これは本来起こり得るものではありません"
+
+msgid "Too small count of the max of undo.(required is %s and minimum is %s)"
+msgstr "最大巻き戻し回数が小さすぎます。(%s回を指定されましたが、最低でも%s回です)"
+
+msgid "Too many count of the max of undo.(required is %s and maximum is %s)"
+msgstr "最大巻き戻し回数が大きすぎます。(%s回を指定されましたが、最大でも%s回です)"
+
+msgid "Too small size of the canvas.(required is %s x %s and minimum is %s x %s)"
+msgstr "キャンバスが小さすぎます。(%s x %sを指定されましたが、最低でも%s x %sです)"
+
+msgid "Too big size of the canvas.(required is %s x %s and minimum is %s x %s)"
+msgstr "キャンバスが大きすぎます。(%s x %sを指定されましたが、最大でも%s x %sです)"

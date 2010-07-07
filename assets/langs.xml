@@ -125,6 +125,10 @@
       <msgstr>何らかの原因で投稿に失敗しました。再投稿してください。</msgstr>
     </message>
     <message>
+      <msgid>Requested post has been canceled, but the post will not be able to rollback.</msgid>
+      <msgstr>投稿がキャンセルされましたが、すでに受け付けられたかもしれません。</msgstr>
+    </message>
+    <message>
       <msgid>The message is empty.</msgid>
       <msgstr>書き込みが空です。</msgstr>
     </message>
@@ -183,6 +187,26 @@
     <message>
       <msgid>Dropper module</msgid>
       <msgstr>スポイトツール</msgstr>
+    </message>
+    <message>
+      <msgid>Request cannot accept for the invalid state. This error should not be occured</msgid>
+      <msgstr>不正な状態のため、要求を受け付けられませんでした。これは本来起こり得るものではありません</msgstr>
+    </message>
+    <message>
+      <msgid>Too small count of the max of undo.(required is %s and minimum is %s)</msgid>
+      <msgstr>最大巻き戻し回数が小さすぎます。(%s回を指定されましたが、最低でも%s回です)</msgstr>
+    </message>
+    <message>
+      <msgid>Too many count of the max of undo.(required is %s and maximum is %s)</msgid>
+      <msgstr>最大巻き戻し回数が大きすぎます。(%s回を指定されましたが、最大でも%s回です)</msgstr>
+    </message>
+    <message>
+      <msgid>Too small size of the canvas.(required is %s x %s and minimum is %s x %s)</msgid>
+      <msgstr>キャンバスが小さすぎます。(%s x %sを指定されましたが、最低でも%s x %sです)</msgstr>
+    </message>
+    <message>
+      <msgid>Too big size of the canvas.(required is %s x %s and minimum is %s x %s)</msgid>
+      <msgstr>キャンバスが大きすぎます。(%s x %sを指定されましたが、最大でも%s x %sです)</msgstr>
     </message>
   </lang>
 </langs>
