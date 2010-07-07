@@ -157,8 +157,7 @@
             {
                 try {
                     var appData:ApplicationData = new ApplicationData(
-                        m_recorder.layers,
-                        m_recorder.undoStack,
+                        m_recorder,
                         m_windows
                     );
                     appData.load(bytes, m_bytes);
@@ -173,8 +172,7 @@
             {
                 try {
                     var appData:ApplicationData = new ApplicationData(
-                        m_recorder.layers,
-                        m_recorder.undoStack,
+                        m_recorder,
                         m_windows
                     );
                     appData.save(bytes, m_bytes);
@@ -236,9 +234,13 @@
                 var height:int = metadata.height;
                 var ready:Boolean = postInitialize(width, height);
                 if (ready) {
-                    m_recorder.layers.load(m_baseImage, metadata);
+                    var from:UndoStack = m_recorder.undoStack;
+                    m_recorder.load(m_baseImage, metadata);
+                    var to:UndoStack = m_recorder.undoStack;
                     if (metadata.pen_details != null)
                         penController.palettes = metadata.pen_details[0];
+                    toolController.swapEventListener(from, to);
+                    layerController.swapEventListener(from, to);
                     layerController.update();
                     enabled = ready;
                 }

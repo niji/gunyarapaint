@@ -65,6 +65,16 @@
                 canvasZoomValue.text = String(Math.round(n) / 100);
             }
             
+            public function swapEventListener(from:UndoStack, to:UndoStack):void
+            {
+                from.removeEventListener(UndoEvent.UNDO, onChangeUndo);
+                from.removeEventListener(UndoEvent.REDO, onChangeUndo);
+                from.removeEventListener(UndoEvent.PUSH, onChangeUndo);
+                to.addEventListener(UndoEvent.UNDO, onChangeUndo);
+                to.addEventListener(UndoEvent.REDO, onChangeUndo);
+                to.addEventListener(UndoEvent.PUSH, onChangeUndo);
+            }
+            
             private function onChangeUndo(event:UndoEvent):void
             {
                 var undoStack:UndoStack = UndoStack(event.target);

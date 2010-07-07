@@ -79,6 +79,14 @@
                 }
             }
             
+            public function swapEventListener(from:UndoStack, to:UndoStack):void
+            {
+                from.removeEventListener(UndoEvent.UNDO, onChangeUndo);
+                from.removeEventListener(UndoEvent.REDO, onChangeUndo);
+                to.addEventListener(UndoEvent.UNDO, onChangeUndo);
+                to.addEventListener(UndoEvent.REDO, onChangeUndo);
+            }
+            
             private function onClickLayer(event:ListEvent):void
             {
                 var app:IApplication = IApplication(Application.application);
