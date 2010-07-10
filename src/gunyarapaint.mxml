@@ -8,7 +8,7 @@
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
     implements="org.libspark.gunyarapaint.framework.ui.IApplication"
-    alpha="1.0">
+    alpha="1.0" xmlns:net="org.libspark.gunyarapaint.ui.v1.net.*">
     <mx:Script>
         <![CDATA[
             import com.adobe.images.PNGEncoder;
@@ -48,6 +48,7 @@
             import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             import org.libspark.gunyarapaint.ui.v1.PNGExporter;
+            import org.libspark.gunyarapaint.ui.v1.net.LoadingDialog;
             import org.libspark.gunyarapaint.ui.v1.net.Parameters;
             
             [Bindable]
@@ -221,13 +222,6 @@
                 }
             }
             
-            private function openRecoveryWindow(event:FlexEvent):void
-            {
-                //var controller:DataController = new DataController();
-                var controller:FileController = new FileController();
-                PopUpManager.addPopUp(controller, this, true);
-            }
-            
             private function restoreCanvas(metadata:Object):void
             {
                 var width:int = metadata.width;
@@ -299,12 +293,18 @@
             
             private function addLoaderEvents(loader:EventDispatcher):void
             {
-                loader.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
-                loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
+                loadingDialog.visible = true;
+                loadingDialog.centerize(this);
+                loadingDialog.setProgressSource(loader);
+                PopUpManager.addPopUp(loadingDialog, this);
+                loader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
             }
             
             private function removeLoaderEvents(loader:EventDispatcher):void
             {
+                loadingDialog.visible = false;
+                PopUpManager.removePopUp(loadingDialog);
                 loader.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
                 loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
             }
@@ -349,6 +349,7 @@
                     addLoaderEvents(loader.contentLoaderInfo);
                     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadImage);
                     loader.load(new URLRequest(parameters.baseImgUrl));
+                    loadingDialog.title = _("Loading image layers...");
                 }
                 else {
                     var width:int = int(parameters["canvasWidth"]);
@@ -523,6 +524,7 @@
                     addLoaderEvents(loader);
                     loader.addEventListener(Event.COMPLETE, onLoadImageInfo);
                     loader.load(new URLRequest(parameters.baseImgInfoUrl));
+                    loadingDialog.title = _("Loading image metadata...");
                 }
                 else {
                     // FIXME: 消してもいいとあるけど消す?
@@ -586,5 +588,6 @@
     <ui:PenController id="penController" x="10" y="218" layout="absolute" title="ペンツール"/>
     <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
     <ui:LayerController x="533" y="218" layout="absolute" title="レイヤーツール" id="layerController" />
+    <net:LoadingDialog id="loadingDialog" visible="false" />
     <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5" click="onClickImage()"/>
 </mx:Application>

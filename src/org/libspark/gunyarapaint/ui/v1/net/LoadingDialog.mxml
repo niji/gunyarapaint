@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="240" height="105">
+    <mx:Script>
+        <![CDATA[
+            import mx.controls.ProgressBarMode;
+            import mx.core.UIComponent;
+            
+            public function centerize(parent:UIComponent):void
+            {
+                x = (parent.width - width) / 2;
+                y = (parent.height - height) / 2;
+            }
+            
+            public function setProgressSource(source:EventDispatcher):void
+            {
+                progress.source = source;
+                if (source is URLLoader) {
+                    progress.mode = ProgressBarMode.POLLED;
+                }
+                else if (source is Loader) {
+                    progress.mode = ProgressBarMode.EVENT;
+                }
+            }
+        ]]>
+    </mx:Script>
+    <mx:ProgressBar id="progress" x="10" y="23"/>
+</mx:TitleWindow>

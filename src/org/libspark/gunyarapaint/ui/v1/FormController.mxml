@@ -4,6 +4,7 @@
                 implements="org.libspark.gunyarapaint.ui.v1.IController">
     <mx:Script>
         <![CDATA[
+            import org.libspark.gunyarapaint.ui.v1.net.RequestWindow;
             import mx.controls.Alert;
             import mx.core.Application;
             import mx.managers.PopUpManager;
