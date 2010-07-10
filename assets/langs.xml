@@ -205,8 +205,12 @@
       <msgstr>キャンバスが小さすぎます。(%s x %sを指定されましたが、最低でも%s x %sです)</msgstr>
     </message>
     <message>
-      <msgid>Too big size of the canvas.(required is %s x %s and minimum is %s x %s)</msgid>
-      <msgstr>キャンバスが大きすぎます。(%s x %sを指定されましたが、最大でも%s x %sです)</msgstr>
+      <msgid>Loading image layers...</msgid>
+      <msgstr>レイヤー画像を読み込み中...</msgstr>
+    </message>
+    <message>
+      <msgid>Loading image metadata...</msgid>
+      <msgstr>画像情報を読み込み中...</msgstr>
     </message>
   </lang>
 </langs>
