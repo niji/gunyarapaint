@@ -1,23 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                xmlns:net="org.libspark.gunyarapaint.ui.v1.net.*"
                 layout="absolute" width="420" height="349"
                 backgroundGradientAlphas="[1.0, 1.0]"
                 backgroundGradientColors="[#FFFFFF, #FFFFFF]"
-                creationComplete="onCreationComplete()" enabled="false">
+                preinitialize="onPreinitialize()"
+                creationComplete="onCreationComplete()"
+                enabled="false">
     <mx:Script>
         <![CDATA[
             import com.adobe.serialization.json.JSON;
+            import com.rails2u.gettext.GetText;
             
             import mx.controls.Alert;
             import mx.core.UIComponent;
             import mx.events.SliderEvent;
+            import mx.managers.PopUpManager;
             
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Player;
             import org.libspark.gunyarapaint.framework.events.PlayerErrorEvent;
             import org.libspark.gunyarapaint.framework.events.PlayerEvent;
+            import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
+            import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
             import org.libspark.gunyarapaint.ui.v1.net.Request;
             
+            [Bindable]
+            [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
+            private var languages:Class;
+            
+            [Bindable]
+            [Embed(source="../assets/config.xml", mimeType="application/octet-stream")]
+            private var config:Class;
+            
+            private function onPreinitialize():void
+            {
+                var configXml:XML = new XML(new config());
+                if (configXml.@stage != "production") {
+                    for each (var item:XML in configXml.children()) {
+                        parameters[item.name()] = item.toString();
+                    }
+                }
+                GetText.locale = parameters["language"] || "ja_jp";
+                GetText.initLangFile(new XML(new languages()));
+                TranslatorRegistry.install(new GetTextTranslator());
+            }
             private function onCreationComplete():void
             {
                 var url:String = parameters["oelogUrl"];
@@ -25,6 +52,7 @@
                 m_continue = false;
                 if (url) {
                     m_request = new Request();
+                    showLoadingDialog(m_request, _("Loading the log..."));
                     m_request.addEventListener(Event.COMPLETE, onResponseLog);
                     m_request.get(url);
                     currentState = "loading";
@@ -38,12 +66,14 @@
             {
                 var urlLoader:URLLoader = URLLoader(event.target);
                 urlLoader.removeEventListener(Event.COMPLETE, onResponseLog);
+                hideLoadingDialog();
                 m_log = urlLoader.data;
                 m_log.uncompress();
                 var url:String = parameters["baseImgUrl"];
                 if (url) {
                     var loader:Loader = new Loader();
                     m_request.loader = loader.contentLoaderInfo;
+                    showLoadingDialog(m_request, _("Loading the image layers..."));
                     m_request.addEventListener(Event.COMPLETE, onResponseLayerImage);
                     m_request.load(url);
                 }
@@ -56,10 +86,12 @@
             {
                 var loader:LoaderInfo = LoaderInfo(event.target);
                 loader.removeEventListener(Event.COMPLETE, onResponseLayerImage);
+                hideLoadingDialog();
                 m_layerImage = Bitmap(loader.content).bitmapData;
                 var url:String = parameters["baseImgInfoUrl"];
                 if (url) {
                     m_request.loader = new URLLoader();
+                    showLoadingDialog(m_request, _("Loading the image metadata..."));
                     m_request.addEventListener(Event.COMPLETE, onResponseMetadata);
                     m_request.get(url);
                 }
@@ -73,6 +105,7 @@
             {
                 var loader:URLLoader = URLLoader(event.target);
                 loader.removeEventListener(Event.COMPLETE, onResponseMetadata);
+                hideLoadingDialog();
                 m_metadata = JSON.decode(String(loader.data));
                 m_continue = true;
                 play();
@@ -177,6 +210,21 @@
                 }
             }
             
+            private function hideLoadingDialog():void
+            {
+                loadingDialog.visible = false;
+                PopUpManager.removePopUp(loadingDialog);
+            }
+            
+            private function showLoadingDialog(request:Request, title:String):void
+            {
+                loadingDialog.centerize(this);
+                loadingDialog.setProgressSource(request.loader);
+                loadingDialog.visible = true;
+                loadingDialog.title = title;
+                PopUpManager.addPopUp(loadingDialog, this);
+            }
+            
             private var m_log:ByteArray;
             private var m_layerImage:BitmapData;
             private var m_metadata:Object;
@@ -205,4 +253,5 @@
     <mx:HSlider id="playSpeedHSlider" x="175" y="8" minimum="1" maximum="501" snapInterval="20" value="1" width="107" change="onChangePlayerSpeed(event)"/>
     <mx:Canvas id="canvas" x="10" width="400" height="300" y="39" borderStyle="solid"></mx:Canvas>
     <mx:Label x="313" y="11" text="{Painter.PAINTER_VERSION_STRING}"/>
+    <net:LoadingDialog id="loadingDialog" visible="false" />
 </mx:Application>

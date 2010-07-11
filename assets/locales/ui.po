@@ -144,8 +144,11 @@ msgstr "キャンバスが小さすぎます。(%s x %sを指定されました�
 msgid "Too big size of the canvas.(required is %s x %s and minimum is %s x %s)"
 msgstr "キャンバスが大きすぎます。(%s x %sを指定されましたが、最大でも%s x %sです)"
 
-msgid "Loading image layers..."
+msgid "Loading the log..."
+msgstr "描画ログを読み込み中..."
+
+msgid "Loading image the layers..."
 msgstr "レイヤー画像を読み込み中..."
 
-msgid "Loading image metadata..."
+msgid "Loading image the metadata..."
 msgstr "画像情報を読み込み中..."

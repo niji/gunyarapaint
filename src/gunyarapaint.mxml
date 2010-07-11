@@ -349,7 +349,7 @@
                     addLoaderEvents(loader.contentLoaderInfo);
                     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadImage);
                     loader.load(new URLRequest(parameters.baseImgUrl));
-                    loadingDialog.title = _("Loading image layers...");
+                    loadingDialog.title = _("Loading the image layers...");
                 }
                 else {
                     var width:int = int(parameters["canvasWidth"]);
@@ -524,7 +524,7 @@
                     addLoaderEvents(loader);
                     loader.addEventListener(Event.COMPLETE, onLoadImageInfo);
                     loader.load(new URLRequest(parameters.baseImgInfoUrl));
-                    loadingDialog.title = _("Loading image metadata...");
+                    loadingDialog.title = _("Loading the image metadata...");
                 }
                 else {
                     // FIXME: 消してもいいとあるけど消す?
