@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 width="486" height="166"
-                implements="org.libspark.gunyarapaint.ui.v1.IController">
+                implements="org.libspark.gunyarapaint.framework.ui.IController">
     <mx:Script>
         <![CDATA[
             import org.libspark.gunyarapaint.ui.v1.net.RequestWindow;

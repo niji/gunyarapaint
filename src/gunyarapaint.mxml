@@ -26,6 +26,7 @@
             import mx.managers.PopUpManager;
             
             import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+            import org.libspark.gunyarapaint.framework.Marshal;
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Pen;
             import org.libspark.gunyarapaint.framework.Recorder;
@@ -40,12 +41,11 @@
             import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
             import org.libspark.gunyarapaint.framework.modules.LineModule;
             import org.libspark.gunyarapaint.framework.modules.PixelModule;
+            import org.libspark.gunyarapaint.framework.ui.IController;
             import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
             import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
-            import org.libspark.gunyarapaint.ui.v1.ApplicationData;
             import org.libspark.gunyarapaint.ui.v1.CopyrightWindow;
             import org.libspark.gunyarapaint.ui.v1.FileController;
-            import org.libspark.gunyarapaint.ui.v1.IController;
             import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
             import org.libspark.gunyarapaint.ui.v1.PNGExporter;
             import org.libspark.gunyarapaint.ui.v1.net.LoadingDialog;
@@ -159,15 +159,15 @@
                 }
             }
             
-            public function newApplicationData():ApplicationData
+            public function newMarshal():Marshal
             {
-                return new ApplicationData(m_recorder, m_windows);
+                return new Marshal(m_recorder, m_windows);
             }
             
             public function load(bytes:ByteArray):void
             {
                 try {
-                    newApplicationData().load(bytes, m_bytes);
+                    newMarshal().load(bytes, m_bytes);
                     m_module.reset();
                 }
                 catch (e:Error) {
@@ -178,7 +178,7 @@
             public function save(bytes:ByteArray):void
             {
                 try {
-                    newApplicationData().save(bytes, m_bytes);
+                    newMarshal().save(bytes, m_bytes);
                 }
                 catch (e:Error) {
                     Alert.show(e.message, m_title);

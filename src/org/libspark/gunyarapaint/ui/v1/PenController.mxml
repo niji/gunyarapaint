@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450"
                 xmlns:ns1="org.libspark.gunyarapaint.controls.*"
-                implements="org.libspark.gunyarapaint.ui.v1.IController">
+                implements="org.libspark.gunyarapaint.framework.ui.IController">
     <mx:Script>
         <![CDATA[
             import mx.containers.GridItem;
