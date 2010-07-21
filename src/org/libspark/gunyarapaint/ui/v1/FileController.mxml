@@ -19,7 +19,9 @@
             
             private function onSave():void
             {
-                m_dialog.openToSave();
+                var bytes:ByteArray = new ByteArray();
+                Application.application.save(bytes);
+                m_dialog.openToSave(bytes);
             }
             
             private function onClose():void
