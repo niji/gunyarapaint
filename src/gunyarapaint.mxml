@@ -147,6 +147,11 @@
                 return m_commit;
             }
             
+            public function get enabledDevelopmentSupport():Boolean
+            {
+                return m_development;
+            }
+            
             public function resetWindowsPosition():void
             {
                 for (var i:String in m_windows) {
@@ -154,14 +159,15 @@
                 }
             }
             
+            public function newApplicationData():ApplicationData
+            {
+                return new ApplicationData(m_recorder, m_windows);
+            }
+            
             public function load(bytes:ByteArray):void
             {
                 try {
-                    var appData:ApplicationData = new ApplicationData(
-                        m_recorder,
-                        m_windows
-                    );
-                    appData.load(bytes, m_bytes);
+                    newApplicationData().load(bytes, m_bytes);
                     m_module.reset();
                 }
                 catch (e:Error) {
@@ -172,11 +178,7 @@
             public function save(bytes:ByteArray):void
             {
                 try {
-                    var appData:ApplicationData = new ApplicationData(
-                        m_recorder,
-                        m_windows
-                    );
-                    appData.save(bytes, m_bytes);
+                    newApplicationData().save(bytes, m_bytes);
                 }
                 catch (e:Error) {
                     Alert.show(e.message, m_title);
@@ -205,7 +207,7 @@
                 param.refererId = parameters.oekakiId;
                 param.imageBytes = PNGEncoder.encode(bitmapData);
                 param.layerImageBytes = PNGEncoder.encode(layerBitmap);
-                param.logBytes = m_recorder.bytes;
+                param.logBytes = m_recorder.newBytes();
                 param.logCount = commitCount;
                 param.metadata = metadata;
             }
