@@ -19,6 +19,7 @@
             
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Player;
+            import org.libspark.gunyarapaint.framework.events.CommandEvent;
             import org.libspark.gunyarapaint.framework.events.PlayerErrorEvent;
             import org.libspark.gunyarapaint.framework.events.PlayerEvent;
             import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
@@ -40,6 +41,7 @@
                     for each (var item:XML in configXml.children()) {
                         parameters[item.name()] = item.toString();
                     }
+                    m_development = true;
                 }
                 GetText.locale = parameters["language"] || "ja_jp";
                 GetText.initLangFile(new XML(new languages()));
@@ -138,6 +140,11 @@
                 Alert.show(event.cause.message);
             }
             
+            private function onParse(event:CommandEvent):void
+            {
+                trace(event.command);
+            }
+            
             private function play():void
             {
                 if (m_finished) {
@@ -150,6 +157,8 @@
                 m_player.speed = playSpeedHSlider.value;
                 m_player.addEventListener(PlayerEvent.FINISHED, onPlayFinished);
                 m_player.addEventListener(PlayerErrorEvent.ERROR, onPlayError);
+                if (m_development)
+                    m_player.addEventListener(CommandEvent.PARSE, onParse);
                 m_player.start();
             }
             
@@ -164,6 +173,7 @@
                     m_continue = true;
                 }
                 if (m_player != null) {
+                    m_player.removeEventListener(CommandEvent.PARSE, onParse);
                     m_player.removeEventListener(PlayerEvent.FINISHED, onPlayFinished);
                     m_player.removeEventListener(PlayerErrorEvent.ERROR, onPlayError);
                 }
@@ -232,6 +242,7 @@
             private var m_request:Request;
             private var m_continue:Boolean;
             private var m_finished:Boolean;
+            private var m_development:Boolean;
         ]]>
     </mx:Script>
     <mx:states>
