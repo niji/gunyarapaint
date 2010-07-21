@@ -22,8 +22,10 @@
                         dialog.openToLoad();
                         break;
                     case "file.save":
+                        var bytes:ByteArray = new ByteArray();
+                        Application.application.save(bytes);
                         dialog = new FileDialog(item.@label);
-                        dialog.openToSave();
+                        dialog.openToSave(bytes);
                         break;
                     case "window.resetAll":
                         Application.application.resetWindowsPosition();
@@ -33,6 +35,11 @@
                         break;
                     case "help.bbs":
                         navigateToURL(new URLRequest("http://nicodic.razil.jp/bugyobo/"));
+                        break;
+                    case "development.saveLog":
+                        var appData:ApplicationData = Application.application.newApplicationData();
+                        dialog = new FileDialog(item.@label);
+                        dialog.openToSave(appData.newRecorderBytes());
                         break;
                     default:
                         throw new IllegalOperationError("Invalid menu item selected");
@@ -48,6 +55,9 @@
             <menuitem label="ファイル">
                 <menuitem label="読み込み" data="file.load" />
                 <menuitem label="保存" data="file.save" />
+            </menuitem>
+            <menuitem label="開発">
+                <menuitem label="ログを保存する" data="development.saveLog" />
             </menuitem>
             <menuitem label="ウィンドウ">
                 <menuitem label="初期状態に戻す" data="window.resetAll" />
