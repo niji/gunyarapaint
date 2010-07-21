@@ -7,6 +7,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
     import org.libspark.gunyarapaint.framework.Painter;
+    import org.libspark.gunyarapaint.framework.Recorder;
     import org.libspark.gunyarapaint.framework.UndoStack;
     
     /**
@@ -30,10 +31,10 @@ package org.libspark.gunyarapaint.ui.v1
          */
         public static const VERSION:uint = 1;
         
-        public function ApplicationData(painter:Painter,
+        public function ApplicationData(recorder:Recorder,
                                         controllers:Vector.<IController>)
         {
-            m_painter = painter;
+            m_recorder = recorder;
             m_controllers = controllers;
         }
         
@@ -60,8 +61,8 @@ package org.libspark.gunyarapaint.ui.v1
             var bitmapData:BitmapData = new BitmapData(w, h, true, 0x0);
             bitmapData.setVector(new Rectangle(0, 0, w, h), pixels);
             dataBytes.readBytes(toBytes);
-            m_painter.layers.load(bitmapData, metadata);
-            m_painter.undoStack.load(undoData);
+            m_recorder.layers.load(bitmapData, metadata);
+            m_recorder.undoStack.load(undoData);
             toBytes.position = toBytes.length;
             var count:uint = m_controllers.length;
             for (var i:uint = 0; i < count; i++) {
@@ -79,12 +80,12 @@ package org.libspark.gunyarapaint.ui.v1
          */
         public function save(bytes:ByteArray, fromBytes:ByteArray):void
         {
-            var bitmapData:BitmapData = m_painter.layers.newLayerBitmapData;
+            var bitmapData:BitmapData = m_recorder.layers.newLayerBitmapData;
             var metadata:Object = {};
             var undoData:Object = {};
             var rect:Rectangle = bitmapData.rect;
-            m_painter.layers.save(bitmapData, metadata);
-            m_painter.undoStack.save(undoData);
+            m_recorder.layers.save(bitmapData, metadata);
+            m_recorder.undoStack.save(undoData);
             bytes.endian = Endian.BIG_ENDIAN;
             bytes.writeByte(VERSION);
             bytes.writeObject(fromBytes);
@@ -105,7 +106,12 @@ package org.libspark.gunyarapaint.ui.v1
             bytes.position = 0;
         }
         
-        private var m_painter:Painter;
+        public function newRecorderBytes():ByteArray
+        {
+            return m_recorder.newBytes();
+        }
+        
+        private var m_recorder:Recorder;
         private var m_controllers:Vector.<IController>;
     }
 }
