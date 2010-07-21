@@ -18,10 +18,8 @@ package org.libspark.gunyarapaint.ui.v1
             m_title = title;
         }
         
-        public function openToSave():void
+        public function openToSave(bytes:ByteArray):void
         {
-            var bytes:ByteArray = new ByteArray();
-            Application.application.save(bytes);
             createFileReferenceEvents();
             m_file.addEventListener(Event.COMPLETE, onSaveComplete);
             m_file.save(bytes);
