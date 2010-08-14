@@ -22,6 +22,10 @@ msgstr "現在のレイヤーは不可視です"
 msgid "The current layer is locked"
 msgstr "現在のレイヤーはロックされています"
 
+# MarshalVersionError.as
+msgid "Cannot load this file: actual version = %s, expected version = %s"
+msgstr "このファイルは読むことが出来ません: 実際のバージョン = %s, 期待されたバージョン = %s"
+
 # MergeLayersError.as
 msgid "Cannot merge layers because there is only one layer or invisible layer is found"
 msgstr "ひとつのレイヤーしか無いか、または不可視のレイヤーが見つかったため、レイヤーの統合が出来ません"

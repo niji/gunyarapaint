@@ -29,6 +29,10 @@
       <msgstr>現在のレイヤーはロックされています</msgstr>
     </message>
     <message>
+      <msgid>Cannot load this file: actual version = %s, expected version = %s</msgid>
+      <msgstr>このファイルは読むことが出来ません: 実際のバージョン = %s, 期待されたバージョン = %s</msgstr>
+    </message>
+    <message>
       <msgid>Tried loading invalid signature log</msgid>
       <msgstr>不正な識別子を持つお絵描きログを読み込もうとしました</msgstr>
     </message>
