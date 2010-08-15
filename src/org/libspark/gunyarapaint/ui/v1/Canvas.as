@@ -15,7 +15,7 @@ package org.libspark.gunyarapaint.ui.v1
     
     import org.libspark.gunyarapaint.framework.AuxLineView;
     import org.libspark.gunyarapaint.framework.AuxPixelView;
-    import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+    import org.libspark.gunyarapaint.framework.LayerCollection;
     import org.libspark.gunyarapaint.framework.TransparentBitmap;
     import org.libspark.gunyarapaint.framework.modules.DropperModule;
     import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
@@ -175,7 +175,7 @@ package org.libspark.gunyarapaint.ui.v1
                 y = mouseY;
             }
             var app:gunyarapaint = gunyarapaint(Application.application);
-            var layers:LayerBitmapCollection = app.layers;
+            var layers:LayerCollection = app.layers;
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
@@ -240,7 +240,7 @@ package org.libspark.gunyarapaint.ui.v1
             module.wheel(event.localX, event.localY, event.delta);
         }
         
-        private function removeMouseEvents(layers:LayerBitmapCollection):void
+        private function removeMouseEvents(layers:LayerCollection):void
         {
             layers.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
             layers.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);

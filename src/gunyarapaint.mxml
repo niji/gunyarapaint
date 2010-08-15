@@ -25,7 +25,7 @@
             import mx.events.MenuEvent;
             import mx.managers.PopUpManager;
             
-            import org.libspark.gunyarapaint.framework.LayerBitmapCollection;
+            import org.libspark.gunyarapaint.framework.LayerCollection;
             import org.libspark.gunyarapaint.framework.Marshal;
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Pen;
@@ -117,7 +117,7 @@
                 return m_blendModes.slice();
             }
             
-            public function get layers():LayerBitmapCollection
+            public function get layers():LayerCollection
             {
                 return m_recorder.layers;
             }
@@ -194,7 +194,7 @@
                     !parameters.magic      ||
                     !parameters.redirectUrl)
                     throw new ArgumentError(_("Request cannot accept for the invalid state. This error should not be occured"));
-                var layers:LayerBitmapCollection = m_recorder.layers;
+                var layers:LayerCollection = m_recorder.layers;
                 var bitmapData:BitmapData = canvasController.exportBitmapData();
                 var layerBitmap:BitmapData = layers.newLayerBitmapData;
                 var metadata:Object = {};
