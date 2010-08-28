@@ -1,27 +1,39 @@
 package org.libspark.gunyarapaint.ui.v1
 {
+    import com.oysteinwika.ui.SWFMouseWheel;
+    
     import flash.display.BitmapData;
     import flash.events.EventPhase;
     import flash.events.MouseEvent;
     import flash.geom.Matrix;
     import flash.geom.Point;
     import flash.geom.Rectangle;
-    import flash.utils.ByteArray;
+    import flash.system.Capabilities;
     
     import mx.containers.TitleWindow;
+    import mx.controls.Alert;
     import mx.controls.HScrollBar;
     import mx.controls.VScrollBar;
     import mx.controls.scrollClasses.ScrollBar;
+    import mx.controls.scrollClasses.ScrollThumb;
     import mx.core.Application;
     import mx.core.Container;
-    import mx.events.FlexEvent;
+    import mx.core.UIComponent;
     import mx.events.MoveEvent;
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
+    import mx.managers.CursorManager;
     
+    import org.libspark.gunyarapaint.framework.AuxLineView;
+    import org.libspark.gunyarapaint.framework.AuxPixelView;
+    import org.libspark.gunyarapaint.framework.LayerCollection;
     import org.libspark.gunyarapaint.framework.Pen;
+    import org.libspark.gunyarapaint.framework.TransparentBitmap;
+    import org.libspark.gunyarapaint.framework.modules.DropperModule;
+    import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
     import org.libspark.gunyarapaint.framework.ui.IApplication;
     import org.libspark.gunyarapaint.framework.ui.IController;
+    import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
     import org.libspark.gunyarapaint.ui.utils.ComponentResizer;
     
     public class CanvasController extends TitleWindow implements IController
@@ -67,8 +79,7 @@ package org.libspark.gunyarapaint.ui.v1
             m_canvasX = m_canvasY = 0;
             m_canvasScaleX = m_canvasScaleY = 0.5;
             m_canvasScale = 1;
-            m_canvas = new Canvas(app, this);
-            m_canvasContainer.addChild(m_canvas);
+            initCanvas(app);
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
@@ -87,23 +98,23 @@ package org.libspark.gunyarapaint.ui.v1
             move(rect.x, rect.y);
             width = rect.width;
             height = rect.height;
-            m_canvas.auxBoxVisible = data.auxBoxVisible;
-            m_canvas.auxSkewVisible = data.auxSkewVisible;
-            m_canvas.auxDivideCount = data.auxDivideCount;
-            m_canvas.auxLineAlpha = data.auxLineAlpha;
-            m_canvas.auxLineColor = data.auxLineColor;
-            m_canvas.enableAuxPixel = data.enableAuxPixel;
+            auxBoxVisible = data.auxBoxVisible;
+            auxSkewVisible = data.auxSkewVisible;
+            auxDivideCount = data.auxDivideCount;
+            auxLineAlpha = data.auxLineAlpha;
+            auxLineColor = data.auxLineColor;
+            enableAuxPixel = data.enableAuxPixel;
         }
         
         public function save(data:Object):void
         {
             data.rectangle = new Rectangle(x, y, width, height);
-            data.auxBoxVisible = m_canvas.auxBoxVisible;
-            data.auxSkewVisible = m_canvas.auxSkewVisible;
-            data.auxDivideCount = m_canvas.auxDivideCount;
-            data.auxLineAlpha = m_canvas.auxLineAlpha;
-            data.auxLineColor = m_canvas.auxLineColor;
-            data.enableAuxPixel = m_canvas.enableAuxPixel;
+            data.auxBoxVisible = auxBoxVisible;
+            data.auxSkewVisible = auxSkewVisible;
+            data.auxDivideCount = auxDivideCount;
+            data.auxLineAlpha = auxLineAlpha;
+            data.auxLineColor = auxLineColor;
+            data.enableAuxPixel = enableAuxPixel;
         }
         
         public function resetWindow():void
@@ -157,7 +168,7 @@ package org.libspark.gunyarapaint.ui.v1
         public function exportBitmapData():BitmapData
         {
             var bitmapData:BitmapData = new BitmapData(m_canvasWidth, m_canvasHeight);
-            bitmapData.draw(m_canvas);
+            bitmapData.draw(m_canvasContainer);
             return bitmapData;
         }
         
@@ -171,34 +182,84 @@ package org.libspark.gunyarapaint.ui.v1
             return m_canvasScale;
         }
         
+        public function updateAuxViews():void
+        {
+            m_auxLine.update();
+            m_auxPixel.update();
+        }
+        
+        public function get auxBoxVisible():Boolean
+        {
+            return m_auxLine.boxVisible;
+        }
+        
+        public function get auxSkewVisible():Boolean
+        {
+            return m_auxLine.skewVisible;
+        }
+        
+        public function get auxDivideCount():uint
+        {
+            return m_auxLine.divideCount;
+        }
+        
+        public function get auxLineAlpha():Number
+        {
+            return m_auxLine.lineAlpha;
+        }
+        
+        public function get auxLineColor():uint
+        {
+            return m_auxLine.lineColor;
+        }
+        
+        public function get enableAuxPixel():Boolean
+        {
+            return m_auxPixel.visible;
+        }
+        
         public function set auxBoxVisible(value:Boolean):void
         {
-            m_canvas.auxBoxVisible = value;
-            m_canvas.updateAuxViews();
+            m_auxLine.boxVisible = m_auxPixel.boxVisible = value;
+            updateAuxViews();
         }
         
         public function set auxSkewVisible(value:Boolean):void
         {
-            m_canvas.auxSkewVisible = value;
-            m_canvas.updateAuxViews();
+            m_auxLine.skewVisible = m_auxPixel.skewVisible = value;
+            updateAuxViews();
         }
         
         public function set auxDivideCount(value:uint):void
         {
-            m_canvas.auxDivideCount = value;
-            m_canvas.updateAuxViews();
+            m_auxLine.divideCount = m_auxPixel.divideCount = value;
+            updateAuxViews();
+        }
+        
+        public function set auxLineAlpha(value:Number):void
+        {
+            m_auxLine.lineAlpha = m_auxPixel.lineAlpha = value;
+            updateAuxViews();
+        }
+        
+        public function set auxLineColor(value:uint):void
+        {
+            m_auxLine.lineColor = m_auxPixel.lineColor = value;
+            updateAuxViews();
         }
         
         public function set enableAuxPixel(value:Boolean):void
         {
-            m_canvas.enableAuxPixel = value;
-            m_canvas.updateAuxViews();
+            m_auxLine.visible = value ? false : true;
+            m_auxPixel.visible = value ? true : false;
         }
         
         public function set enablePixelInfo(value:Boolean):void
         {
             status = value ? m_statusDefault : "";
-            m_canvas.enablePixelInfo = value;
+            m_contentContainer.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
+            if (value)
+                m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
         }
         
         public function set statusText(value:String):void
@@ -239,9 +300,146 @@ package org.libspark.gunyarapaint.ui.v1
             if (event.eventPhase == EventPhase.AT_TARGET && event.shiftKey) {
                 var pen:Pen = IApplication(Application.application).pen;
                 setStyle("backgroundColor", pen.color);
-                m_canvas.auxLineColor = pen.color;
-                m_canvas.auxLineAlpha = pen.alpha;
-                m_canvas.updateAuxViews();
+                auxLineColor = pen.color;
+                auxLineAlpha = pen.alpha;
+            }
+        }
+        
+        private function onModuleChangeBefore(event:CanvasModuleEvent):void
+        {
+            removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+        }
+        
+        private function onModuleChangeAfter(event:CanvasModuleEvent):void
+        {
+            var application:Object = Application.application;
+            var app:IApplication = IApplication(application);
+            var module:ICanvasModule = app.canvasModule;
+            if (module is MovableCanvasModule)
+                addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+            CursorManager.removeCursor(CursorManager.currentCursorID);
+            switch (module.name) {
+                case DropperModule.DROPPER:
+                    CursorManager.setCursor(application.dropperIcon);
+                    break;
+                case MovableCanvasModule.MOVABLE_CANVAS:
+                    CursorManager.setCursor(application.handOpenIcon);
+                    break;
+            }
+        }
+        
+        private function onMouseDown(event:MouseEvent):void
+        {
+            var app:gunyarapaint = gunyarapaint(Application.application);
+            var layers:LayerCollection = app.layers;
+            var x:Number = layers.mouseX;
+            var y:Number = layers.mouseY;
+            try {
+                // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
+                // 必ず try/catch で囲む必要がある
+                app.canvasModule.start(x, y);
+                removeMouseEvents(layers);
+                m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+                m_contentContainer.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+                m_widthLimit = m_contentContainer.width - m_vScrollBar.width;
+                m_heightLimit = m_contentContainer.height - m_hScrollBar.height;
+                //addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+            } catch (e:Error) {
+                removeMouseEvents(layers);
+                Alert.show(e.message, app.canvasModuleName);
+            }
+        }
+        
+        private function onMouseMove(event:MouseEvent):void
+        {
+            if (event.target is ScrollThumb == false &&
+                m_contentContainer.mouseX < m_widthLimit &&
+                m_contentContainer.mouseY < m_heightLimit) {
+                var app:IApplication = IApplication(Application.application);
+                var layers:LayerCollection = app.layers;
+                var x:Number = layers.mouseX;
+                var y:Number = layers.mouseY;
+                app.canvasModule.move(x, y);
+            }
+        }
+        
+        private function onMouseMove2(event:MouseEvent):void
+        {
+            var application:Object = Application.application;
+            var app:IApplication = IApplication(application);
+            var layers:LayerCollection = app.layers
+            var x:Number = layers.mouseX;
+            var y:Number = layers.mouseY;
+            var color:uint = app.canvasModule.getPixel32(x, y);
+            var status:String = _(
+                "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)",
+                x, y,
+                Number(((color >> 24) & 0xff) / 255).toPrecision(2),
+                ((color >> 16) & 0xff),
+                ((color >> 8) & 0xff),
+                ((color >> 0) & 0xff)
+            );
+            application.canvasController.statusText = status;
+        }
+        
+        private function onMouseUp(event:MouseEvent):void
+        {
+            var app:IApplication = IApplication(Application.application);
+            var layers:LayerCollection = app.layers;
+            var x:Number = layers.mouseX;
+            var y:Number = layers.mouseY;
+            removeMouseEvents(layers);
+            app.canvasModule.stop(x, y);
+        }
+        
+        private function onMouseOut(event:MouseEvent):void
+        {
+            var app:IApplication = IApplication(Application.application);
+            removeMouseEvents(app.layers);
+            app.canvasModule.interrupt(event.localX, event.localY);
+        }
+        
+        private function onMouseWheel(event:MouseEvent):void
+        {
+            var module:MovableCanvasModule = MovableCanvasModule(Application.application.module);
+            module.wheel(event.localX, event.localY, event.delta);
+        }
+        
+        private function removeMouseEvents(layers:LayerCollection):void
+        {
+            m_contentContainer.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            m_contentContainer.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+        }
+        
+        private function initCanvas(app:IApplication):void
+        {
+            var rect:Rectangle = new Rectangle(0, 0, m_canvasWidth, m_canvasHeight);
+            var transparent:TransparentBitmap = new TransparentBitmap(rect);
+            m_auxLine = new AuxLineView(rect);
+            m_auxPixel = new AuxPixelView(rect);
+            m_auxLine.visible = true;
+            m_auxPixel.visible = false;
+            m_canvas = new UIComponent();
+            m_canvas.addChild(transparent);
+            app.layers.setView(m_canvas);
+            m_canvas.addChild(m_auxLine);
+            m_canvas.addChild(m_auxPixel);
+            m_canvasContainer.addChild(m_canvas);
+            app.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
+            app.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
+            m_contentContainer.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
+            // Capabilities.version で OS を判断するのは適切ではないが、
+            // 少なくとも MacOSX ではマウスホイールを正しく感知することが出来無いので対処療法として
+            if (Capabilities.version.indexOf("MAC") >= 0) {
+                SWFMouseWheel.SWFMouseWheelHandler = function(delta:Number):void
+                {
+                    var module:MovableCanvasModule = app.canvasModule as MovableCanvasModule;
+                    if (module != null)
+                        module.wheel(0, 0, delta * 3)
+                };
+                SWFMouseWheel._init();
             }
         }
         
@@ -273,7 +471,6 @@ package org.libspark.gunyarapaint.ui.v1
             // スクロールバーの大きさを決定する(拡大率が大きい程スクロールバーが小さくなる)
             m_hScrollBar.setScrollProperties(m_canvasContainer.width, 0, maxX);
             m_vScrollBar.setScrollProperties(m_canvasContainer.height, 0, maxY);
-            // キャンバスを移動させる
             m_canvas.move(-m_canvasX, -m_canvasY);
         }
         
@@ -308,6 +505,7 @@ package org.libspark.gunyarapaint.ui.v1
         }
         
         private var m_statusDefault:String;
+        private var m_canvas:UIComponent;
         private var m_canvasContainer:Container; // GPCanvasを直接格納するコンテナ
         private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
         private var m_hScrollBar:HScrollBar; // 横スクロールバー
@@ -321,6 +519,9 @@ package org.libspark.gunyarapaint.ui.v1
         private var m_canvasScaleY:Number; // 拡大したキャンバスの高さに対する Y 座標の相対率
         private var m_canvasScale:Number; // キャンバスの倍率
         private var m_preDegree:int; // 前の回転角度
-        private var m_canvas:Canvas;
+        private var m_auxLine:AuxLineView;
+        private var m_auxPixel:AuxPixelView;
+        private var m_widthLimit:Number;
+        private var m_heightLimit:Number;
     }
 }
