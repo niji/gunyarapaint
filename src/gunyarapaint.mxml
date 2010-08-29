@@ -31,6 +31,7 @@
             import org.libspark.gunyarapaint.framework.Pen;
             import org.libspark.gunyarapaint.framework.Recorder;
             import org.libspark.gunyarapaint.framework.UndoStack;
+            import org.libspark.gunyarapaint.framework.Version;
             import org.libspark.gunyarapaint.framework.events.CommandEvent;
             import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
             import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
@@ -591,5 +592,5 @@
     <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
     <ui:LayerController x="533" y="218" layout="absolute" title="レイヤーツール" id="layerController" />
     <net:LoadingDialog id="loadingDialog" visible="false" />
-    <mx:Label id="versionLabel" text="{Painter.PAINTER_VERSION_STRING}" right="10" bottom="10" alpha="0.5" click="onClickImage()"/>
+    <mx:Label id="versionLabel" text="{Version.DATE_STRING}" right="10" bottom="10" alpha="0.5" click="onClickImage()"/>
 </mx:Application>
