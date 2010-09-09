@@ -19,6 +19,7 @@
             
             import org.libspark.gunyarapaint.framework.Painter;
             import org.libspark.gunyarapaint.framework.Player;
+            import org.libspark.gunyarapaint.framework.Version;
             import org.libspark.gunyarapaint.framework.events.CommandEvent;
             import org.libspark.gunyarapaint.framework.events.PlayerErrorEvent;
             import org.libspark.gunyarapaint.framework.events.PlayerEvent;
@@ -263,6 +264,6 @@
     <mx:Label x="122" y="11" text="再生スピード" />
     <mx:HSlider id="playSpeedHSlider" x="175" y="8" minimum="1" maximum="501" snapInterval="20" value="1" width="107" change="onChangePlayerSpeed(event)"/>
     <mx:Canvas id="canvas" x="10" width="400" height="300" y="39" borderStyle="solid"></mx:Canvas>
-    <mx:Label x="313" y="11" text="{Painter.PAINTER_VERSION_STRING}"/>
+    <mx:Label x="313" y="11" text="{Version.DATE_STRING}"/>
     <net:LoadingDialog id="loadingDialog" visible="false" />
 </mx:Application>
