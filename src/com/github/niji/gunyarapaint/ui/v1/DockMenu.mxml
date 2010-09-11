@@ -2,6 +2,8 @@
 <mx:ApplicationControlBar xmlns:mx="http://www.adobe.com/2006/mxml" dock="true">
     <mx:Script>
         <![CDATA[
+            import com.github.niji.framework.Marshal;
+            
             import flash.net.navigateToURL;
             
             import mx.core.Application;
@@ -37,9 +39,9 @@
                         navigateToURL(new URLRequest("http://nicodic.razil.jp/bugyobo/"));
                         break;
                     case "development.saveLog":
-                        var appData:ApplicationData = Application.application.newApplicationData();
+                        var marshal:Marshal = Application.application.newMarshal();
                         dialog = new FileDialog(item.@label);
-                        dialog.openToSave(appData.newRecorderBytes());
+                        dialog.openToSave(marshal.newRecorderBytes());
                         break;
                     default:
                         throw new IllegalOperationError("Invalid menu item selected");
