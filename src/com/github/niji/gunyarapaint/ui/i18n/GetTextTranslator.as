@@ -1,8 +1,8 @@
-package org.libspark.gunyarapaint.ui.i18n
+package com.github.niji.gunyarapaint.ui.i18n
 {
     import com.rails2u.gettext.GetText;
     
-    import org.libspark.gunyarapaint.framework.i18n.ITranslator;
+    import com.github.niji.framework.i18n.ITranslator;
     
     /**
      * as3gettext を使った翻訳クラス

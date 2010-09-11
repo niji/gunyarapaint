@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.ui.events
+package com.github.niji.gunyarapaint.ui.events
 {
     import flash.events.Event;
     

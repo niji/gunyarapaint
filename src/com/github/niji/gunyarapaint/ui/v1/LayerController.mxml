@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 width="144" height="360"
-                implements="org.libspark.gunyarapaint.framework.ui.IController"
-                xmlns:ui="org.libspark.gunyarapaint.ui.v1.*">
+                implements="com.github.niji.framework.ui.IController"
+                xmlns:ui="com.github.niji.gunyarapaint.ui.v1.*">
     <mx:Script>
         <![CDATA[
             import mx.collections.ArrayCollection;
@@ -13,13 +13,13 @@
             import mx.events.ListEvent;
             import mx.events.SliderEvent;
             
-            import org.libspark.gunyarapaint.framework.BitmapLayer;
-            import org.libspark.gunyarapaint.framework.LayerCollection;
-            import org.libspark.gunyarapaint.framework.Painter;
-            import org.libspark.gunyarapaint.framework.UndoStack;
-            import org.libspark.gunyarapaint.framework.events.UndoEvent;
-            import org.libspark.gunyarapaint.framework.ui.IApplication;
-            import org.libspark.gunyarapaint.ui.utils.ComponentResizer;
+            import com.github.niji.framework.BitmapLayer;
+            import com.github.niji.framework.LayerCollection;
+            import com.github.niji.framework.Painter;
+            import com.github.niji.framework.UndoStack;
+            import com.github.niji.framework.events.UndoEvent;
+            import com.github.niji.framework.ui.IApplication;
+            import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
             
             public function init(app:IApplication):void
             {
@@ -197,8 +197,8 @@
     <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
                          itemClick="onClickLayer(event)" dragStart="onDragStart(event)" dragComplete="onDragComplete(event)">
         <ui:columns>
-            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
-            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="org.libspark.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="com.github.niji.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="com.github.niji.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
             <!--mx:DataGridColumn headerText="マ" dataField="maskCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/-->
             <mx:DataGridColumn editable="true" headerText="レイヤ名" dataField="name"/>
         </ui:columns>

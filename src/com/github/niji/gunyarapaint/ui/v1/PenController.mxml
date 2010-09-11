@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450"
                 xmlns:ns1="org.libspark.gunyarapaint.controls.*"
-                implements="org.libspark.gunyarapaint.framework.ui.IController">
+                implements="com.github.niji.framework.ui.IController">
     <mx:Script>
         <![CDATA[
             import mx.containers.GridItem;
@@ -14,17 +14,17 @@
             import mx.events.SliderEvent;
             import mx.managers.PopUpManager;
             
-            import org.libspark.gunyarapaint.framework.Pen;
-            import org.libspark.gunyarapaint.framework.events.PenEvent;
-            import org.libspark.gunyarapaint.framework.modules.CircleModule;
-            import org.libspark.gunyarapaint.framework.modules.DropperModule;
-            import org.libspark.gunyarapaint.framework.modules.FloodFillModule;
-            import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
-            import org.libspark.gunyarapaint.framework.modules.LineModule;
-            import org.libspark.gunyarapaint.framework.modules.PixelModule;
-            import org.libspark.gunyarapaint.framework.modules.TransparentFloodFill;
-            import org.libspark.gunyarapaint.framework.modules.TransparentLineModule;
-            import org.libspark.gunyarapaint.framework.ui.IApplication;
+            import com.github.niji.framework.Pen;
+            import com.github.niji.framework.events.PenEvent;
+            import com.github.niji.framework.modules.CircleModule;
+            import com.github.niji.framework.modules.DropperModule;
+            import com.github.niji.framework.modules.FloodFillModule;
+            import com.github.niji.framework.modules.FreeHandModule;
+            import com.github.niji.framework.modules.LineModule;
+            import com.github.niji.framework.modules.PixelModule;
+            import com.github.niji.framework.modules.TransparentFloodFill;
+            import com.github.niji.framework.modules.TransparentLineModule;
+            import com.github.niji.framework.ui.IApplication;
             import org.sepy.controls.SColorPicker;
             import org.sepy.events.SPickerEvent;
             

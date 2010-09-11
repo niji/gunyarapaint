@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.ui.v1
+package com.github.niji.gunyarapaint.ui.v1
 {
     import mx.controls.ComboBox;
     import mx.events.FlexEvent;

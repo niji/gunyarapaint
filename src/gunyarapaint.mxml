@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application
     xmlns:mx="http://www.adobe.com/2006/mxml"
-    xmlns:ui="org.libspark.gunyarapaint.ui.v1.*"
+    xmlns:ui="com.github.niji.gunyarapaint.ui.v1.*"
     layout="absolute" width="100%" height="100%"
     preinitialize="onPreinitialize(event)"
     applicationComplete="onApplicationComplete(event)"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
-    implements="org.libspark.gunyarapaint.framework.ui.IApplication"
-    alpha="1.0" xmlns:net="org.libspark.gunyarapaint.ui.v1.net.*">
+    implements="com.github.niji.framework.ui.IApplication"
+    alpha="1.0" xmlns:net="com.github.niji.gunyarapaint.ui.v1.net.*">
     <mx:Script>
         <![CDATA[
             import com.adobe.images.PNGEncoder;
@@ -25,32 +25,32 @@
             import mx.events.MenuEvent;
             import mx.managers.PopUpManager;
             
-            import org.libspark.gunyarapaint.framework.LayerCollection;
-            import org.libspark.gunyarapaint.framework.Marshal;
-            import org.libspark.gunyarapaint.framework.Painter;
-            import org.libspark.gunyarapaint.framework.Pen;
-            import org.libspark.gunyarapaint.framework.Recorder;
-            import org.libspark.gunyarapaint.framework.UndoStack;
-            import org.libspark.gunyarapaint.framework.Version;
-            import org.libspark.gunyarapaint.framework.events.CommandEvent;
-            import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
-            import org.libspark.gunyarapaint.framework.modules.CanvasModuleContext;
-            import org.libspark.gunyarapaint.framework.modules.CircleModule;
-            import org.libspark.gunyarapaint.framework.modules.DropperModule;
-            import org.libspark.gunyarapaint.framework.modules.FloodFillModule;
-            import org.libspark.gunyarapaint.framework.modules.FreeHandModule;
-            import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
-            import org.libspark.gunyarapaint.framework.modules.LineModule;
-            import org.libspark.gunyarapaint.framework.modules.PixelModule;
-            import org.libspark.gunyarapaint.framework.ui.IController;
-            import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
-            import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
-            import org.libspark.gunyarapaint.ui.v1.CopyrightWindow;
-            import org.libspark.gunyarapaint.ui.v1.FileController;
-            import org.libspark.gunyarapaint.ui.v1.MovableCanvasModule;
-            import org.libspark.gunyarapaint.ui.v1.PNGExporter;
-            import org.libspark.gunyarapaint.ui.v1.net.LoadingDialog;
-            import org.libspark.gunyarapaint.ui.v1.net.Parameters;
+            import com.github.niji.framework.LayerCollection;
+            import com.github.niji.framework.Marshal;
+            import com.github.niji.framework.Painter;
+            import com.github.niji.framework.Pen;
+            import com.github.niji.framework.Recorder;
+            import com.github.niji.framework.UndoStack;
+            import com.github.niji.framework.Version;
+            import com.github.niji.framework.events.CommandEvent;
+            import com.github.niji.framework.i18n.TranslatorRegistry;
+            import com.github.niji.framework.modules.CanvasModuleContext;
+            import com.github.niji.framework.modules.CircleModule;
+            import com.github.niji.framework.modules.DropperModule;
+            import com.github.niji.framework.modules.FloodFillModule;
+            import com.github.niji.framework.modules.FreeHandModule;
+            import com.github.niji.framework.modules.ICanvasModule;
+            import com.github.niji.framework.modules.LineModule;
+            import com.github.niji.framework.modules.PixelModule;
+            import com.github.niji.framework.ui.IController;
+            import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
+            import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
+            import com.github.niji.gunyarapaint.ui.v1.CopyrightWindow;
+            import com.github.niji.gunyarapaint.ui.v1.FileController;
+            import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
+            import com.github.niji.gunyarapaint.ui.v1.PNGExporter;
+            import com.github.niji.gunyarapaint.ui.v1.net.LoadingDialog;
+            import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
             
             [Bindable]
             [Embed(source="../assets/images/icon_dropper.png")]

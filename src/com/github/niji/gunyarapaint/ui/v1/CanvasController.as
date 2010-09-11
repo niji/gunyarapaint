@@ -1,4 +1,4 @@
-package org.libspark.gunyarapaint.ui.v1
+package com.github.niji.gunyarapaint.ui.v1
 {
     import com.oysteinwika.ui.SWFMouseWheel;
     
@@ -24,17 +24,17 @@ package org.libspark.gunyarapaint.ui.v1
     import mx.events.ScrollEvent;
     import mx.managers.CursorManager;
     
-    import org.libspark.gunyarapaint.framework.AuxLineView;
-    import org.libspark.gunyarapaint.framework.AuxPixelView;
-    import org.libspark.gunyarapaint.framework.LayerCollection;
-    import org.libspark.gunyarapaint.framework.Pen;
-    import org.libspark.gunyarapaint.framework.TransparentBitmap;
-    import org.libspark.gunyarapaint.framework.modules.DropperModule;
-    import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
-    import org.libspark.gunyarapaint.framework.ui.IApplication;
-    import org.libspark.gunyarapaint.framework.ui.IController;
-    import org.libspark.gunyarapaint.ui.events.CanvasModuleEvent;
-    import org.libspark.gunyarapaint.ui.utils.ComponentResizer;
+    import com.github.niji.framework.AuxLineView;
+    import com.github.niji.framework.AuxPixelView;
+    import com.github.niji.framework.LayerCollection;
+    import com.github.niji.framework.Pen;
+    import com.github.niji.framework.TransparentBitmap;
+    import com.github.niji.framework.modules.DropperModule;
+    import com.github.niji.framework.modules.ICanvasModule;
+    import com.github.niji.framework.ui.IApplication;
+    import com.github.niji.framework.ui.IController;
+    import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
+    import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
     
     public class CanvasController extends TitleWindow implements IController
     {

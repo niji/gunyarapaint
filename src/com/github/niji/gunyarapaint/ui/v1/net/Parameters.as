@@ -1,11 +1,11 @@
-package org.libspark.gunyarapaint.ui.v1.net
+package com.github.niji.gunyarapaint.ui.v1.net
 {
     import com.adobe.serialization.json.JSON;
     
     import flash.net.URLVariables;
     import flash.utils.ByteArray;
     
-    import org.libspark.gunyarapaint.framework.net.IParameters;
+    import com.github.niji.framework.net.IParameters;
     
     /**
      * ニコニコ大百科のお絵カキコの投稿に必要なパラメータクラス

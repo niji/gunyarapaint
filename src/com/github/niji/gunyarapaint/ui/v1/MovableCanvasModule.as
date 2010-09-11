@@ -1,14 +1,14 @@
-package org.libspark.gunyarapaint.ui.v1
+package com.github.niji.gunyarapaint.ui.v1
 {
     import flash.geom.Point;
     
-    import org.libspark.gunyarapaint.framework.Recorder;
-    import org.libspark.gunyarapaint.framework.modules.CanvasModule;
-    import org.libspark.gunyarapaint.framework.modules.ICanvasModule;
+    import com.github.niji.framework.Recorder;
+    import com.github.niji.framework.modules.CanvasModule;
+    import com.github.niji.framework.modules.ICanvasModule;
     
     public final class MovableCanvasModule extends CanvasModule implements ICanvasModule
     {
-        public static const MOVABLE_CANVAS:String = "org.libspark.gunyarapaint.ui.v1.movableCanvas";
+        public static const MOVABLE_CANVAS:String = "com.github.niji.gunyarapaint.ui.v1.movableCanvas";
         
         public function MovableCanvasModule(recorder:Recorder, canvas:CanvasController)
         {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-                xmlns:net="org.libspark.gunyarapaint.ui.v1.net.*"
+                xmlns:net="com.github.niji.gunyarapaint.ui.v1.net.*"
                 layout="absolute" width="420" height="349"
                 backgroundGradientAlphas="[1.0, 1.0]"
                 backgroundGradientColors="[#FFFFFF, #FFFFFF]"
@@ -17,15 +17,15 @@
             import mx.events.SliderEvent;
             import mx.managers.PopUpManager;
             
-            import org.libspark.gunyarapaint.framework.Painter;
-            import org.libspark.gunyarapaint.framework.Player;
-            import org.libspark.gunyarapaint.framework.Version;
-            import org.libspark.gunyarapaint.framework.events.CommandEvent;
-            import org.libspark.gunyarapaint.framework.events.PlayerErrorEvent;
-            import org.libspark.gunyarapaint.framework.events.PlayerEvent;
-            import org.libspark.gunyarapaint.framework.i18n.TranslatorRegistry;
-            import org.libspark.gunyarapaint.ui.i18n.GetTextTranslator;
-            import org.libspark.gunyarapaint.ui.v1.net.Request;
+            import com.github.niji.framework.Painter;
+            import com.github.niji.framework.Player;
+            import com.github.niji.framework.Version;
+            import com.github.niji.framework.events.CommandEvent;
+            import com.github.niji.framework.events.PlayerErrorEvent;
+            import com.github.niji.framework.events.PlayerEvent;
+            import com.github.niji.framework.i18n.TranslatorRegistry;
+            import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
+            import com.github.niji.gunyarapaint.ui.v1.net.Request;
             
             [Bindable]
             [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
