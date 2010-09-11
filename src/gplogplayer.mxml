@@ -10,13 +10,6 @@
     <mx:Script>
         <![CDATA[
             import com.adobe.serialization.json.JSON;
-            import com.rails2u.gettext.GetText;
-            
-            import mx.controls.Alert;
-            import mx.core.UIComponent;
-            import mx.events.SliderEvent;
-            import mx.managers.PopUpManager;
-            
             import com.github.niji.framework.Painter;
             import com.github.niji.framework.Player;
             import com.github.niji.framework.Version;
@@ -26,6 +19,12 @@
             import com.github.niji.framework.i18n.TranslatorRegistry;
             import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
             import com.github.niji.gunyarapaint.ui.v1.net.Request;
+            import com.rails2u.gettext.GetText;
+            
+            import mx.controls.Alert;
+            import mx.core.UIComponent;
+            import mx.events.SliderEvent;
+            import mx.managers.PopUpManager;
             
             [Bindable]
             [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
@@ -184,9 +183,13 @@
                     m_player.layers.load(m_layerImage, m_metadata);
                 canvas.removeAllChildren();
                 var temp:UIComponent = new UIComponent();
-                var g:Graphics = temp.graphics;
-                g.beginFill(0xFFFFFF);
+                var mask:Shape = new Shape();
+                var g:Graphics = mask.graphics;
+                g.beginFill(0x0);
                 g.drawRect(0, 0, m_player.width, m_player.height);
+                g.endFill();
+                temp.mask = mask;
+                temp.addChild(mask);
                 m_player.layers.setView(temp);
                 canvas.addChild(temp);
             }
@@ -261,9 +264,9 @@
     </mx:states>
     <mx:Button id="playButton" x="10" y="9" label="再生" enabled="false" buttonDown="onClickPlay(event)"/>
     <mx:Button id="stopButton" x="66" y="9" label="停止" enabled="false" buttonDown="onClickStop(event)"/>
-    <mx:Label x="122" y="11" text="再生スピード" />
+    <mx:Label x="122" y="11" text="再生スピード"/>
     <mx:HSlider id="playSpeedHSlider" x="175" y="8" minimum="1" maximum="501" snapInterval="20" value="1" width="107" change="onChangePlayerSpeed(event)"/>
-    <mx:Canvas id="canvas" x="10" width="400" height="300" y="39" borderStyle="solid"></mx:Canvas>
+    <mx:Canvas id="canvas" x="10" width="400" height="300" y="39" borderStyle="solid"/>
     <mx:Label x="313" y="11" text="{Version.DATE_STRING}"/>
-    <net:LoadingDialog id="loadingDialog" visible="false" />
+    <net:LoadingDialog id="loadingDialog" visible="false"/>
 </mx:Application>
