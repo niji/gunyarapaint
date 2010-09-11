@@ -1,8 +1,21 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
+    import com.github.niji.framework.AuxLineView;
+    import com.github.niji.framework.AuxPixelView;
+    import com.github.niji.framework.LayerCollection;
+    import com.github.niji.framework.Pen;
+    import com.github.niji.framework.TransparentBitmap;
+    import com.github.niji.framework.modules.DropperModule;
+    import com.github.niji.framework.modules.ICanvasModule;
+    import com.github.niji.framework.ui.IApplication;
+    import com.github.niji.framework.ui.IController;
+    import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
+    import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
     import com.oysteinwika.ui.SWFMouseWheel;
     
     import flash.display.BitmapData;
+    import flash.display.DisplayObject;
+    import flash.display.InteractiveObject;
     import flash.events.EventPhase;
     import flash.events.MouseEvent;
     import flash.geom.Matrix;
@@ -23,18 +36,6 @@ package com.github.niji.gunyarapaint.ui.v1
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
     import mx.managers.CursorManager;
-    
-    import com.github.niji.framework.AuxLineView;
-    import com.github.niji.framework.AuxPixelView;
-    import com.github.niji.framework.LayerCollection;
-    import com.github.niji.framework.Pen;
-    import com.github.niji.framework.TransparentBitmap;
-    import com.github.niji.framework.modules.DropperModule;
-    import com.github.niji.framework.modules.ICanvasModule;
-    import com.github.niji.framework.ui.IApplication;
-    import com.github.niji.framework.ui.IController;
-    import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
-    import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
     
     public class CanvasController extends TitleWindow implements IController
     {
@@ -398,7 +399,8 @@ package com.github.niji.gunyarapaint.ui.v1
             // キャンバスウィンドウ以外でのみ処理するようにする
             // (対象がキャンバスウィンドウではない、かつそれの中の要素ではないとき)
             // これはキャンバスウィンドウ以外でもこのイベントが発動することから
-            if (this != event.relatedObject && !this.contains(event.relatedObject)) {
+            var ro:InteractiveObject = event.relatedObject;
+            if (this != ro && !this.contains(ro)) {
                 var app:IApplication = IApplication(Application.application);
                 var layers:LayerCollection = app.layers;
                 var x:Number = layers.mouseX;
