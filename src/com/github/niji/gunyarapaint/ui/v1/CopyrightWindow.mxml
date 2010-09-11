@@ -15,9 +15,10 @@
     <mx:Text width="300" height="208" x="10" y="10" selectable="false">
         <mx:htmlText>
 <![CDATA[2008-2010 Tasuku Suenaga, @haku2, @hikarincl2
+2010 Niji Paint Project
 
-This application is built on gunyarapaint
-(<a href="http://www.libspark.org/svn/as3/gunyarapaint/" target="_blank"><font color="#0000ff"><u>http://www.libspark.org/svn/as3/gunyarapaint/</u></font></a>)
+This application is built on Niji Paint Project's sources
+(<a href="http://github.com/niji/" target="_blank"><font color="#0000ff"><u>http://github.com/niji/</u></font></a>)
 
 This application uses the part of as3corelib
 (<a href="http://code.google.com/p/as3corelib/" target="_blank"><font color="#0000ff"><u>http://code.google.com/p/as3corelib/</u></font></a>)
