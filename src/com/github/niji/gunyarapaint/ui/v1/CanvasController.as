@@ -339,6 +339,7 @@ package com.github.niji.gunyarapaint.ui.v1
                 // 必ず try/catch で囲む必要がある
                 app.canvasModule.start(x, y);
                 removeMouseEvents(layers);
+                addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
                 m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
                 m_contentContainer.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                 m_widthLimit = m_contentContainer.width - m_vScrollBar.width;
@@ -394,9 +395,17 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseOut(event:MouseEvent):void
         {
-            var app:IApplication = IApplication(Application.application);
-            removeMouseEvents(app.layers);
-            app.canvasModule.interrupt(event.localX, event.localY);
+            // キャンバスウィンドウ以外でのみ処理するようにする
+            // (対象がキャンバスウィンドウではない、かつそれの中の要素ではないとき)
+            // これはキャンバスウィンドウ以外でもこのイベントが発動することから
+            if (this != event.relatedObject && !this.contains(event.relatedObject)) {
+                var app:IApplication = IApplication(Application.application);
+                var layers:LayerCollection = app.layers;
+                var x:Number = layers.mouseX;
+                var y:Number = layers.mouseY;
+                removeMouseEvents(layers);
+                app.canvasModule.interrupt(x, y);
+            }
         }
         
         private function onMouseWheel(event:MouseEvent):void
@@ -407,9 +416,9 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function removeMouseEvents(layers:LayerCollection):void
         {
+            removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             m_contentContainer.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
             m_contentContainer.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-            removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
         }
         
         private function initCanvas(app:IApplication):void
