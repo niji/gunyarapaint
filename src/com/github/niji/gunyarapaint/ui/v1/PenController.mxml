@@ -4,16 +4,6 @@
                 implements="com.github.niji.framework.ui.IController">
     <mx:Script>
         <![CDATA[
-            import mx.containers.GridItem;
-            import mx.core.Application;
-            import mx.core.IFlexDisplayObject;
-            import mx.effects.easing.Bounce;
-            import mx.events.CloseEvent;
-            import mx.events.FlexEvent;
-            import mx.events.ListEvent;
-            import mx.events.SliderEvent;
-            import mx.managers.PopUpManager;
-            
             import com.github.niji.framework.Pen;
             import com.github.niji.framework.events.PenEvent;
             import com.github.niji.framework.modules.CircleModule;
@@ -25,6 +15,17 @@
             import com.github.niji.framework.modules.TransparentFloodFill;
             import com.github.niji.framework.modules.TransparentLineModule;
             import com.github.niji.framework.ui.IApplication;
+            
+            import mx.containers.GridItem;
+            import mx.core.Application;
+            import mx.core.IFlexDisplayObject;
+            import mx.effects.easing.Bounce;
+            import mx.events.CloseEvent;
+            import mx.events.FlexEvent;
+            import mx.events.ListEvent;
+            import mx.events.SliderEvent;
+            import mx.managers.PopUpManager;
+            
             import org.sepy.controls.SColorPicker;
             import org.sepy.events.SPickerEvent;
             
@@ -221,7 +222,7 @@
                 currentColor = palette.getStyle("backgroundColor");
             }
             
-            private function onClickColorPicker(evt:FlexEvent):void
+            private function onClickColorPicker(event:FlexEvent):void
             {
                 // FIXME: お絵かきのログにパレット変更も反映したい
                 var picker:SColorPicker = new SColorPicker();
@@ -242,40 +243,40 @@
                 PopUpManager.centerPopUp(picker);
             }
             
-            private function onClosePicker(evt:CloseEvent):void
+            private function onClosePicker(event:CloseEvent):void
             {
-                PopUpManager.removePopUp(IFlexDisplayObject(evt.target));
+                PopUpManager.removePopUp(IFlexDisplayObject(event.target));
             }
             
-            private function onPicker(evt:Event):void
+            private function onPicker(event:Event):void
             {
-                if (evt.type != SPickerEvent.CHANGING &&
-                    evt.type != SPickerEvent.SWATCH_ADD &&
-                    evt.type == Event.CHANGE) {
-                    currentColor = SColorPicker(evt.target).selectedColor;
-                    PopUpManager.removePopUp(IFlexDisplayObject(evt.target));
+                if (event.type != SPickerEvent.CHANGING &&
+                    event.type != SPickerEvent.SWATCH_ADD &&
+                    event.type == Event.CHANGE) {
+                    currentColor = SColorPicker(event.target).selectedColor;
+                    PopUpManager.removePopUp(IFlexDisplayObject(event.target));
                 }
             }
             
-            private function onSelectHandTool(evt:Event):void
+            private function onSelectHandTool(event:Event):void
             {
-                if (Button(evt.currentTarget).selected)
+                if (Button(event.currentTarget).selected)
                     pen = MovableCanvasModule.MOVABLE_CANVAS;
                 else
                     setDefaultPen();
             }
             
-            private function onSelectDropper(evt:Event):void
+            private function onSelectDropper(event:Event):void
             {
-                if (Button(evt.currentTarget).selected)
+                if (Button(event.currentTarget).selected)
                     pen = DropperModule.DROPPER;
                 else
                     setDefaultPen();
             }
             
-            private function onSelectEraser(evt:Event):void
+            private function onSelectEraser(event:Event):void
             {
-                if (Button(evt.currentTarget).selected) {
+                if (Button(event.currentTarget).selected) {
                     var app:IApplication = IApplication(Application.application);
                     pen = FreeHandModule.FREE_HAND;
                     currentState = "eraser";
@@ -286,46 +287,45 @@
                 }
             }
             
-            private function onSelectDot(evt:Event):void
+            private function onSelectDot(event:Event):void
             {
-                if (Button(evt.currentTarget).selected)
+                if (Button(event.currentTarget).selected)
                     pen = PixelModule.PIXEL;
                 else
                     setDefaultPen();
             }
             
-            private function onSelectPen(evt:ListEvent):void
+            private function onSelectPen(event:ListEvent):void
+            {
+                cancel();
+                pen = String(event.currentTarget.value);
+            }
+            
+            private function onSelectBlendMode(event:ListEvent):void
             {
                 cancel();
                 var app:IApplication = IApplication(Application.application);
-                app.setCanvasModule(String(evt.currentTarget.value));
+                app.canvasModule.blendMode = String(event.currentTarget.value);
             }
             
-            private function onSelectBlendMode(evt:ListEvent):void
-            {
-                cancel();
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.blendMode = String(evt.currentTarget.value);
-            }
-            
-            private function onChangeColorSlider(evt:SliderEvent, mode:String):void
+            private function onChangeColorSlider(event:SliderEvent, mode:String):void
             {
                 var c:uint = 0;
                 switch (mode) {
                     case "red":
-                        c += evt.value * 65536;
+                        c += event.value * 65536;
                         c += colGSlider.value * 256;
                         c += colBSlider.value;
                         break;
                     case "green":
                         c += colRSlider.value * 65536;
-                        c += evt.value * 256;
+                        c += event.value * 256;
                         c += colBSlider.value;
                         break;
                     case "blue":
                         c += colRSlider.value * 65536;
                         c += colGSlider.value * 256;
-                        c += evt.value;
+                        c += event.value;
                         break;
                 }
                 currentColor = c;
@@ -447,6 +447,28 @@
             <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
             <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
             <mx:SetProperty target="{eraserButton}" name="selected" value="true"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="transparentLine">
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="transparentFloodFill">
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
             <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
         </mx:State>
     </mx:states>
