@@ -38,7 +38,7 @@
     <option staticLinkRSL="True" />
     <option additional="-locale ja_JP" />
     <option compilerConstants="" />
-    <option customSDK="C:\Documents and Settings\hkrn2\My Documents\Application\FlexSDK\3.5" />
+    <option customSDK="C:\Users\hkrn\Documents\Applications\Flex3SDK" />
   </build>
   <!-- SWC Include Libraries -->
   <includeLibraries>
@@ -73,6 +73,7 @@
   <hiddenPaths>
     <hidden path=".settings" />
     <hidden path="src\_.as" />
+    <hidden path=".git" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />
