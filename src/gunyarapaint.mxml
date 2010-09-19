@@ -229,6 +229,7 @@
                 var width:int = metadata.width;
                 var height:int = metadata.height;
                 var ready:Boolean = postInitialize(width, height);
+                // If ready is false, an error has occured.
                 if (ready) {
                     var from:UndoStack = m_recorder.undoStack;
                     m_recorder.load(m_baseImage, metadata);
@@ -320,7 +321,7 @@
                     }
                     m_development = true;
                 }
-                // default state is disabled
+                // The default state is disabled
                 enabled = false;
                 GetText.locale = parameters["language"] || "ja_jp";
                 GetText.initLangFile(new XML(new languages()));
@@ -354,6 +355,7 @@
                     loadingDialog.title = _("Loading the image layers...");
                 }
                 else {
+                    // It's not continued
                     var width:int = int(parameters["canvasWidth"]);
                     var height:int = int(parameters["canvasHeight"]);
                     enabled = postInitialize(width, height);
@@ -387,8 +389,7 @@
                         else
                             toolController.setZoom(1);
                         break;
-                    case 65: // a
-                        // Aキーの状態 = 押下中
+                    case 65: // a (pressing)
                         m_module.shouldDrawCircleClockwise = true;
                         break;
                     case 73: // i
@@ -397,16 +398,13 @@
                     case 77: // m
                         m_module.horizontalMirror(Painter.ALL_LAYERS);
                         break;
-                    case 81: // q
-                        // Qキーの状態 = 押下中
+                    case 81: // q (pressing)
                         m_module.shouldDrawCircleCounterClockwise = true;
                         break;
-                    case 82: // r
-                        // Rキーの状態 = 押下中
+                    case 82: // r (pressing)
                         m_module.shouldDrawFromEndPoint = true;
                         break;
-                    case 84: // t
-                        // Tキーの状態 = 押下中
+                    case 84: // t (pressing)
                         m_module.shouldDrawFromStartPoint = true;
                         break;
                     case 88: // x
@@ -456,7 +454,8 @@
                     case 55: // 7
                     case 56: // 8
                     case 57: // 9
-                        if (!event.shiftKey)// 念のため SHIFTキー対応 (テンキーのほうは放置)
+                        // SHIFT + (NUM) is reserved
+                        if (!event.shiftKey)
                             penController.currentThickness = keyCode - 48;
                         break;
                     case 97: // ten-key 1
@@ -471,6 +470,7 @@
                         penController.currentThickness = keyCode - 96;
                         break;
                     case 45: // INS
+                        // INS + SHIFT is reserved
                         if (!event.shiftKey)
                             toolController.setRotate(0);
                         break;
@@ -486,20 +486,16 @@
                     case Keyboard.SPACE:
                         penController.loadState();
                         break;
-                    case 65: // a
-                        // Aキーの状態 = 解放
+                    case 65: // a (released)
                         m_module.shouldDrawCircleClockwise = false;
                         break;
-                    case 81: // q
-                        // Qキーの状態 = 解放
+                    case 81: // q (released)
                         m_module.shouldDrawCircleCounterClockwise = false;
                         break;
-                    case 82: // r
-                        // Rキーの状態 = 解放
+                    case 82: // r (released)
                         m_module.shouldDrawFromEndPoint = false;
                         break;
-                    case 84: // t
-                        // Tキーの状態 = 解放
+                    case 84: // t (released)
                         m_module.shouldDrawFromStartPoint = false;
                         break;
                 }
@@ -522,6 +518,7 @@
                 removeLoaderEvents(loaderInfo);
                 m_baseImage = Bitmap(loaderInfo.content).bitmapData;
                 if (parameters["baseImgInfoUrl"]) {
+                    // from continued
                     var loader:URLLoader = new URLLoader();
                     addLoaderEvents(loader);
                     loader.addEventListener(Event.COMPLETE, onLoadImageInfo);
@@ -529,7 +526,7 @@
                     loadingDialog.title = _("Loading the image metadata...");
                 }
                 else {
-                    // FIXME: 消してもいいとあるけど消す?
+                    // FIXME: Should be removed?
                     var metadata:Object = {
                         "width": m_baseImage.width,
                         "height": m_baseImage.height

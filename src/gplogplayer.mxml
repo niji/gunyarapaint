@@ -60,6 +60,7 @@
                     currentState = "loading";
                 }
                 else {
+                    // should not be here
                     Alert.show("The value of oelogUrl is empty");
                 }
             }
@@ -80,6 +81,7 @@
                     m_request.load(url);
                 }
                 else {
+                    // It's now continued
                     play();
                 }
             }
@@ -98,7 +100,7 @@
                     m_request.get(url);
                 }
                 else {
-                    // 旧バージョン
+                    // It seems older version
                     play();
                 }
             }
@@ -165,6 +167,7 @@
             private function createPlayer():void
             {
                 if (m_layerImage && !m_metadata) {
+                    // It's seems older version
                     m_metadata = {
                         "width": m_layerImage.width,
                         "height": m_layerImage.height,
@@ -173,6 +176,7 @@
                     m_continue = true;
                 }
                 if (m_player != null) {
+                    // prevent memory leaks caused Event.
                     m_player.removeEventListener(CommandEvent.PARSE, onParse);
                     m_player.removeEventListener(PlayerEvent.FINISHED, onPlayFinished);
                     m_player.removeEventListener(PlayerErrorEvent.ERROR, onPlayError);
@@ -203,7 +207,8 @@
                 width = w + 20;
                 width = w < 420 ? 420 : width;
                 height = h + canvas.y + 20;
-                height = height < 137 ? 137 : height; // for express install
+                // for express install
+                height = height < 137 ? 137 : height;
             }
             
             private function setFinished():void
