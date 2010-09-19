@@ -47,6 +47,7 @@
                 GetText.initLangFile(new XML(new languages()));
                 TranslatorRegistry.install(new GetTextTranslator());
             }
+            
             private function onCreationComplete():void
             {
                 var url:String = parameters["oelogUrl"];
@@ -55,7 +56,7 @@
                 if (url) {
                     m_request = new Request();
                     showLoadingDialog(m_request, _("Loading the log..."));
-                    m_request.addEventListener(Event.COMPLETE, onResponseLog);
+                    setHandler(m_request, onResponseLog);
                     m_request.get(url);
                     currentState = "loading";
                 }
@@ -68,7 +69,7 @@
             private function onResponseLog(event:Event):void
             {
                 var urlLoader:URLLoader = URLLoader(event.target);
-                urlLoader.removeEventListener(Event.COMPLETE, onResponseLog);
+                removeHandler(urlLoader, onResponseLog);
                 hideLoadingDialog();
                 m_log = urlLoader.data;
                 m_log.uncompress();
@@ -77,7 +78,7 @@
                     var loader:Loader = new Loader();
                     m_request.loader = loader.contentLoaderInfo;
                     showLoadingDialog(m_request, _("Loading the image layers..."));
-                    m_request.addEventListener(Event.COMPLETE, onResponseLayerImage);
+                    setHandler(m_request, onResponseLayerImage);
                     m_request.load(url);
                 }
                 else {
@@ -89,14 +90,14 @@
             private function onResponseLayerImage(event:Event):void
             {
                 var loader:LoaderInfo = LoaderInfo(event.target);
-                loader.removeEventListener(Event.COMPLETE, onResponseLayerImage);
+                removeHandler(loader, onResponseLayerImage);
                 hideLoadingDialog();
                 m_layerImage = Bitmap(loader.content).bitmapData;
                 var url:String = parameters["baseImgInfoUrl"];
                 if (url) {
                     m_request.loader = new URLLoader();
                     showLoadingDialog(m_request, _("Loading the image metadata..."));
-                    m_request.addEventListener(Event.COMPLETE, onResponseMetadata);
+                    setHandler(m_request, onResponseMetadata);
                     m_request.get(url);
                 }
                 else {
@@ -108,7 +109,7 @@
             private function onResponseMetadata(event:Event):void
             {
                 var loader:URLLoader = URLLoader(event.target);
-                loader.removeEventListener(Event.COMPLETE, onResponseMetadata);
+                removeHandler(loader, onResponseMetadata);
                 hideLoadingDialog();
                 m_metadata = JSON.decode(String(loader.data));
                 m_continue = true;
@@ -142,9 +143,34 @@
                 Alert.show(event.cause.message);
             }
             
+            private function onError(event:ErrorEvent):void
+            {
+                hideLoadingDialog();
+                removeHandler(m_request, onResponseLog);
+                removeHandler(m_request, onResponseLayerImage);
+                removeHandler(m_request, onResponseMetadata);
+                Alert.show(event.text, event.type);
+            }
+            
             private function onParse(event:CommandEvent):void
             {
                 trace(event.command);
+            }
+            
+            private function setHandler(target:IEventDispatcher, handler:Function):void
+            {
+                target.addEventListener(Event.COMPLETE, handler);
+                target.addEventListener(IOErrorEvent.IO_ERROR, onError);
+                target.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onError);
+                target.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+            }
+            
+            private function removeHandler(target:IEventDispatcher, handler:Function):void
+            {
+                target.removeEventListener(Event.COMPLETE, handler);
+                target.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+                target.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onError);
+                target.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
             }
             
             private function play():void
@@ -257,6 +283,7 @@
     <mx:states>
         <mx:State name="loading">
             <mx:SetProperty name="enabled" value="true"/>
+            <mx:SetProperty target="{playSpeedHSlider}" name="enabled" value="false"/>
         </mx:State>
         <mx:State name="playing">
             <mx:SetProperty name="enabled" value="true"/>
