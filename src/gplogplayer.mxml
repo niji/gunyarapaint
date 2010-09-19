@@ -190,7 +190,7 @@
                 g.endFill();
                 temp.mask = mask;
                 temp.addChild(mask);
-                m_player.layers.setView(temp);
+                temp.addChild(m_player.layers.view);
                 canvas.addChild(temp);
             }
             

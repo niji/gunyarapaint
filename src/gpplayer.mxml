@@ -128,7 +128,7 @@
                 var base:UIComponent = new UIComponent();
                 base.graphics.beginFill(0xffffff);
                 base.graphics.drawRect(0, 0, player.width, player.height);
-                player.layers.setView(base);
+                base.addChild(player.layers.view);
                 canvas.addChild(base);
             }
             

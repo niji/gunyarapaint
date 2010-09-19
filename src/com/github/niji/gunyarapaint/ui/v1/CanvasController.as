@@ -16,6 +16,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.display.BitmapData;
     import flash.display.DisplayObject;
     import flash.display.InteractiveObject;
+    import flash.display.Sprite;
     import flash.events.EventPhase;
     import flash.events.MouseEvent;
     import flash.geom.Matrix;
@@ -333,8 +334,9 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var app:gunyarapaint = gunyarapaint(Application.application);
             var layers:LayerCollection = app.layers;
-            var x:Number = layers.mouseX;
-            var y:Number = layers.mouseY;
+            var view:Sprite = layers.view;
+            var x:Number = view.mouseX;
+            var y:Number = view.mouseY;
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
@@ -359,8 +361,9 @@ package com.github.niji.gunyarapaint.ui.v1
                 m_contentContainer.mouseY < m_heightLimit) {
                 var app:IApplication = IApplication(Application.application);
                 var layers:LayerCollection = app.layers;
-                var x:Number = layers.mouseX;
-                var y:Number = layers.mouseY;
+                var view:Sprite = layers.view;
+                var x:Number = view.mouseX;
+                var y:Number = view.mouseY;
                 app.canvasModule.move(x, y);
             }
         }
@@ -369,9 +372,10 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var application:Object = Application.application;
             var app:IApplication = IApplication(application);
-            var layers:LayerCollection = app.layers
-            var x:Number = layers.mouseX;
-            var y:Number = layers.mouseY;
+            var layers:LayerCollection = app.layers;
+            var view:Sprite = layers.view;
+            var x:Number = view.mouseX;
+            var y:Number = view.mouseY;
             var color:uint = app.canvasModule.getPixel32(x, y);
             var status:String = _(
                 "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)",
@@ -388,8 +392,9 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var app:IApplication = IApplication(Application.application);
             var layers:LayerCollection = app.layers;
-            var x:Number = layers.mouseX;
-            var y:Number = layers.mouseY;
+            var view:Sprite = layers.view;
+            var x:Number = view.mouseX;
+            var y:Number = view.mouseY;
             removeMouseEvents(layers);
             app.canvasModule.stop(x, y);
         }
@@ -403,8 +408,9 @@ package com.github.niji.gunyarapaint.ui.v1
             if (this != ro && !this.contains(ro)) {
                 var app:IApplication = IApplication(Application.application);
                 var layers:LayerCollection = app.layers;
-                var x:Number = layers.mouseX;
-                var y:Number = layers.mouseY;
+                var view:Sprite = layers.view;
+                var x:Number = view.mouseX;
+                var y:Number = view.mouseY;
                 removeMouseEvents(layers);
                 app.canvasModule.interrupt(x, y);
             }
@@ -433,7 +439,7 @@ package com.github.niji.gunyarapaint.ui.v1
             m_auxPixel.visible = false;
             m_canvas = new UIComponent();
             m_canvas.addChild(transparent);
-            app.layers.setView(m_canvas);
+            m_canvas.addChild(app.layers.view);
             m_canvas.addChild(m_auxLine);
             m_canvas.addChild(m_auxPixel);
             m_canvasContainer.addChild(m_canvas);
