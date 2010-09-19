@@ -14,7 +14,7 @@
             import mx.events.SliderEvent;
             
             import com.github.niji.framework.BitmapLayer;
-            import com.github.niji.framework.LayerCollection;
+            import com.github.niji.framework.LayerList;
             import com.github.niji.framework.Painter;
             import com.github.niji.framework.UndoStack;
             import com.github.niji.framework.events.UndoEvent;
@@ -23,7 +23,7 @@
             
             public function init(app:IApplication):void
             {
-                var layers:LayerCollection = app.layers;
+                var layers:LayerList = app.layers;
                 var currentLayerIndex:uint = layers.currentIndex;
                 var currentLayerBlendMode:String = layers.at(currentLayerIndex).blendMode;
                 var blendModes:Object = blendModeComboBox.dataProvider;
@@ -62,7 +62,7 @@
             
             public function update():void
             {
-                var layers:LayerCollection = IApplication(Application.application).layers;
+                var layers:LayerList = IApplication(Application.application).layers;
                 var layer:BitmapLayer = BitmapLayer(layers.at(layers.currentIndex));
                 var currentLayerBlendMode:String = layer.blendMode;
                 layers.resetIndex();
@@ -171,7 +171,7 @@
                 var app:IApplication = IApplication(Application.application);
                 var a:Array = ArrayCollection(layerDataGrid.dataProvider).toArray().reverse();
                 var length:uint = a.length;
-                var layers:LayerCollection = app.layers;
+                var layers:LayerList = app.layers;
                 for (var i:uint = 0; i < length; i++) {
                     var from:uint = a[i].index;
                     var to:uint = layers.at(i).index;
@@ -185,7 +185,7 @@
                 layerDataGrid.selectedIndex = m_selectedIndex;
             }
             
-            private function getSelectedIndex(layers:LayerCollection):uint
+            private function getSelectedIndex(layers:LayerList):uint
             {
                 return layers.count - layers.currentIndex - 1;
             }

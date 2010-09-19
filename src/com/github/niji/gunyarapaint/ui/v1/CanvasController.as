@@ -2,7 +2,7 @@ package com.github.niji.gunyarapaint.ui.v1
 {
     import com.github.niji.framework.AuxLineView;
     import com.github.niji.framework.AuxPixelView;
-    import com.github.niji.framework.LayerCollection;
+    import com.github.niji.framework.LayerList;
     import com.github.niji.framework.Pen;
     import com.github.niji.framework.TransparentBitmap;
     import com.github.niji.framework.modules.DropperModule;
@@ -333,7 +333,7 @@ package com.github.niji.gunyarapaint.ui.v1
         private function onMouseDown(event:MouseEvent):void
         {
             var app:gunyarapaint = gunyarapaint(Application.application);
-            var layers:LayerCollection = app.layers;
+            var layers:LayerList = app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
@@ -360,7 +360,7 @@ package com.github.niji.gunyarapaint.ui.v1
                 m_contentContainer.mouseX < m_widthLimit &&
                 m_contentContainer.mouseY < m_heightLimit) {
                 var app:IApplication = IApplication(Application.application);
-                var layers:LayerCollection = app.layers;
+                var layers:LayerList = app.layers;
                 var view:Sprite = layers.view;
                 var x:Number = view.mouseX;
                 var y:Number = view.mouseY;
@@ -372,7 +372,7 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var application:Object = Application.application;
             var app:IApplication = IApplication(application);
-            var layers:LayerCollection = app.layers;
+            var layers:LayerList = app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
@@ -391,7 +391,7 @@ package com.github.niji.gunyarapaint.ui.v1
         private function onMouseUp(event:MouseEvent):void
         {
             var app:IApplication = IApplication(Application.application);
-            var layers:LayerCollection = app.layers;
+            var layers:LayerList = app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
@@ -407,7 +407,7 @@ package com.github.niji.gunyarapaint.ui.v1
             var ro:InteractiveObject = event.relatedObject;
             if (this != ro && !this.contains(ro)) {
                 var app:IApplication = IApplication(Application.application);
-                var layers:LayerCollection = app.layers;
+                var layers:LayerList = app.layers;
                 var view:Sprite = layers.view;
                 var x:Number = view.mouseX;
                 var y:Number = view.mouseY;
@@ -422,7 +422,7 @@ package com.github.niji.gunyarapaint.ui.v1
             module.wheel(event.localX, event.localY, event.delta);
         }
         
-        private function removeMouseEvents(layers:LayerCollection):void
+        private function removeMouseEvents(layers:LayerList):void
         {
             removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             m_contentContainer.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
