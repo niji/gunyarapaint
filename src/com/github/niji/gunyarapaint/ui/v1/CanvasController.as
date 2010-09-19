@@ -412,7 +412,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseWheel(event:MouseEvent):void
         {
-            var module:MovableCanvasModule = MovableCanvasModule(Application.application.module);
+            var module:MovableCanvasModule = MovableCanvasModule(Application.application.canvasModule);
             module.wheel(event.localX, event.localY, event.delta);
         }
         
