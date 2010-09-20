@@ -402,10 +402,10 @@ package com.github.niji.gunyarapaint.ui.v1
         private function onMouseOut(event:MouseEvent):void
         {
             // キャンバスウィンドウ以外でのみ処理するようにする
-            // (対象がキャンバスウィンドウではない、かつそれの中の要素ではないとき)
+            // (対象がキャンバスウィンドウか、それの中の要素ではないとき)
             // これはキャンバスウィンドウ以外でもこのイベントが発動することから
             var ro:InteractiveObject = event.relatedObject;
-            if (this != ro && !this.contains(ro)) {
+            if (this == ro || !this.contains(ro)) {
                 var app:IApplication = IApplication(Application.application);
                 var layers:LayerList = app.layers;
                 var view:Sprite = layers.view;
