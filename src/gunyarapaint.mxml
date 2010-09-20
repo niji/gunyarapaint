@@ -215,7 +215,7 @@
             
             public function showAlert(message:String, title:String):void
             {
-                m_lockKeyboard = true;
+                m_lockHandlingKeyboard = true;
                 Alert.show(message, title, Alert.OK, null, onClose);
             }
             
@@ -238,6 +238,7 @@
                 var ready:Boolean = postInitialize(width, height);
                 // If ready is false, an error has occured.
                 if (ready) {
+                    m_lockHandlingKeyboard = true;
                     var from:UndoStack = m_recorder.undoStack;
                     m_recorder.load(m_baseImage, metadata);
                     var to:UndoStack = m_recorder.undoStack;
@@ -247,6 +248,7 @@
                     layerController.swapEventListener(from, to);
                     layerController.update();
                     enabled = ready;
+                    m_lockHandlingKeyboard = false;
                 }
             }
             
@@ -291,7 +293,7 @@
                 m_windows[2] = layerController;
                 m_windows[3] = toolController;
                 m_windows[4] = formController;
-                m_lockKeyboard = false;
+                m_lockHandlingKeyboard = false;
                 for (var i:String in m_windows) {
                     var controller:IController = m_windows[i];
                     controller.init(this);
@@ -378,7 +380,7 @@
             
             private function onKeyDown(event:KeyboardEvent):void
             {
-                if (m_lockKeyboard || isForcusedOnTextField)
+                if (m_lockHandlingKeyboard || isForcusedOnTextField)
                     return;
                 var keyCode:uint = event.keyCode;
                 switch (keyCode) {
@@ -487,7 +489,7 @@
             
             private function onKeyUp(evt:KeyboardEvent):void
             {
-                if (m_lockKeyboard || isForcusedOnTextField)
+                if (m_lockHandlingKeyboard || isForcusedOnTextField)
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
@@ -511,7 +513,7 @@
             
             private function onClose(event:CloseEvent):void
             {
-                m_lockKeyboard = false;
+                m_lockHandlingKeyboard = false;
             }
             
             private function onExportComplete(event:Event):void
@@ -592,7 +594,7 @@
             private var m_title:String;
             private var m_blendModes:Array;
             private var m_development:Boolean;
-            private var m_lockKeyboard:Boolean;
+            private var m_lockHandlingKeyboard:Boolean;
         ]]>
     </mx:Script>
     <ui:DockMenu id="dockMenu" />
