@@ -8,8 +8,6 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.net.FileReference;
     import flash.utils.ByteArray;
     
-    import mx.controls.Alert;
-    
     /**
      * BitmapData を PNG に変換するクラス.
      * 

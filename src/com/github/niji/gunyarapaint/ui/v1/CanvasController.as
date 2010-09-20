@@ -25,7 +25,6 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.system.Capabilities;
     
     import mx.containers.TitleWindow;
-    import mx.controls.Alert;
     import mx.controls.HScrollBar;
     import mx.controls.VScrollBar;
     import mx.controls.scrollClasses.ScrollBar;
@@ -350,7 +349,7 @@ package com.github.niji.gunyarapaint.ui.v1
                 //addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             } catch (e:Error) {
                 removeMouseEvents(layers);
-                Alert.show(e.message, app.canvasModuleName);
+                Application.application.showAlert(e.message, app.canvasModuleName);
             }
         }
         

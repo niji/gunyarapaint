@@ -2,7 +2,6 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="346" showCloseButton="true" close="onClose()" x="146" y="223">
     <mx:Script>
         <![CDATA[
-            import mx.controls.Alert;
             import mx.core.Application;
             import mx.managers.PopUpManager;
             import mx.utils.Base64Decoder;
@@ -20,7 +19,7 @@
                 var decoder:Base64Decoder = new Base64Decoder();
                 // ※ネタです
                 if (password == "ザオリク" || password == "ざおりく") {
-                    Alert.show(_("Rejected."), title);
+                    Application.application.showAlert(_("Rejected."), title);
                 }
                 else {
                     decoder.decode(password);
@@ -31,7 +30,7 @@
                     }
                     catch (e:Error) {
                         trace(e.message);
-                        Alert.show(_("Input password is incorrect."), title);
+                        Application.application.showAlert(_("Input password is incorrect."), title);
                     }
                 }
             }
@@ -48,7 +47,7 @@
             private function onClipboard():void
             {
                 System.setClipboard(passwordTextArea.text);
-                Alert.show("Copied the password to the clipboard ", title);
+                Application.application.showAlert("Copied the password to the clipboard ", title);
             }
         ]]>
     </mx:Script>

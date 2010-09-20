@@ -5,7 +5,6 @@
     <mx:Script>
         <![CDATA[
             import com.github.niji.gunyarapaint.ui.v1.net.RequestWindow;
-            import mx.controls.Alert;
             import mx.core.Application;
             import mx.managers.PopUpManager;
             
@@ -56,7 +55,7 @@
                     window.post(parameters);
                 }
                 catch (e:Error) {
-                    Alert.show(e.message, title);
+                    Application.application.showAlert(e.message, title);
                 }
             }
             

@@ -2,7 +2,6 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150" showCloseButton="true" close="onClose()" x="146" y="223" creationComplete="onCreationComplete()">
     <mx:Script>
         <![CDATA[
-            import mx.controls.Alert;
             import mx.core.Application;
             import mx.managers.PopUpManager;
             

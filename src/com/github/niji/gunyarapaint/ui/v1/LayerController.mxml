@@ -6,7 +6,6 @@
     <mx:Script>
         <![CDATA[
             import mx.collections.ArrayCollection;
-            import mx.controls.Alert;
             import mx.core.Application;
             import mx.events.DragEvent;
             import mx.events.FlexEvent;
@@ -103,7 +102,7 @@
                     app.canvasModule.createLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, title);
+                    Application.application.showAlert(e.message, title);
                 }
             }
             
@@ -115,7 +114,7 @@
                     app.canvasModule.copyLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, title);
+                    Application.application.showAlert(e.message, title);
                 }
             }
             
@@ -127,7 +126,7 @@
                     app.canvasModule.removeLayer();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, title);
+                    Application.application.showAlert(e.message, title);
                 }
             }
             
@@ -139,7 +138,7 @@
                     app.canvasModule.mergeLayers();
                     update();
                 } catch (e:Error) {
-                    Alert.show(e.message, title);
+                    Application.application.showAlert(e.message, title);
                 }
             }
             

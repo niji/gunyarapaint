@@ -47,6 +47,7 @@
             import mx.controls.Alert;
             import mx.core.IFlexDisplayObject;
             import mx.core.UITextField;
+            import mx.events.CloseEvent;
             import mx.events.FlexEvent;
             import mx.events.MenuEvent;
             import mx.managers.PopUpManager;
@@ -171,7 +172,7 @@
                     m_module.reset();
                 }
                 catch (e:Error) {
-                    Alert.show(e.message, m_title);
+                    showAlert(e.message, m_title);
                 }
             }
             
@@ -181,7 +182,7 @@
                     newMarshal().save(bytes, m_bytes);
                 }
                 catch (e:Error) {
-                    Alert.show(e.message, m_title);
+                    showAlert(e.message, m_title);
                 }
             }
             
@@ -210,6 +211,12 @@
                 param.logBytes = m_recorder.newBytes();
                 param.logCount = commitCount;
                 param.metadata = metadata;
+            }
+            
+            public function showAlert(message:String, title:String):void
+            {
+                m_lockKeyboard = true;
+                Alert.show(message, title, Alert.OK, null, onClose);
             }
             
             public function set shouldAlertOnUnload(value:Boolean):void
@@ -247,24 +254,24 @@
             {
                 var undoBufferSize:int = int(parameters["undoBufferSize"]);
                 if (undoBufferSize < 1) {
-                    Alert.show(_("Too small count of the max of undo." +
+                    showAlert(_("Too small count of the max of undo." +
 					             "(required is %s and minimum is %s)", 
                                  undoBufferSize, 1), m_title);   
                     return false;
                 }
                 else if (undoBufferSize > 32) {
-                    Alert.show(_("Too many count of the max of undo." +
+                    showAlert(_("Too many count of the max of undo." +
 					             "(required is %s and maximum is %s)", undoBufferSize, 32), m_title);      
                     return false;
                 }
                 else if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
-                    Alert.show(_("Too small size of the canvas." +
+                    showAlert(_("Too small size of the canvas." +
 					             "(required is %s x %s and minimum is %s x %s)",
 								 width, height, MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
                     return false;
                 }
                 else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-                    Alert.show(_("Too big size of the canvas." +
+                    showAlert(_("Too big size of the canvas." +
 					             "(required is %s x %s and minimum is %s x %s)",
                                  width, height, MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
                     return false;
@@ -284,6 +291,7 @@
                 m_windows[2] = layerController;
                 m_windows[3] = toolController;
                 m_windows[4] = formController;
+                m_lockKeyboard = false;
                 for (var i:String in m_windows) {
                     var controller:IController = m_windows[i];
                     controller.init(this);
@@ -370,7 +378,7 @@
             
             private function onKeyDown(event:KeyboardEvent):void
             {
-                if (isForcusedOnTextField)
+                if (m_lockKeyboard || isForcusedOnTextField)
                     return;
                 var keyCode:uint = event.keyCode;
                 switch (keyCode) {
@@ -417,7 +425,7 @@
                             m_module.redo();
                         }
                         catch (e:Error) {
-                            Alert.show(e.message, m_title);
+                            showAlert(e.message, m_title);
                         }
                         break;
                     case 90: // z
@@ -425,7 +433,7 @@
                             m_module.undo();
                         }
                         catch (e:Error) {
-                            Alert.show(e.message, m_title);
+                            showAlert(e.message, m_title);
                         }
                         break;
                     case 107: // ten key +
@@ -479,7 +487,7 @@
             
             private function onKeyUp(evt:KeyboardEvent):void
             {
-                if (isForcusedOnTextField)
+                if (m_lockKeyboard || isForcusedOnTextField)
                     return;
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
@@ -501,9 +509,14 @@
                 }
             }
             
+            private function onClose(event:CloseEvent):void
+            {
+                m_lockKeyboard = false;
+            }
+            
             private function onExportComplete(event:Event):void
             {
-                Alert.show(_("Exporting the bitmap of the canvas to PNG has been completed."), m_title);
+                showAlert(_("Exporting the bitmap of the canvas to PNG has been completed."), m_title);
             }
             
             private function onClickImage():void
@@ -547,20 +560,20 @@
                 }
                 catch (e:JSONParseError) {
                     // should not be occured
-                    Alert.show(e.message, e.name);
+                    showAlert(e.message, e.name);
                 }
             }
             
             private function onIOError(event:IOErrorEvent):void
             {
                 removeLoaderEvents(EventDispatcher(event.target));
-                Alert.show(_("IO error has occured. Try again: %s", event.text));
+                showAlert(_("IO error has occured. Try again: %s", event.text), event.type);
             }
             
             private function onSecurityError(event:SecurityErrorEvent):void
             {
                 removeLoaderEvents(EventDispatcher(event.target));
-                Alert.show(_("Security error has occured. This error should not be occured: %s", event.text));
+                showAlert(_("Security error has occured. This error should not be occured: %s", event.text), event.type);
             }
             
             private function get isForcusedOnTextField():Boolean
@@ -579,6 +592,7 @@
             private var m_title:String;
             private var m_blendModes:Array;
             private var m_development:Boolean;
+            private var m_lockKeyboard:Boolean;
         ]]>
     </mx:Script>
     <ui:DockMenu id="dockMenu" />

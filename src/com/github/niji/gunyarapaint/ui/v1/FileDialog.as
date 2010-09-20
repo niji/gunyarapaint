@@ -8,7 +8,6 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.net.FileReference;
     import flash.utils.ByteArray;
     
-    import mx.controls.Alert;
     import mx.core.Application;
 
     public final class FileDialog extends EventDispatcher
@@ -49,7 +48,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onSaveComplete(event:Event):void
         {
-            Alert.show(_("Saving data to the file has been completed."), m_title);
+            Application.application.showAlert(_("Saving data to the file has been completed."), m_title);
             removeFileReference();
         }
         
@@ -60,7 +59,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onError(event:ErrorEvent):void
         {
-            Alert.show(event.text, m_title);
+            Application.application.showAlert(event.text, m_title);
             removeFileReference();
         }
         
