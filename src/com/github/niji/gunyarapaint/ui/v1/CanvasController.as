@@ -378,7 +378,8 @@ package com.github.niji.gunyarapaint.ui.v1
             var color:uint = app.canvasModule.getPixel32(x, y);
             var status:String = _(
                 "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)",
-                x, y,
+                int(x),
+                int(y),
                 Number(((color >> 24) & 0xff) / 255).toPrecision(2),
                 ((color >> 16) & 0xff),
                 ((color >> 8) & 0xff),
