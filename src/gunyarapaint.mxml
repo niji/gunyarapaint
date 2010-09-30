@@ -196,7 +196,8 @@
                     !parameters.redirectUrl)
                     throw new ArgumentError(_("Request cannot accept for the invalid state. This error should not be occured"));
                 var layers:LayerList = m_recorder.layers;
-                var bitmapData:BitmapData = canvasController.exportBitmapData();
+                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height);
+                bitmapData.draw(layers.view);
                 var layerBitmap:BitmapData = layers.newLayerBitmapData;
                 var metadata:Object = {};
                 layers.save(layerBitmap, metadata);
@@ -211,6 +212,7 @@
                 param.logBytes = m_recorder.newBytes();
                 param.logCount = commitCount;
                 param.metadata = metadata;
+                bitmapData.dispose();
             }
             
             public function showAlert(message:String, title:String):void
