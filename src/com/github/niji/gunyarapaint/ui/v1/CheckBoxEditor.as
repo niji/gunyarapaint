@@ -1,5 +1,7 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
+    import com.github.niji.gunyarapaint.ui.events.CheckBoxEditorEvent;
+    
     import flash.events.Event;
     import flash.events.MouseEvent;
     
@@ -9,9 +11,6 @@ package com.github.niji.gunyarapaint.ui.v1
     
     public class CheckBoxEditor extends CheckBox
     {
-        private var m_ownerData:Object;
-        private var m_text:String;
-        
         override public function set data(value:Object):void
         {
             m_ownerData = value;
@@ -43,7 +42,8 @@ package com.github.niji.gunyarapaint.ui.v1
             super.clickHandler(event);
             var col:DataGridListData = DataGridListData(listData);
             m_ownerData[col.dataField] = selected;
-            var toggleEvent:Event = new Event("describeChange");
+            var toggleEvent:Event = new CheckBoxEditorEvent(
+                CheckBoxEditorEvent.DATA_CHANGED, m_ownerData, col.dataField);
             owner.dispatchEvent(toggleEvent);
             updateCheckText();
         }
@@ -52,5 +52,8 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             m_text = selected ? 'on' : 'off';
         }
+        
+        private var m_ownerData:Object;
+        private var m_text:String;
     }
 }

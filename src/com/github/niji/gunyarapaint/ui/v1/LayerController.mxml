@@ -5,20 +5,24 @@
                 xmlns:ui="com.github.niji.gunyarapaint.ui.v1.*">
     <mx:Script>
         <![CDATA[
+            import com.github.niji.framework.BitmapLayer;
+            import com.github.niji.framework.ILayer;
+            import com.github.niji.framework.LayerList;
+            import com.github.niji.framework.Painter;
+            import com.github.niji.framework.UndoStack;
+            import com.github.niji.framework.events.UndoEvent;
+            import com.github.niji.framework.modules.CanvasModule;
+            import com.github.niji.framework.modules.ICanvasModule;
+            import com.github.niji.framework.ui.IApplication;
+            import com.github.niji.gunyarapaint.ui.events.CheckBoxEditorEvent;
+            import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
+            
             import mx.collections.ArrayCollection;
             import mx.core.Application;
             import mx.events.DragEvent;
             import mx.events.FlexEvent;
             import mx.events.ListEvent;
             import mx.events.SliderEvent;
-            
-            import com.github.niji.framework.BitmapLayer;
-            import com.github.niji.framework.LayerList;
-            import com.github.niji.framework.Painter;
-            import com.github.niji.framework.UndoStack;
-            import com.github.niji.framework.events.UndoEvent;
-            import com.github.niji.framework.ui.IApplication;
-            import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
             
             public function init(app:IApplication):void
             {
@@ -37,6 +41,7 @@
                     if (blendModes[i].data == currentLayerBlendMode)
                         blendModeComboBox.selectedIndex = i;
                 }
+                layerDataGrid.addEventListener(CheckBoxEditorEvent.DATA_CHANGED, onDataChange);
                 ComponentResizer.addResize(this, new Point(144, 230));
                 m_initPosition = new Point(x, y);
                 update();
@@ -182,6 +187,15 @@
                 // レイヤーの入れ替え処理がなかった場合は元のレイヤーの選択位置に戻すように
                 // (例えばレイヤーウィンドウ外にレイヤーをドラッグした時とか)
                 layerDataGrid.selectedIndex = m_selectedIndex;
+            }
+            
+            private function onDataChange(event:CheckBoxEditorEvent):void
+            {
+                if (event.column === "visible") {
+                    var module:ICanvasModule = IApplication(Application.application).canvasModule;
+                    var layer:ILayer = ILayer(event.data);
+                    module.setLayerVisible(layer.index, layer.visible);
+                }
             }
             
             private function getSelectedIndex(layers:LayerList):uint
