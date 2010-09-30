@@ -1,8 +1,7 @@
 package com.github.niji.gunyarapaint.ui.i18n
 {
-    import com.rails2u.gettext.GetText;
-    
     import com.github.niji.framework.i18n.ITranslator;
+    import com.rails2u.gettext.GetText;
     
     /**
      * as3gettext を使った翻訳クラス
@@ -14,7 +13,8 @@ package com.github.niji.gunyarapaint.ui.i18n
          */
         public function translate(str:String, ...rest):String
         {
-            var translated:String = GetText._(str, rest);
+            var args:Array = rest ? rest[0] : [];
+            var translated:String = GetText._(str, args);
             return translated;
         }
     }
