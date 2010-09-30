@@ -22,6 +22,10 @@ msgstr "現在のレイヤーは不可視です"
 msgid "The current layer is locked"
 msgstr "現在のレイヤーはロックされています"
 
+# MarshalRectError.as
+msgid "Cannot load this file because the size of an image is not equal: actual = (%s,%s), expected = (%s,%s)"
+msgstr "このファイルは画像の大きさが異なるため読むことが出来ません: 実際の大きさ = (%s,%s), 期待された大きさ = (%s,%s)"
+
 # MarshalVersionError.as
 msgid "Cannot load this file: actual version = %s, expected version = %s"
 msgstr "このファイルは読むことが出来ません: 実際のバージョン = %s, 期待されたバージョン = %s"
