@@ -25,6 +25,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.system.Capabilities;
     
     import mx.containers.TitleWindow;
+    import mx.controls.Button;
     import mx.controls.HScrollBar;
     import mx.controls.VScrollBar;
     import mx.controls.scrollClasses.ScrollBar;
@@ -336,6 +337,10 @@ package com.github.niji.gunyarapaint.ui.v1
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
+            var target:Object = event.target;
+            // Skip if the target is scroll bar's controller
+            if (target is ScrollThumb || target is Button)
+                return;
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
