@@ -222,29 +222,13 @@
                 currentColor = palette.getStyle("backgroundColor");
             }
             
-            private function onClickColorPicker(event:FlexEvent):void
-            {
-                // FIXME: お絵かきのログにパレット変更も反映したい
-                var picker:SColorPicker = new SColorPicker();
-                picker.selectedColor = m_palette.getStyle('backgroundColor');
-                picker.title = _("Select color to the palette");
-                
-                // display the 'x' close button
-                picker.showCloseButton = true;  
-                // picker.add_swatch = true;
-                // picker.picker_enabled = true;
-                
-                picker.addEventListener(CloseEvent.CLOSE, onClosePicker);
-                picker.addEventListener(SPickerEvent.CHANGING, onPicker);
-                picker.addEventListener(SPickerEvent.SWATCH_ADD, onPicker);
-                picker.addEventListener(Event.CHANGE, onPicker);
-                
-                PopUpManager.addPopUp(picker, Application.application as DisplayObject, true);
-                PopUpManager.centerPopUp(picker);
-            }
-            
             private function onClosePicker(event:CloseEvent):void
             {
+                var picker:SColorPicker = SColorPicker(event.target);
+                picker.removeEventListener(CloseEvent.CLOSE, onClosePicker);
+                picker.removeEventListener(SPickerEvent.CHANGING, onPicker);
+                picker.removeEventListener(SPickerEvent.SWATCH_ADD, onPicker);
+                picker.removeEventListener(Event.CHANGE, onPicker);
                 PopUpManager.removePopUp(IFlexDisplayObject(event.target));
             }
             
@@ -329,6 +313,23 @@
                         break;
                 }
                 currentColor = c;
+            }
+            
+            private function createColorPicker():void
+            {
+                var picker:SColorPicker = new SColorPicker();
+                picker.selectedColor = m_palette.getStyle('backgroundColor');
+                picker.title = _("Select color to the palette");
+                // display the 'x' close button
+                picker.showCloseButton = true;  
+                // picker.add_swatch = true;
+                // picker.picker_enabled = true;
+                picker.addEventListener(CloseEvent.CLOSE, onClosePicker);
+                picker.addEventListener(SPickerEvent.CHANGING, onPicker);
+                picker.addEventListener(SPickerEvent.SWATCH_ADD, onPicker);
+                picker.addEventListener(Event.CHANGE, onPicker);
+                PopUpManager.addPopUp(picker, Application.application as DisplayObject, true);
+                PopUpManager.centerPopUp(picker);
             }
             
             private function drawPreview(thickness:uint, color:uint, alpha:Number):void
@@ -492,65 +493,65 @@
         <!-- color palette -->
         <mx:Grid id="paletteGrid" x="15" y="73" borderStyle="none" borderColor="#000000" borderThickness="1" horizontalGap="4" verticalGap="3">
             <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#000000" id="gridItemPalette1" click="onClickPalette(1);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#000000" id="gridItemPalette1" click="onClickPalette(1);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#ffffff" id="gridItemPalette2" click="onClickPalette(2);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#ffffff" id="gridItemPalette2" click="onClickPalette(2);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette3" click="onClickPalette(3);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-            </mx:GridRow>
-            <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#888888" id="gridItemPalette4" click="onClickPalette(4);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#b47575" id="gridItemPalette5" click="onClickPalette(5);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette6" click="onClickPalette(6);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette3" click="onClickPalette(3);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
             </mx:GridRow>
             <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#c096c0" id="gridItemPalette7" click="onClickPalette(7);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#888888" id="gridItemPalette4" click="onClickPalette(4);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#fa9696" id="gridItemPalette8" click="onClickPalette(8);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#b47575" id="gridItemPalette5" click="onClickPalette(5);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette9" click="onClickPalette(9);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-            </mx:GridRow>
-            <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#8080ff" id="gridItemPalette10" click="onClickPalette(10);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#ffb6ff" id="gridItemPalette11" click="onClickPalette(11);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette12" click="onClickPalette(12);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette6" click="onClickPalette(6);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
             </mx:GridRow>
             <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#e7e58d" id="gridItemPalette13" click="onClickPalette(13);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#c096c0" id="gridItemPalette7" click="onClickPalette(7);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#25c7c9" id="gridItemPalette14" click="onClickPalette(14);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#fa9696" id="gridItemPalette8" click="onClickPalette(8);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette15" click="onClickPalette(15);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-            </mx:GridRow>
-            <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#99cb80" id="gridItemPalette16" click="onClickPalette(16);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#e7962d" id="gridItemPalette17" click="onClickPalette(17);" borderStyle="solid" cornerRadius="5">
-                </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette18" click="onClickPalette(18);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette9" click="onClickPalette(9);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
             </mx:GridRow>
             <mx:GridRow width="100%" height="100%">
-                <mx:GridItem width="24" height="20" backgroundColor="#f9ddcf" id="gridItemPalette19" click="onClickPalette(19);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#8080ff" id="gridItemPalette10" click="onClickPalette(10);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#fcece2" id="gridItemPalette20" click="onClickPalette(20);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#ffb6ff" id="gridItemPalette11" click="onClickPalette(11);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
-                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette21" click="onClickPalette(21);" borderStyle="solid" cornerRadius="5">
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette12" click="onClickPalette(12);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#e7e58d" id="gridItemPalette13" click="onClickPalette(13);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#25c7c9" id="gridItemPalette14" click="onClickPalette(14);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette15" click="onClickPalette(15);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#99cb80" id="gridItemPalette16" click="onClickPalette(16);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#e7962d" id="gridItemPalette17" click="onClickPalette(17);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette18" click="onClickPalette(18);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#f9ddcf" id="gridItemPalette19" click="onClickPalette(19);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#fcece2" id="gridItemPalette20" click="onClickPalette(20);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette21" click="onClickPalette(21);" doubleClickEnabled="true" doubleClick="createColorPicker()" borderStyle="solid" cornerRadius="5">
                 </mx:GridItem>
             </mx:GridRow>
         </mx:Grid>
         
         <!-- tools -->
-        <mx:Button id="colorPickerButton" x="21.5" y="235" label="色選択画面" width="65" paddingLeft="0" paddingRight="0" buttonDown="onClickColorPicker(event)"/>
+        <mx:Button id="colorPickerButton" x="21.5" y="235" label="色選択画面" width="65" paddingLeft="0" paddingRight="0" buttonDown="createColorPicker()"/>
         <mx:Button id="dropperButton" x="5" y="260" toggle="true" icon="{Application.application.dropperIcon}" width="22" paddingLeft="0" paddingRight="0" change="onSelectDropper(event)"/>
         <mx:Button id="handtoolButton" x="31" y="260" toggle="true" icon="{Application.application.handOpenIcon}" width="22" paddingLeft="0" paddingRight="0" change="onSelectHandTool(event)"/>
         <mx:Button id="eraserButton" x="56" y="260" toggle="true" label="消" width="22" paddingLeft="0" paddingRight="0" change="onSelectEraser(event)"/>
