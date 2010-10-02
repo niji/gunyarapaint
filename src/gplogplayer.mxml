@@ -154,7 +154,7 @@
             
             private function onParse(event:CommandEvent):void
             {
-                trace(event.command);
+                //trace(event.command);
             }
             
             private function setHandler(target:IEventDispatcher, handler:Function):void
