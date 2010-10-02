@@ -160,16 +160,16 @@
                 }
             }
             
-            public function newMarshal():Marshal
+            public function newMarshal(metadata:Object):Marshal
             {
-                m_metadata = {};
-                return new Marshal(m_recorder, m_windows, m_metadata);
+                return new Marshal(m_recorder, m_windows, metadata);
             }
             
             public function load(bytes:ByteArray):void
             {
                 try {
-                    newMarshal().load(bytes, m_bytes);
+                    m_metadata = {};
+                    newMarshal(m_metadata).load(bytes, m_bytes);
                     m_module.reset();
                 }
                 catch (e:Error) {
@@ -180,7 +180,8 @@
             public function save(bytes:ByteArray):void
             {
                 try {
-                    newMarshal().save(bytes, m_bytes);
+                    m_metadata = {};
+                    newMarshal(m_metadata).save(bytes, m_bytes);
                 }
                 catch (e:Error) {
                     showAlert(e.message, m_title);
