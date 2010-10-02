@@ -168,8 +168,10 @@
             public function load(bytes:ByteArray):void
             {
                 try {
-                    m_metadata = {};
-                    newMarshal(m_metadata).load(bytes, m_bytes);
+                    var metadata:Object = {};
+                    newMarshal(metadata).load(bytes, m_bytes);
+                    // parameters.foo = metadata.foo;
+                    // parameters.bar = metadata.bar;
                     m_module.reset();
                 }
                 catch (e:Error) {
@@ -180,8 +182,10 @@
             public function save(bytes:ByteArray):void
             {
                 try {
-                    m_metadata = {};
-                    newMarshal(m_metadata).save(bytes, m_bytes);
+                    var metadata:Object = { };
+                    // metadata.foo = parameters.foo;
+                    // metadata.bar = parameters.bar;
+                    newMarshal(metadata).save(bytes, m_bytes);
                 }
                 catch (e:Error) {
                     showAlert(e.message, m_title);
@@ -599,7 +603,6 @@
             private var m_blendModes:Array;
             private var m_development:Boolean;
             private var m_lockHandlingKeyboard:Boolean;
-            private var m_metadata:Object;
         ]]>
     </mx:Script>
     <ui:DockMenu id="dockMenu" />
