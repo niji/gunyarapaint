@@ -162,7 +162,8 @@
             
             public function newMarshal():Marshal
             {
-                return new Marshal(m_recorder, m_windows);
+                m_metadata = {};
+                return new Marshal(m_recorder, m_windows, m_metadata);
             }
             
             public function load(bytes:ByteArray):void
@@ -597,6 +598,7 @@
             private var m_blendModes:Array;
             private var m_development:Boolean;
             private var m_lockHandlingKeyboard:Boolean;
+            private var m_metadata:Object;
         ]]>
     </mx:Script>
     <ui:DockMenu id="dockMenu" />
