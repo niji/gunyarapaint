@@ -202,8 +202,7 @@
                     !parameters.redirectUrl)
                     throw new ArgumentError(_("Request cannot accept for the invalid state. This error should not be occured"));
                 var layers:LayerList = m_recorder.layers;
-                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height);
-                bitmapData.draw(layers.view);
+                var bitmapData:BitmapData = getBitmap();
                 var layerBitmap:BitmapData = layers.newLayerBitmapData;
                 var metadata:Object = {};
                 layers.save(layerBitmap, metadata);
@@ -360,6 +359,14 @@
                 ];
             }
             
+            private function getBitmap():BitmapData
+            {
+                var layers:LayerList = m_recorder.layers;
+                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height);
+                bitmapData.draw(layers.view);
+                return bitmapData;
+            }
+            
             private function onApplicationComplete(event:FlexEvent):void
             {
                 if (m_development)
@@ -426,7 +433,7 @@
                         m_module.shouldDrawFromStartPoint = true;
                         break;
                     case 88: // x
-                        var bitmapData:BitmapData = canvasController.exportBitmapData();
+                        var bitmapData:BitmapData = getBitmap();
                         m_exporter.save(bitmapData);
                         bitmapData.dispose();
                         break;
