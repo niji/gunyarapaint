@@ -64,6 +64,9 @@ package com.github.niji.gunyarapaint.ui.v1
             m_vScrollBar.lineScrollSize = 1;
             m_statusDefault = _("Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)", 0, 0, 0, 0, 0, 0);
             m_preDegree = 0;
+            m_canvasX = m_canvasY = 0;
+            m_canvasScaleX = m_canvasScaleY = 0.5;
+            m_canvasScale = 1;
             super();
         }
         
@@ -78,9 +81,6 @@ package com.github.niji.gunyarapaint.ui.v1
             m_canvasContainer.height = m_contentContainer.height - m_hScrollBar.height;
             m_canvasWidth = app.canvasWidth;
             m_canvasHeight = app.canvasHeight;
-            m_canvasX = m_canvasY = 0;
-            m_canvasScaleX = m_canvasScaleY = 0.5;
-            m_canvasScale = 1;
             initCanvas(app);
             m_contentContainer.addChild(m_canvasContainer);
             m_contentContainer.addChild(m_hScrollBar);
@@ -440,9 +440,11 @@ package com.github.niji.gunyarapaint.ui.v1
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_auxLine = new AuxLineView(rect);
             m_auxPixel = new AuxPixelView(rect);
-            m_auxLine.visible = true;
+            m_auxLine.visible = false;
             m_auxPixel.visible = false;
             m_canvas = new UIComponent();
+            m_canvas.width = m_canvasWidth;
+            m_canvas.height = m_canvasHeight;
             m_canvas.addChild(transparent);
             m_canvas.addChild(app.layers.view);
             m_canvas.addChild(m_auxLine);
