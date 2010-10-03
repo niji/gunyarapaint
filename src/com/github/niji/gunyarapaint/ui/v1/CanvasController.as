@@ -440,7 +440,7 @@ package com.github.niji.gunyarapaint.ui.v1
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
             m_auxLine = new AuxLineView(rect);
             m_auxPixel = new AuxPixelView(rect);
-            m_auxLine.visible = false;
+            m_auxLine.visible = true;
             m_auxPixel.visible = false;
             m_canvas = new UIComponent();
             m_canvas.width = m_canvasWidth;
