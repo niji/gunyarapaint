@@ -162,6 +162,9 @@
             public function set pen(mode:String):void
             {
                 var app:IApplication = IApplication(Application.application);
+                // The "eraser" state retains BlendMode.ERASE so change it forcely
+                if (currentState == "eraser")
+                    app.canvasModule.blendMode = String(blendModeComboBox.value);
                 currentState = mode.split(".").pop();
                 app.setCanvasModule(mode);
             }
@@ -344,8 +347,11 @@
             private function setDefaultPen():void
             {
                 pen = String(penModeComboBox.value);
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.blendMode = String(blendModeComboBox.value);
+                // changed blendMode at this#pen so prevents setting twice
+                if (currentState != "eraser") {
+                    var app:IApplication = IApplication(Application.application);
+                    app.canvasModule.blendMode = String(blendModeComboBox.value);
+                }
             }
             
             private const STATE_NONE:uint = 0;

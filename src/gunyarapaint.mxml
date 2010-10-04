@@ -160,15 +160,18 @@
                 }
             }
             
-            public function newMarshal():Marshal
+            public function newMarshal(metadata:Object):Marshal
             {
-                return new Marshal(m_recorder, m_windows);
+                return new Marshal(m_recorder, m_windows, metadata);
             }
             
             public function load(bytes:ByteArray):void
             {
                 try {
-                    newMarshal().load(bytes, m_bytes);
+                    var metadata:Object = {};
+                    newMarshal(metadata).load(bytes, m_bytes);
+                    // parameters.foo = metadata.foo;
+                    // parameters.bar = metadata.bar;
                     m_module.reset();
                 }
                 catch (e:Error) {
@@ -179,7 +182,10 @@
             public function save(bytes:ByteArray):void
             {
                 try {
-                    newMarshal().save(bytes, m_bytes);
+                    var metadata:Object = { };
+                    // metadata.foo = parameters.foo;
+                    // metadata.bar = parameters.bar;
+                    newMarshal(metadata).save(bytes, m_bytes);
                 }
                 catch (e:Error) {
                     showAlert(e.message, m_title);
@@ -196,8 +202,7 @@
                     !parameters.redirectUrl)
                     throw new ArgumentError(_("Request cannot accept for the invalid state. This error should not be occured"));
                 var layers:LayerList = m_recorder.layers;
-                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height);
-                bitmapData.draw(layers.view);
+                var bitmapData:BitmapData = getBitmap();
                 var layerBitmap:BitmapData = layers.newLayerBitmapData;
                 var metadata:Object = {};
                 layers.save(layerBitmap, metadata);
@@ -354,6 +359,14 @@
                 ];
             }
             
+            private function getBitmap():BitmapData
+            {
+                var layers:LayerList = m_recorder.layers;
+                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height);
+                bitmapData.draw(layers.view);
+                return bitmapData;
+            }
+            
             private function onApplicationComplete(event:FlexEvent):void
             {
                 if (m_development)
@@ -420,7 +433,7 @@
                         m_module.shouldDrawFromStartPoint = true;
                         break;
                     case 88: // x
-                        var bitmapData:BitmapData = canvasController.exportBitmapData();
+                        var bitmapData:BitmapData = getBitmap();
                         m_exporter.save(bitmapData);
                         bitmapData.dispose();
                         break;
