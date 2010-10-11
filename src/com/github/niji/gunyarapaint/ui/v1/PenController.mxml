@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450"
                 xmlns:ns1="org.libspark.gunyarapaint.controls.*"
-                implements="com.github.niji.framework.ui.IController">
+                implements="com.github.niji.framework.ui.IController"
+                currentStateChange="onCurrentStateChange(event)">
     <mx:Script>
         <![CDATA[
             import com.github.niji.framework.Pen;
@@ -24,6 +25,7 @@
             import mx.events.FlexEvent;
             import mx.events.ListEvent;
             import mx.events.SliderEvent;
+            import mx.events.StateChangeEvent;
             import mx.managers.PopUpManager;
             
             import org.sepy.controls.SColorPicker;
@@ -163,8 +165,6 @@
             {
                 var app:IApplication = IApplication(Application.application);
                 // The "eraser" state retains BlendMode.ERASE so change it forcely
-                if (currentState == "eraser")
-                    app.canvasModule.blendMode = String(blendModeComboBox.value);
                 currentState = mode.split(".").pop();
                 app.setCanvasModule(mode);
             }
@@ -212,6 +212,10 @@
                 var value:uint = pen.thickness;
                 thicknessSlider.value = value;
                 drawPreview(value, pen.color, pen.alpha);
+                if (currentState == "eraser")
+                    m_eraserThickness = value;
+                else
+                    m_brushThickness = value;
             }
             
             private function onClickPalette(index:uint):void
@@ -318,6 +322,18 @@
                 currentColor = c;
             }
             
+            private function onCurrentStateChange(event:StateChangeEvent):void
+            {
+                // The "eraser" state retains BlendMode.ERASE so change it forcely
+                if (event.oldState == "eraser") {
+                    var app:IApplication = IApplication(Application.application);
+                    app.canvasModule.blendMode = String(blendModeComboBox.value);
+                    currentThickness = m_brushThickness;
+                }
+                else if (event.newState == "eraser") {
+                    currentThickness = m_eraserThickness
+                }
+            }
             private function createColorPicker():void
             {
                 var picker:SColorPicker = new SColorPicker();
@@ -347,11 +363,6 @@
             private function setDefaultPen():void
             {
                 pen = String(penModeComboBox.value);
-                // changed blendMode at this#pen so prevents setting twice
-                if (currentState != "eraser") {
-                    var app:IApplication = IApplication(Application.application);
-                    app.canvasModule.blendMode = String(blendModeComboBox.value);
-                }
             }
             
             private const STATE_NONE:uint = 0;
@@ -363,6 +374,8 @@
             
             private var m_initPosition:Point;
             private var m_state:uint = STATE_NONE;
+            private var m_brushThickness:uint = Pen.DEFAULT_THICKNESS;
+            private var m_eraserThickness:uint = Pen.DEFAULT_THICKNESS;
         ]]>
     </mx:Script>
     
