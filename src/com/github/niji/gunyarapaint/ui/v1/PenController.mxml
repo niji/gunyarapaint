@@ -13,6 +13,7 @@
             import com.github.niji.framework.modules.FreeHandModule;
             import com.github.niji.framework.modules.LineModule;
             import com.github.niji.framework.modules.PixelModule;
+            import com.github.niji.framework.modules.RectangleModule;
             import com.github.niji.framework.modules.TransparentFloodFill;
             import com.github.niji.framework.modules.TransparentLineModule;
             import com.github.niji.framework.ui.IApplication;
@@ -110,9 +111,7 @@
                         pen = MovableCanvasModule.MOVABLE_CANVAS;
                         break;
                     case STATE_ERASER:
-                        pen = FreeHandModule.FREE_HAND;
-                        currentState = "eraser";
-                        app.canvasModule.blendMode = BlendMode.ERASE;
+                        setEraser();
                         break;
                     case STATE_DOT:
                         pen = PixelModule.PIXEL;
@@ -135,6 +134,19 @@
                 dotButton.selected = false;
                 var app:IApplication = IApplication(Application.application);
                 app.setCanvasModule(String(penModeComboBox.value));
+            }
+            
+            public function setEraser():void
+            {
+                var app:IApplication = IApplication(Application.application);
+                pen = FreeHandModule.FREE_HAND;
+                currentState = "eraser";
+                app.canvasModule.blendMode = BlendMode.ERASE;
+            }
+            
+            public function get isEraser():Boolean
+            {
+                return currentState == "eraser" && m_state != STATE_NONE;
             }
             
             public function get dataForPost():Object
@@ -267,15 +279,10 @@
             
             private function onSelectEraser(event:Event):void
             {
-                if (Button(event.currentTarget).selected) {
-                    var app:IApplication = IApplication(Application.application);
-                    pen = FreeHandModule.FREE_HAND;
-                    currentState = "eraser";
-                    app.canvasModule.blendMode = BlendMode.ERASE;
-                }
-                else {
+                if (Button(event.currentTarget).selected)
+                    setEraser();
+                else
                     setDefaultPen();
-                }
             }
             
             private function onSelectDot(event:Event):void
@@ -460,6 +467,12 @@
             <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
             <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
         </mx:State>
+        <mx:State name="rectangle">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
         <mx:State name="eraser">
             <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
             <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
@@ -598,11 +611,11 @@
                 <mx:Object label="手書き" data="{FreeHandModule.FREE_HAND}" />
                 <mx:Object label="直線" data="{LineModule.LINE}" />
                 <mx:Object label="円" data="{CircleModule.CIRCLE}" />
+                <mx:Object label="矩形" data="{RectangleModule.RECTANGLE}" />
                 <mx:Object label="塗りつぶし" data="{FloodFillModule.FLOOD_FILL}" />
                 <mx:Object label="透明直線" data="{TransparentLineModule.TRANSPARENT_LINE}" />
                 <mx:Object label="透明塗りつぶし" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
                 <!--
-                <mx:Object label="四角" data="" />
                 <mx:Object label="楕円" data="" />
                 <mx:Object label="角丸つき四角" data="" />
                 -->
