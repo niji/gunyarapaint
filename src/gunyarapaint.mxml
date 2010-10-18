@@ -400,11 +400,11 @@
                 var keyCode:uint = event.keyCode;
                 switch (keyCode) {
                     case Keyboard.CONTROL:
-                        penController.saveState();
+                        penController.saveSelectedState();
                         penController.pen = DropperModule.DROPPER;
                         break;
                     case Keyboard.SPACE:
-                        penController.saveState();
+                        penController.saveSelectedState();
                         penController.pen = MovableCanvasModule.MOVABLE_CANVAS;
                         break;
                     case 48: // 0
@@ -509,7 +509,7 @@
                 switch (evt.keyCode) {
                     case Keyboard.CONTROL:
                     case Keyboard.SPACE:
-                        penController.loadState();
+                        penController.loadSelectedState();
                         break;
                     case 65: // a (released)
                         m_module.shouldDrawCircleClockwise = false;

@@ -79,7 +79,7 @@
                 move(m_initPosition.x, m_initPosition.y);
             }
             
-            public function saveState():void
+            public function saveSelectedState():void
             {
                 if (m_state == STATE_NONE) {
                     if (dropperButton.selected) {
@@ -100,7 +100,7 @@
                 }
             }
             
-            public function loadState():void
+            public function loadSelectedState():void
             {
                 var app:IApplication = IApplication(Application.application);
                 switch (m_state) {
