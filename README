@@ -1,0 +1,10 @@
+* デプロイ方法
+基本的に gunyarapaint.swf のバイナリを差し替えるだけです。
+ただし、以下の JavaScript ファイルが必要です。これらは js ディレクトリ以下にあります。
+- swfobject.js
+- swfmousewheel.js
+
+* デプロイ時の注意
+swfmousewheel.js には後ろに "?id=[埋め込み先の DOM の ID]" をつける必要があります。
+埋め込み先の DOM の ID について Flash Player の挙動上 external を必ずつけてください。
+
