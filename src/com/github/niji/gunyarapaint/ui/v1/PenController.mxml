@@ -611,7 +611,7 @@
                 <mx:Object label="手書き" data="{FreeHandModule.FREE_HAND}" />
                 <mx:Object label="直線" data="{LineModule.LINE}" />
                 <mx:Object label="円" data="{CircleModule.CIRCLE}" />
-                <mx:Object label="矩形" data="{RectangleModule.RECTANGLE}" />
+                <mx:Object label="四角" data="{RectangleModule.RECTANGLE}" />
                 <mx:Object label="塗りつぶし" data="{FloodFillModule.FLOOD_FILL}" />
                 <mx:Object label="透明直線" data="{TransparentLineModule.TRANSPARENT_LINE}" />
                 <mx:Object label="透明塗りつぶし" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
