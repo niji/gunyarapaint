@@ -73,14 +73,7 @@
                 layerDataGrid.dataProvider = layers.toDataProvider();
                 layerDataGrid.selectedIndex = getSelectedIndex(layers);
                 alphaSlider.value = layer.alpha;
-                var ac:ArrayCollection = blendModeComboBox.dataProvider as ArrayCollection;
-                var length:uint = ac.length;
-                for (var i:uint = 0; i < length; i++) {
-                    if (ac.getItemAt(i).data == currentLayerBlendMode) {
-                        blendModeComboBox.selectedIndex = i;
-                        return;
-                    }
-                }
+                updateBlendModeComboBox(currentLayerBlendMode);
             }
             
             public function swapEventListener(from:UndoStack, to:UndoStack):void
@@ -95,8 +88,10 @@
             {
                 var app:IApplication = IApplication(Application.application);
                 var layer:BitmapLayer = BitmapLayer(event.currentTarget.selectedItem);
-                if (app.layers.currentIndex != layer.index)
+                if (app.layers.currentIndex != layer.index) {
                     app.canvasModule.layerIndex = layer.index;
+                    updateBlendModeComboBox(layer.blendMode);
+                }
             }
             
             private function onCreateLayer(event:Event):void
@@ -195,6 +190,18 @@
                     var module:ICanvasModule = IApplication(Application.application).canvasModule;
                     var layer:ILayer = ILayer(event.data);
                     module.setLayerVisible(layer.index, layer.visible);
+                }
+            }
+            
+            private function updateBlendModeComboBox(blendMode:String):void
+            {
+                var ac:ArrayCollection = blendModeComboBox.dataProvider as ArrayCollection;
+                var length:uint = ac.length;
+                for (var i:uint = 0; i < length; i++) {
+                    if (ac.getItemAt(i).data == blendMode) {
+                        blendModeComboBox.selectedIndex = i;
+                        break;
+                    }
                 }
             }
             
