@@ -56,7 +56,7 @@
             </menuitem>
             <menuitem label="ファイル">
                 <menuitem label="読み込み" data="file.load" />
-                <menuitem label="保存" data="file.save" />
+                <menuitem label="保存" data="file.save" enabled="false" />
             </menuitem>
             <menuitem label="開発">
                 <menuitem label="ログを保存する" data="development.saveLog" />

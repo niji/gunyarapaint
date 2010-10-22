@@ -41,9 +41,9 @@
             import com.github.niji.gunyarapaint.ui.v1.net.LoadingDialog;
             import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
             import com.rails2u.gettext.GetText;
-            
+
             import flash.net.navigateToURL;
-            
+
             import mx.controls.Alert;
             import mx.core.IFlexDisplayObject;
             import mx.core.UITextField;
@@ -51,28 +51,28 @@
             import mx.events.FlexEvent;
             import mx.events.MenuEvent;
             import mx.managers.PopUpManager;
-            
+
             [Bindable]
             [Embed(source="../assets/images/icon_dropper.png")]
             public var dropperIcon:Class;
-            
+
             [Bindable]
             [Embed(source="../assets/images/icon_hand_open.png")]
             public var handOpenIcon:Class;
-            
+
             [Bindable]
             [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
             private var languages:Class;
-            
+
             [Bindable]
             [Embed(source="../assets/config.xml", mimeType="application/octet-stream")]
             private var config:Class;
-            
+
             private const MAX_CANVAS_WIDTH:uint = 500;
             private const MAX_CANVAS_HEIGHT:uint = 500;
-            private const MIN_CANVAS_WIDTH:uint = 16;
-            private const MIN_CANVAS_HEIGHT:uint = 16;
-            
+            private const MIN_CANVAS_WIDTH:uint = 8;
+            private const MIN_CANVAS_HEIGHT:uint = 8;
+
             public function setCanvasModule(value:String):void
             {
                 if (hasEventListener(CanvasModuleEvent.BEFORE_CHANGE))
@@ -87,12 +87,12 @@
                 if (hasEventListener(CanvasModuleEvent.AFTER_CHANGE))
                     dispatchEvent(new CanvasModuleEvent(CanvasModuleEvent.AFTER_CHANGE));
             }
-            
+
             public function get canvasModule():ICanvasModule
             {
                 return m_module;
             }
-            
+
             public function get canvasModuleName():String
             {
                 switch (m_module.name) {
@@ -112,59 +112,59 @@
                         return _("Unknown module");
                 }
             }
-            
+
             public function get supportedBlendModes():Array
             {
                 return m_blendModes.slice();
             }
-            
+
             public function get layers():LayerList
             {
                 return m_recorder.layers;
             }
-            
+
             public function get pen():Pen
             {
                 return m_recorder.pen;
             }
-            
+
             public function get undoStack():UndoStack
             {
                 return m_recorder.undoStack;
             }
-            
+
             public function get canvasWidth():uint
             {
                 return m_recorder.width;
             }
-            
+
             public function get canvasHeight():uint
             {
                 return m_recorder.height;
             }
-            
+
             public function get commitCount():uint
             {
                 return m_commit;
             }
-            
+
             public function get enabledDevelopmentSupport():Boolean
             {
                 return m_development;
             }
-            
+
             public function resetWindowsPosition():void
             {
                 for (var i:String in m_windows) {
                     m_windows[i].resetWindow();
                 }
             }
-            
+
             public function newMarshal(metadata:Object):Marshal
             {
                 return new Marshal(m_recorder, m_windows, metadata);
             }
-            
+
             public function load(bytes:ByteArray):void
             {
                 try {
@@ -178,7 +178,7 @@
                     showAlert(e.message, m_title);
                 }
             }
-            
+
             public function save(bytes:ByteArray):void
             {
                 try {
@@ -191,7 +191,7 @@
                     showAlert(e.message, m_title);
                 }
             }
-            
+
             public function fillParameters(param:Parameters):void
             {
                 if (!m_development && commitCount == 0)
@@ -219,13 +219,13 @@
                 param.metadata = metadata;
                 bitmapData.dispose();
             }
-            
+
             public function showAlert(message:String, title:String):void
             {
                 m_lockHandlingKeyboard = true;
                 Alert.show(message, title, Alert.OK, null, onClose);
             }
-            
+
             public function set shouldAlertOnUnload(value:Boolean):void
             {
                 if (ExternalInterface.available) {
@@ -237,7 +237,7 @@
                     }
                 }
             }
-            
+
             private function restoreCanvas(metadata:Object):void
             {
                 var width:int = metadata.width;
@@ -258,31 +258,31 @@
                     m_lockHandlingKeyboard = false;
                 }
             }
-            
+
             private function postInitialize(width:int, height:int):Boolean
             {
                 var undoBufferSize:int = int(parameters["undoBufferSize"]);
                 if (undoBufferSize < 1) {
                     showAlert(_("Too small count of the max of undo." +
-					             "(required is %s and minimum is %s)", 
-                                 undoBufferSize, 1), m_title);   
+                                "(required is %s and minimum is %s)",
+                              undoBufferSize, 1), m_title);
                     return false;
                 }
                 else if (undoBufferSize > 32) {
                     showAlert(_("Too many count of the max of undo." +
-					             "(required is %s and maximum is %s)", undoBufferSize, 32), m_title);      
+                                 "(required is %s and maximum is %s)", undoBufferSize, 32), m_title);
                     return false;
                 }
                 else if (width < MIN_CANVAS_WIDTH || height < MIN_CANVAS_HEIGHT) {
                     showAlert(_("Too small size of the canvas." +
-					             "(required is %s x %s and minimum is %s x %s)",
-								 width, height, MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
+                                "(required is %s x %s and minimum is %s x %s)",
+                              width, height, MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT), m_title);
                     return false;
                 }
                 else if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
                     showAlert(_("Too big size of the canvas." +
-					             "(required is %s x %s and minimum is %s x %s)",
-                                 width, height, MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
+                                "(required is %s x %s and minimum is %s x %s)",
+                              width, height, MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT), m_title);
                     return false;
                 }
                 m_bytes = new ByteArray();
@@ -310,7 +310,7 @@
                 stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
                 return true;
             }
-            
+
             private function addLoaderEvents(loader:EventDispatcher):void
             {
                 loadingDialog.visible = true;
@@ -320,7 +320,7 @@
                 loader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
                 loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
             }
-            
+
             private function removeLoaderEvents(loader:EventDispatcher):void
             {
                 loadingDialog.visible = false;
@@ -328,7 +328,7 @@
                 loader.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
                 loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
             }
-            
+
             private function onPreinitialize(event:FlexEvent):void
             {
                 var configXml:XML = new XML(new config());
@@ -358,7 +358,7 @@
                     { "label": _("Invert"),     "data": BlendMode.INVERT     },
                 ];
             }
-            
+
             private function getBitmap():BitmapData
             {
                 var layers:LayerList = m_recorder.layers;
@@ -366,7 +366,7 @@
                 bitmapData.draw(layers.view);
                 return bitmapData;
             }
-            
+
             private function onApplicationComplete(event:FlexEvent):void
             {
                 if (m_development)
@@ -386,13 +386,13 @@
                     enabled = postInitialize(width, height);
                 }
             }
-            
+
             private function onCommit(event:CommandEvent):void
             {
                 //trace(event.command);
                 m_commit++;
             }
-            
+
             private function onKeyDown(event:KeyboardEvent):void
             {
                 if (m_lockHandlingKeyboard || isForcusedOnTextField)
@@ -501,7 +501,7 @@
                         break;
                 }
             }
-            
+
             private function onKeyUp(evt:KeyboardEvent):void
             {
                 if (m_lockHandlingKeyboard || isForcusedOnTextField)
@@ -525,22 +525,22 @@
                         break;
                 }
             }
-            
+
             private function onClose(event:CloseEvent):void
             {
                 m_lockHandlingKeyboard = false;
             }
-            
+
             private function onExportComplete(event:Event):void
             {
                 showAlert(_("Exporting the bitmap of the canvas to PNG has been completed."), m_title);
             }
-            
+
             private function onClickImage():void
             {
                 PopUpManager.addPopUp(new CopyrightWindow(), this, true);
             }
-            
+
             private function onLoadImage(event:Event):void
             {
                 var loaderInfo:LoaderInfo = LoaderInfo(event.target);
@@ -564,7 +564,7 @@
                     restoreCanvas(metadata);
                 }
             }
-            
+
             private function onLoadImageInfo(event:Event):void
             {
                 var loader:URLLoader = URLLoader(event.target);
@@ -580,24 +580,24 @@
                     showAlert(e.message, e.name);
                 }
             }
-            
+
             private function onIOError(event:IOErrorEvent):void
             {
                 removeLoaderEvents(EventDispatcher(event.target));
                 showAlert(_("IO error has occured. Try again: %s", event.text), event.type);
             }
-            
+
             private function onSecurityError(event:SecurityErrorEvent):void
             {
                 removeLoaderEvents(EventDispatcher(event.target));
                 showAlert(_("Security error has occured. This error should not be occured: %s", event.text), event.type);
             }
-            
+
             private function get isForcusedOnTextField():Boolean
             {
                 return stage.focus is mx.core.UITextField;
             }
-            
+
             private var m_baseImage:BitmapData;
             private var m_bytes:ByteArray;
             private var m_recorder:Recorder;
