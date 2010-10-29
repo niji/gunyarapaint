@@ -90,6 +90,7 @@
                 var layer:BitmapLayer = BitmapLayer(event.currentTarget.selectedItem);
                 if (app.layers.currentIndex != layer.index) {
                     app.canvasModule.layerIndex = layer.index;
+                    alphaSlider.value = layer.alpha;
                     updateBlendModeComboBox(layer.blendMode);
                 }
             }
