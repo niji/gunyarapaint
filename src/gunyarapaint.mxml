@@ -41,9 +41,9 @@
             import com.github.niji.gunyarapaint.ui.v1.net.LoadingDialog;
             import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
             import com.rails2u.gettext.GetText;
-
+            
             import flash.net.navigateToURL;
-
+            
             import mx.controls.Alert;
             import mx.core.IFlexDisplayObject;
             import mx.core.UITextField;
@@ -173,6 +173,9 @@
                     // parameters.foo = metadata.foo;
                     // parameters.bar = metadata.bar;
                     m_module.reset();
+                }
+                catch (e:IOError) {
+                    showAlert(_("Loaded file is invalid saved data"), m_title);
                 }
                 catch (e:Error) {
                     showAlert(e.message, m_title);

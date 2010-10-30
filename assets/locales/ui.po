@@ -152,3 +152,6 @@ msgstr "レイヤー画像を読み込み中..."
 
 msgid "Loading image the metadata..."
 msgstr "画像情報を読み込み中..."
+
+msgid "Loaded file is invalid saved data"
+msgstr "読み込まれたファイルは「ふっかつのじゅもん」形式ではありません"
