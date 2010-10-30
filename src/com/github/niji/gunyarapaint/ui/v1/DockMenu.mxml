@@ -39,7 +39,7 @@
                         navigateToURL(new URLRequest("http://nicodic.razil.jp/bugyobo/"));
                         break;
                     case "development.saveLog":
-                        var marshal:Marshal = Application.application.newMarshal();
+                        var marshal:Marshal = Application.application.newMarshal({});
                         dialog = new FileDialog(item.@label);
                         dialog.openToSave(marshal.newRecorderBytes());
                         break;
