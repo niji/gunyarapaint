@@ -1,19 +1,20 @@
-package com.github.niji.gunyarapaint.ui.v1
+package com.github.niji.gunyarapaint.ui.module
 {
     import flash.geom.Point;
     
     import com.github.niji.framework.Recorder;
     import com.github.niji.framework.modules.CanvasModule;
     import com.github.niji.framework.modules.ICanvasModule;
+    import com.github.niji.gunyarapaint.ui.v1.CanvasController;
     
     public final class MovableCanvasModule extends CanvasModule implements ICanvasModule
     {
-        public static const MOVABLE_CANVAS:String = "com.github.niji.gunyarapaint.ui.v1.movableCanvas";
+        public static const MOVABLE_CANVAS:String = Constant.NAMESPACE + "movableCanvas";
         
         public function MovableCanvasModule(recorder:Recorder, canvas:CanvasController)
         {
-            m_canvas = canvas;
             super(recorder);
+            m_canvas = canvas;
         }
         
         public function start(x:Number, y:Number):void

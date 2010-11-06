@@ -10,12 +10,17 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
+    import com.github.niji.gunyarapaint.ui.module.MovableCanvasModule;
     import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
     import com.oysteinwika.ui.SWFMouseWheel;
     
     import flash.display.BitmapData;
+    import flash.display.CapsStyle;
     import flash.display.DisplayObject;
+    import flash.display.Graphics;
     import flash.display.InteractiveObject;
+    import flash.display.LineScaleMode;
+    import flash.display.Shape;
     import flash.display.Sprite;
     import flash.events.EventPhase;
     import flash.events.MouseEvent;
@@ -174,6 +179,12 @@ package com.github.niji.gunyarapaint.ui.v1
             return bitmapData;
         }
         
+        public function updateAuxViews():void
+        {
+            m_auxLine.update();
+            m_auxPixel.update();
+        }
+        
         public function get canvasScrollPosition():Point
         {
             return new Point(m_canvasX, m_canvasY);
@@ -184,10 +195,9 @@ package com.github.niji.gunyarapaint.ui.v1
             return m_canvasScale;
         }
         
-        public function updateAuxViews():void
+        public function get selectShape():Shape
         {
-            m_auxLine.update();
-            m_auxPixel.update();
+            return m_select;
         }
         
         public function get auxBoxVisible():Boolean
@@ -438,6 +448,7 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var rect:Rectangle = new Rectangle(0, 0, m_canvasWidth, m_canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
+            m_select = new Shape();
             m_auxLine = new AuxLineView(rect);
             m_auxPixel = new AuxPixelView(rect);
             m_auxLine.visible = true;
@@ -449,6 +460,7 @@ package com.github.niji.gunyarapaint.ui.v1
             m_canvas.addChild(app.layers.view);
             m_canvas.addChild(m_auxLine);
             m_canvas.addChild(m_auxPixel);
+            m_canvas.addChild(m_select);
             m_canvasContainer.addChild(m_canvas);
             app.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
             app.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
@@ -547,5 +559,6 @@ package com.github.niji.gunyarapaint.ui.v1
         private var m_auxPixel:AuxPixelView;
         private var m_widthLimit:Number;
         private var m_heightLimit:Number;
+        private var m_select:Shape;
     }
 }
