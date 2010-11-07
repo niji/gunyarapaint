@@ -17,30 +17,45 @@ package com.github.niji.gunyarapaint.ui.module
             m_canvas = canvas;
         }
         
+        /**
+         * @inheritDoc
+         */
         public function start(x:Number, y:Number):void
         {
              m_scrollPosition = m_canvas.canvasScrollPosition;
              setCoordinate(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function move(x:Number, y:Number):void
         {
             moveCanvas(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function stop(x:Number, y:Number):void
         {
             saveCoordinate(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function interrupt(x:Number, y:Number):void
         {
             moveCanvas(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function wheel(x:Number, y:Number, delta:int):void
         {
-            // チルト操作には対応していない。ショートカットキーで対応する?
+            // Tilt is not supported. Should support it by shortcut?
             y ||= m_canvas.canvasScrollPosition.y;
             var toY:Number = y + delta * m_canvas.canvasScale;
             start(x, y);
@@ -48,6 +63,9 @@ package com.github.niji.gunyarapaint.ui.module
             stop(x, toY);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function get name():String
         {
             return MOVABLE_CANVAS;

@@ -24,12 +24,20 @@ package com.github.niji.gunyarapaint.ui.module
             m_rect = new Rectangle();
         }
         
+        /**
+         * @inheritDoc
+         */
         public override function load():void
         {
+            var shape:Shape = m_canvas.selectShape;
             m_offset = 0;
-            m_canvas.selectShape.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            shape.graphics.clear();
+            shape.addEventListener(Event.ENTER_FRAME, onEnterFrame);
         }
         
+        /**
+         * @inheritDoc
+         */
         public override function unload():void
         {
             var shape:Shape = m_canvas.selectShape;
@@ -38,26 +46,41 @@ package com.github.niji.gunyarapaint.ui.module
             shape.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function start(x:Number, y:Number):void
         {
             setCoordinate(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function move(x:Number, y:Number):void
         {
             draw(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function stop(x:Number, y:Number):void
         {
             draw(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function interrupt(x:Number, y:Number):void
         {
             draw(x, y);
         }
         
+        /**
+         * @inheritDoc
+         */
         public function get name():String
         {
             return SELECT_RECTANGLE;
@@ -77,7 +100,7 @@ package com.github.niji.gunyarapaint.ui.module
             m_offset += 2;
             m_offset %= 10;
             g.clear();
-            if (!m_rect.equals(ZERO)) {
+            if (!m_rect.isEmpty()) {
                 g.lineStyle(1.0, 0.0, 1.0, true, LineScaleMode.NORMAL, CapsStyle.NONE);
                 dashline.moveTo(m_rect.left, m_rect.top, m_offset);
                 dashline.lineTo(m_rect.right, m_rect.top);
@@ -87,7 +110,6 @@ package com.github.niji.gunyarapaint.ui.module
             }
         }
         
-        private const ZERO:Rectangle = new Rectangle();
         private var m_canvas:CanvasController;
         private var m_rect:Rectangle;
         private var m_offset:uint = 0;
