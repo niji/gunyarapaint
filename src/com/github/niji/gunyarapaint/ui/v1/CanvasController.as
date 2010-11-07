@@ -174,7 +174,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         public function exportBitmapData():BitmapData
         {
-            var bitmapData:BitmapData = new BitmapData(m_canvasWidth, m_canvasHeight);
+            var bitmapData:BitmapData = new BitmapData(m_canvasWidth, m_canvasHeight, true, 0);
             bitmapData.draw(m_canvasContainer);
             return bitmapData;
         }

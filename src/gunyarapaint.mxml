@@ -380,7 +380,7 @@
             private function getBitmap():BitmapData
             {
                 var layers:LayerList = m_recorder.layers;
-                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height);
+                var bitmapData:BitmapData = new BitmapData(layers.width, layers.height, true, 0);
                 bitmapData.draw(layers.view);
                 return bitmapData;
             }
@@ -439,7 +439,7 @@
                         resetWindowsPosition();
                         break;
                     case 77: // m
-                        m_module.horizontalMirror(Painter.ALL_LAYERS);
+                        m_module.horizontalMirror(LayerList.ALL_LAYERS);
                         break;
                     case 81: // q (pressing)
                         m_module.shouldDrawCircleCounterClockwise = true;
