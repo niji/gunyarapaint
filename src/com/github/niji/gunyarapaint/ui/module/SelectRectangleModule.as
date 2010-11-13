@@ -11,6 +11,7 @@ package com.github.niji.gunyarapaint.ui.module
     import flash.display.LineScaleMode;
     import flash.display.Shape;
     import flash.events.Event;
+    import flash.geom.Point;
     import flash.geom.Rectangle;
     
     public final class SelectRectangleModule extends CanvasModule implements ICanvasModule
@@ -31,6 +32,8 @@ package com.github.niji.gunyarapaint.ui.module
         {
             var shape:Shape = m_canvas.selectShape;
             m_offset = 0;
+            m_drag = new Point();
+            m_topLeft = null;
             shape.graphics.clear();
             shape.addEventListener(Event.ENTER_FRAME, onEnterFrame);
         }
@@ -51,7 +54,16 @@ package com.github.niji.gunyarapaint.ui.module
          */
         public function start(x:Number, y:Number):void
         {
-            setCoordinate(x, y);
+            if (m_rect.contains(x, y)) {
+                m_topLeft = m_rect.topLeft.clone();
+                m_drag.x = x;
+                m_drag.y = y;
+            }
+            else {
+                m_drag.x = 0;
+                m_drag.y = 0;
+                setCoordinate(x, y);
+            }
         }
         
         /**
@@ -88,16 +100,31 @@ package com.github.niji.gunyarapaint.ui.module
         
         private function draw(x:Number, y:Number):void
         {
-            var width:int = Math.floor(x - coordinateX);
-            var height:int = Math.floor(y - coordinateY);
-            if (width >= 0 && height >= 0)
-                m_rect = new Rectangle(coordinateX, coordinateY, width, height);
-            else if (width >= 0)
-                m_rect = new Rectangle(coordinateX, y, width, -height);
-            else if (height >= 0)
-                m_rect = new Rectangle(x, coordinateY, -width, height);
-            else
-                m_rect = new Rectangle(x, y, -width, -height);
+            var width:int = 0;
+            var height:int = 0;
+            var offsetX:int = 0;
+            var offsetY:int = 0;
+            if (m_drag.x != 0 || m_drag.y != 0) {
+                offsetX = m_topLeft.x - (m_drag.x - x);
+                offsetY = m_topLeft.y - (m_drag.y - y);
+                width = m_rect.width;
+                height = m_rect.height;
+                m_rect = new Rectangle(offsetX, offsetY, width, height);
+            }
+            else {
+                offsetX = coordinateX;
+                offsetY = coordinateY;
+                width = Math.floor(x - offsetX);
+                height = Math.floor(y - offsetY);
+                if (width >= 0 && height >= 0)
+                    m_rect = new Rectangle(offsetX, offsetY, width, height);
+                else if (width >= 0)
+                    m_rect = new Rectangle(offsetX, y, width, -height);
+                else if (height >= 0)
+                    m_rect = new Rectangle(x, offsetY, -width, height);
+                else
+                    m_rect = new Rectangle(x, y, -width, -height);
+            }
         }
         
         private function onEnterFrame(event:Event):void
@@ -120,6 +147,8 @@ package com.github.niji.gunyarapaint.ui.module
         }
         
         private var m_canvas:CanvasController;
+        private var m_drag:Point;
+        private var m_topLeft:Point;
         private var m_rect:Rectangle;
         private var m_offset:uint = 0;
     }
