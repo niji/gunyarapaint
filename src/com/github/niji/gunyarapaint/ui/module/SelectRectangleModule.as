@@ -88,9 +88,16 @@ package com.github.niji.gunyarapaint.ui.module
         
         private function draw(x:Number, y:Number):void
         {
-            var width:uint = Math.floor(x - coordinateX);
-            var height:uint = Math.floor(y - coordinateY);
-            m_rect = new Rectangle(coordinateX, coordinateY, width, height);
+            var width:int = Math.floor(x - coordinateX);
+            var height:int = Math.floor(y - coordinateY);
+            if (width >= 0 && height >= 0)
+                m_rect = new Rectangle(coordinateX, coordinateY, width, height);
+            else if (width >= 0)
+                m_rect = new Rectangle(coordinateX, y, width, -height);
+            else if (height >= 0)
+                m_rect = new Rectangle(x, coordinateY, -width, height);
+            else
+                m_rect = new Rectangle(x, y, -width, -height);
         }
         
         private function onEnterFrame(event:Event):void
@@ -101,6 +108,8 @@ package com.github.niji.gunyarapaint.ui.module
             m_offset %= 10;
             g.clear();
             if (!m_rect.isEmpty()) {
+                var width:int = m_rect.width;
+                var height:int = m_rect.height;
                 g.lineStyle(1.0, 0.0, 1.0, true, LineScaleMode.NORMAL, CapsStyle.NONE);
                 dashline.moveTo(m_rect.left, m_rect.top, m_offset);
                 dashline.lineTo(m_rect.right, m_rect.top);
