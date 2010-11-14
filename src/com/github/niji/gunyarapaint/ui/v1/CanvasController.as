@@ -15,7 +15,9 @@ package com.github.niji.gunyarapaint.ui.v1
     
     import flash.display.BitmapData;
     import flash.display.DisplayObject;
+    import flash.display.Graphics;
     import flash.display.InteractiveObject;
+    import flash.display.Shape;
     import flash.display.Sprite;
     import flash.events.EventPhase;
     import flash.events.MouseEvent;
@@ -48,7 +50,6 @@ package com.github.niji.gunyarapaint.ui.v1
             m_contentContainer.verticalScrollPolicy = "off";
             m_contentContainer.percentWidth = 100;
             m_contentContainer.percentHeight = 100;
-            m_contentContainer.addEventListener(MouseEvent.CLICK, onClickContentContainer);
             m_canvasContainer = new Container();
             m_canvasContainer.mouseEnabled = false;
             m_canvasContainer.setStyle("borderStyle", "none");
@@ -86,6 +87,7 @@ package com.github.niji.gunyarapaint.ui.v1
             m_contentContainer.addChild(m_hScrollBar);
             m_contentContainer.addChild(m_vScrollBar);
             m_initRectangle = new Rectangle(x, y, width, height);
+            m_mouseLock = false;
             status = m_statusDefault;
             ComponentResizer.addResize(this, new Point(100, 100));
             resize();
@@ -297,16 +299,6 @@ package com.github.niji.gunyarapaint.ui.v1
             y = int(y);
         }
         
-        private function onClickContentContainer(event:MouseEvent):void
-        {
-            if (event.eventPhase == EventPhase.AT_TARGET && event.shiftKey) {
-                var pen:Pen = IApplication(Application.application).pen;
-                setStyle("backgroundColor", pen.color);
-                auxLineColor = pen.color;
-                auxLineAlpha = pen.alpha;
-            }
-        }
-        
         private function onModuleChangeBefore(event:CanvasModuleEvent):void
         {
             removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
@@ -338,29 +330,34 @@ package com.github.niji.gunyarapaint.ui.v1
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
             var target:Object = event.target;
-            // Skip if the target is scroll bar's controller
-            if (target is ScrollThumb || target is Button)
+            if (event.eventPhase == EventPhase.AT_TARGET && event.shiftKey) {
+                var pen:Pen = IApplication(Application.application).pen;
+                setStyle("backgroundColor", pen.color);
+                auxLineColor = pen.color;
+                auxLineAlpha = pen.alpha;
                 return;
+            }
+            // Skip if the target is scroll bar's controller
+            if (target is ScrollThumb || target is Button) {
+                return;
+            }
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
                 app.canvasModule.start(x, y);
-                removeMouseEvents(layers);
-                addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-                m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-                m_contentContainer.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
                 m_widthLimit = m_contentContainer.width - m_vScrollBar.width;
                 m_heightLimit = m_contentContainer.height - m_hScrollBar.height;
-                //addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+                m_mouseLock = true;
             } catch (e:Error) {
-                removeMouseEvents(layers);
                 Application.application.showAlert(e.message, app.canvasModuleName);
             }
         }
         
         private function onMouseMove(event:MouseEvent):void
         {
-            if (event.target is ScrollThumb == false &&
+            // コンテナの範囲内であり、かつスクロールのボタンでなければ処理する
+            // (スクロールボタンでスクロールすると勝手に描写されることを防ぐ)
+            if (m_mouseLock && event.target is ScrollThumb == false &&
                 m_contentContainer.mouseX < m_widthLimit &&
                 m_contentContainer.mouseY < m_heightLimit) {
                 var app:IApplication = IApplication(Application.application);
@@ -395,13 +392,15 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseUp(event:MouseEvent):void
         {
-            var app:IApplication = IApplication(Application.application);
-            var layers:LayerList = app.layers;
-            var view:Sprite = layers.view;
-            var x:Number = view.mouseX;
-            var y:Number = view.mouseY;
-            removeMouseEvents(layers);
-            app.canvasModule.stop(x, y);
+            if (m_mouseLock) {
+                var app:IApplication = IApplication(Application.application);
+                var layers:LayerList = app.layers;
+                var view:Sprite = layers.view;
+                var x:Number = view.mouseX;
+                var y:Number = view.mouseY;
+                m_mouseLock = false;
+                app.canvasModule.stop(x, y);
+            }
         }
         
         private function onMouseOut(event:MouseEvent):void
@@ -410,13 +409,13 @@ package com.github.niji.gunyarapaint.ui.v1
             // (対象がキャンバスウィンドウか、それの中の要素ではないとき)
             // これはキャンバスウィンドウ以外でもこのイベントが発動することから
             var ro:InteractiveObject = event.relatedObject;
-            if (this == ro || !this.contains(ro)) {
+            if (m_mouseLock && (this == ro || !this.contains(ro))) {
                 var app:IApplication = IApplication(Application.application);
                 var layers:LayerList = app.layers;
                 var view:Sprite = layers.view;
                 var x:Number = view.mouseX;
                 var y:Number = view.mouseY;
-                removeMouseEvents(layers);
+                m_mouseLock = false;
                 app.canvasModule.interrupt(x, y);
             }
         }
@@ -427,33 +426,36 @@ package com.github.niji.gunyarapaint.ui.v1
             module.wheel(event.localX, event.localY, event.delta);
         }
         
-        private function removeMouseEvents(layers:LayerList):void
-        {
-            removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-            m_contentContainer.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-            m_contentContainer.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-        }
-        
         private function initCanvas(app:IApplication):void
         {
             var rect:Rectangle = new Rectangle(0, 0, m_canvasWidth, m_canvasHeight);
             var transparent:TransparentBitmap = new TransparentBitmap(rect);
+            var mask:Shape = new Shape();
+            var g:Graphics = mask.graphics;
+            g.beginFill(0x0);
+            g.drawRect(0, 0, m_canvasWidth, m_canvasHeight);
+            g.endFill();
             m_auxLine = new AuxLineView(rect);
             m_auxPixel = new AuxPixelView(rect);
             m_auxLine.visible = true;
             m_auxPixel.visible = false;
             m_canvas = new UIComponent();
+            m_canvas.mask = mask;
             m_canvas.width = m_canvasWidth;
             m_canvas.height = m_canvasHeight;
             m_canvas.addChild(transparent);
+            m_canvas.addChild(mask);
             m_canvas.addChild(app.layers.view);
             m_canvas.addChild(m_auxLine);
             m_canvas.addChild(m_auxPixel);
             m_canvasContainer.addChild(m_canvas);
+            m_contentContainer.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
+            m_contentContainer.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             app.addEventListener(CanvasModuleEvent.BEFORE_CHANGE, onModuleChangeBefore);
             app.addEventListener(CanvasModuleEvent.AFTER_CHANGE, onModuleChangeAfter);
-            m_contentContainer.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-            m_contentContainer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove2);
             // Capabilities.version で OS を判断するのは適切ではないが、
             // 少なくとも MacOSX ではマウスホイールを正しく感知することが出来無いので対処療法として
             if (Capabilities.version.indexOf("MAC") >= 0) {
@@ -529,12 +531,12 @@ package com.github.niji.gunyarapaint.ui.v1
         }
         
         private var m_statusDefault:String;
-        private var m_canvas:UIComponent;
-        private var m_canvasContainer:Container; // GPCanvasを直接格納するコンテナ
-        private var m_contentContainer:Container; // GPCanvasと背景、スクロールバーを持つコンテナ
+        private var m_canvas:UIComponent; // Canvas本体
+        private var m_canvasContainer:Container; // Canvasを格納する間接的なコンテナ
+        private var m_contentContainer:Container; // Canvasと背景、スクロールバーを持つコンテナ
         private var m_hScrollBar:HScrollBar; // 横スクロールバー
         private var m_vScrollBar:VScrollBar; // 縦スクロールバー
-        private var m_initRectangle:Rectangle; // 初期位置
+        private var m_initRectangle:Rectangle;
         private var m_canvasWidth:Number; // キャンバスの幅 (IApplication#canvasWidth の値をキャッシュする)
         private var m_canvasHeight:Number; // キャンバスの高さ (IApplication#canvasHeight の値をキャッシュする)
         private var m_canvasX:Number; // キャンバスのスクロール位置
@@ -547,5 +549,6 @@ package com.github.niji.gunyarapaint.ui.v1
         private var m_auxPixel:AuxPixelView;
         private var m_widthLimit:Number;
         private var m_heightLimit:Number;
+        private var m_mouseLock:Boolean;
     }
 }
