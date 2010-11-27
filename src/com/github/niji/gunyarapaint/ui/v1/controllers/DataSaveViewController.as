@@ -1,6 +1,8 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
     
+    import com.github.niji.gunyarapaint.ui.v1.views.DataSaveView;
+    
     import flash.net.SharedObject;
     import flash.net.SharedObjectFlushStatus;
     import flash.system.System;
@@ -16,7 +18,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     {
         public function initialized(document:Object, id:String):void
         {
-            m_parent = IFlexDisplayObject(document);
+            m_parent = DataSaveView(document);
         }
         
         public function trySave():Boolean
@@ -31,7 +33,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 return so.flush(so.size) == SharedObjectFlushStatus.FLUSHED;
             }
             catch (e:Error) {
-                root.showAlert(e.message, _(""));
+                root.showAlert(e.message, m_parent.title);
             }
             return false;
         }
@@ -59,7 +61,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             return m_password;
         }
         
-        private var m_parent:IFlexDisplayObject;
+        private var m_parent:DataSaveView;
         private var m_password:String;
     }
 }

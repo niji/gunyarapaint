@@ -1,6 +1,7 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
     import com.github.niji.gunyarapaint.ui.errors.DecryptError;
+    import com.github.niji.gunyarapaint.ui.v1.views.DataLoadView;
     
     import flash.errors.IOError;
     import flash.net.SharedObject;
@@ -14,27 +15,28 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     {
         public function initialized(document:Object, id:String):void
         {
-            m_parent = IFlexDisplayObject(document);
+            m_parent = DataLoadView(document);
         }
         
         public function load(password:String):void
         {
             var root:RootViewController = Application.application.controller;
-            var title:String = _("");
             try {
                 var so:SharedObject = SharedObject.getLocal(root.hashForSharedObject);
                 root.load(so.data.bytes, password);
+                handleOnClose();
             }
             catch (e:DecryptError) {
-                root.showAlert(_("Input password is incorrect"), title);
+                root.showAlert(_("Input password is incorrect."), m_parent.title);
             }
             catch (e:IOError) {
-                root.showAlert(_("Loaded file is invalid saved data"), title);
+                root.showAlert(_("Loaded file is invalid saved data."), m_parent.title);
+                handleOnClose();
             }
             catch (e:Error) {
-                root.showAlert(e.message, title);
+                root.showAlert(e.message, m_parent.title);
+                handleOnClose();
             }
-            handleOnClose();
         }
         
         public function handleOnClose():void
@@ -47,6 +49,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             load(password);
         }
         
-        private var m_parent:IFlexDisplayObject;
+        private var m_parent:DataLoadView;
     }
 }

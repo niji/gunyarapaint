@@ -225,7 +225,7 @@
       <msgstr>画像情報を読み込み中...</msgstr>
     </message>
     <message>
-      <msgid>Loaded file is invalid saved data</msgid>
+      <msgid>Loaded file is invalid saved data.</msgid>
       <msgstr>読み込まれたファイルは「ふっかつのじゅもん」形式ではありません</msgstr>
     </message>
   </lang>
