@@ -23,7 +23,10 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import com.github.niji.gunyarapaint.ui.errors.DecryptError;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
     import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
+    import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
+    import com.github.niji.gunyarapaint.ui.v1.PNGExporter;
     import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
+    import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
     import com.hurlant.crypto.Crypto;
     import com.hurlant.crypto.symmetric.ICipher;
     import com.hurlant.crypto.symmetric.IPad;
@@ -55,9 +58,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import mx.events.CloseEvent;
     import mx.managers.PopUpManager;
     import mx.utils.SHA256;
-    import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
-    import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
-    import com.github.niji.gunyarapaint.ui.v1.PNGExporter;
     
     public class RootViewController implements IMXMLObject, IApplication
     {
@@ -366,7 +366,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 var to:UndoStack = m_recorder.undoStack;
                 if (metadata.pen_details != null)
                     m_root.penController.palettes = metadata.pen_details[0];
-                m_root.toolController.swapEventListener(from, to);
+                m_root.toolView.controller.swapEventListener(from, to);
                 m_root.layerController.swapEventListener(from, to);
                 m_root.layerController.update();
                 m_root.enabled = ready;
@@ -413,7 +413,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             m_windows[0] = m_root.canvasController;
             m_windows[1] = m_root.penController;
             m_windows[2] = m_root.layerController;
-            m_windows[3] = m_root.toolController;
+            m_windows[3] = m_root.toolView.controller;
             m_windows[4] = m_root.formView.controller;
             m_lockHandlingKeyboard = false;
             for (var i:String in m_windows) {
@@ -474,6 +474,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             if (m_lockHandlingKeyboard || isForcusedOnTextField)
                 return;
             var keyCode:uint = event.keyCode;
+            var toolViewController:ToolViewController = m_root.toolView.controller;
             switch (keyCode) {
                 case Keyboard.CONTROL:
                     m_root.penController.saveSelectedState();
@@ -486,9 +487,9 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 case 48: // 0
                 case 96: // ten-key 0
                     if (event.shiftKey)
-                        m_root.toolController.setRotate(0);
+                        toolViewController.setRotate(0);
                     else
-                        m_root.toolController.setZoom(1);
+                        toolViewController.setZoom(1);
                     break;
                 case 65: // a (pressing)
                     m_module.shouldDrawCircleClockwise = true;
@@ -531,20 +532,20 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                     break;
                 case 107: // ten key +
                     // +
-                    m_root.toolController.setZoom(m_root.toolController.canvasZoom.value + 1);
+                    m_root.toolView.controller.setZoom(m_root.toolView.canvasZoom.value + 1);
                     break;
                 case 109: // ten key -
                     // -
-                    m_root.toolController.setZoom(m_root.toolController.canvasZoom.value - 1);
+                    m_root.toolView.controller.setZoom(m_root.toolView.canvasZoom.value - 1);
                     break;
                 case 187:
                     // +
                     if (event.shiftKey)
-                        m_root.toolController.setZoom(m_root.toolController.canvasZoom.value + 1);
+                        m_root.toolView.controller.setZoom(m_root.toolView.canvasZoom.value + 1);
                     break;
                 case 189:
                     // -
-                    m_root.toolController.setZoom(m_root.toolController.canvasZoom.value - 1);
+                    m_root.toolView.controller.setZoom(m_root.toolView.canvasZoom.value - 1);
                     break;
                 case 49: // 1
                 case 50: // 2
@@ -573,7 +574,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 case 45: // INS
                     // INS + SHIFT is reserved
                     if (!event.shiftKey)
-                        m_root.toolController.setRotate(0);
+                        toolViewController.setRotate(0);
                     break;
             }
         }
