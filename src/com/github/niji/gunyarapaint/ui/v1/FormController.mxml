@@ -4,18 +4,17 @@
                 implements="com.github.niji.framework.ui.IController">
     <mx:Script>
         <![CDATA[
-            import com.github.niji.gunyarapaint.ui.v1.net.RequestWindow;
-            import mx.core.Application;
-            import mx.managers.PopUpManager;
-            
             import com.github.niji.framework.ui.IApplication;
             import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
-            import com.github.niji.gunyarapaint.ui.v1.net.Request;
+            import com.github.niji.gunyarapaint.ui.v1.net.RequestWindow;
+            
+            import mx.managers.PopUpManager;
             
             private var baseImg:BitmapData;
             
             public function init(app:IApplication):void
             {
+                m_app = RootViewController(app);
                 m_initPosition = new Point(x, y);
             }
             
@@ -44,21 +43,22 @@
             private function onPost(evt:Event):void
             {
                 try {
+                    var window:RequestWindow = new RequestWindow();
                     var parameters:Parameters = new Parameters();
                     parameters.name = fromTextInput.text;
                     parameters.message = messageTextArea.text;
                     parameters.title = titleTextInput.text;
                     parameters.shouldAddWatchList = watchlistCheckBox.selected;
-                    Application.application.fillParameters(parameters);
-                    var window:RequestWindow = new RequestWindow();
+                    m_app.fillParameters(parameters);
                     PopUpManager.addPopUp(window, this);
                     window.post(parameters);
                 }
                 catch (e:Error) {
-                    Application.application.showAlert(e.message, title);
+                    m_app.showAlert(e.message, title);
                 }
             }
             
+            private var m_app:RootViewController;
             private var m_initPosition:Point;
         ]]>
     </mx:Script>

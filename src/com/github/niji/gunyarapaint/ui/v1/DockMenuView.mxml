@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ApplicationControlBar xmlns:mx="http://www.adobe.com/2006/mxml" dock="true"
+                          xmlns:v1="com.github.niji.gunyarapaint.ui.v1.*">
+    <v1:DockMenuViewController id="controller" />
+    <mx:MenuBar labelField="@label" itemClick="controller.handleOnClick(XML(event.item))">
+        <mx:XMLList>
+            <menuitem label="ぐにゃらペイント">
+                <menuitem label="ぐにゃらペイントについて" data="application.about" />
+            </menuitem>
+            <menuitem label="ふっかつのじゅもん">
+                <menuitem label="復活" data="data.load" />
+                <menuitem label="記録" data="data.save" />
+            </menuitem>
+            <menuitem label="開発">
+                <menuitem label="ログを保存する" data="development.saveLog" />
+            </menuitem>
+            <menuitem label="ウィンドウ">
+                <menuitem label="初期状態に戻す" data="window.resetAll" />
+            </menuitem>
+            <menuitem label="ヘルプ">
+                <menuitem label="お絵カキコヘルプを見る" data="help.article" />
+                <menuitem label="不具合・要望掲示板に行く" data="help.bbs" />
+            </menuitem>
+        </mx:XMLList>
+    </mx:MenuBar>
+</mx:ApplicationControlBar>

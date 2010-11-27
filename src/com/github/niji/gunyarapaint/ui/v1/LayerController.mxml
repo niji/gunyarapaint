@@ -43,6 +43,7 @@
                 }
                 layerDataGrid.addEventListener(CheckBoxEditorEvent.DATA_CHANGED, onDataChange);
                 ComponentResizer.addResize(this, new Point(144, 230));
+                m_app = RootViewController(app);
                 m_initPosition = new Point(x, y);
                 update();
             }
@@ -66,7 +67,7 @@
             
             public function update():void
             {
-                var layers:LayerList = IApplication(Application.application).layers;
+                var layers:LayerList = m_app.layers;
                 var layer:BitmapLayer = BitmapLayer(layers.at(layers.currentIndex));
                 var currentLayerBlendMode:String = layer.blendMode;
                 layers.resetIndex();
@@ -86,10 +87,9 @@
             
             private function onClickLayer(event:ListEvent):void
             {
-                var app:IApplication = IApplication(Application.application);
                 var layer:BitmapLayer = BitmapLayer(event.currentTarget.selectedItem);
-                if (app.layers.currentIndex != layer.index) {
-                    app.canvasModule.layerIndex = layer.index;
+                if (m_app.layers.currentIndex != layer.index) {
+                    m_app.canvasModule.layerIndex = layer.index;
                     alphaSlider.value = layer.alpha;
                     updateBlendModeComboBox(layer.blendMode);
                 }
@@ -99,11 +99,10 @@
             {
                 try {
                     // should catch AddLayerError here
-                    var app:IApplication = IApplication(Application.application);
-                    app.canvasModule.createLayer();
+                    m_app.canvasModule.createLayer();
                     update();
                 } catch (e:Error) {
-                    Application.application.showAlert(e.message, title);
+                    m_app.showAlert(e.message, title);
                 }
             }
             
@@ -111,11 +110,10 @@
             {
                 try {
                     // should catch AddLayerError here
-                    var app:IApplication = IApplication(Application.application);
-                    app.canvasModule.copyLayer();
+                    m_app.canvasModule.copyLayer();
                     update();
                 } catch (e:Error) {
-                    Application.application.showAlert(e.message, title);
+                    m_app.showAlert(e.message, title);
                 }
             }
             
@@ -123,11 +121,10 @@
             {
                 try {
                     // should catch RemoveLayerError here
-                    var app:IApplication = IApplication(Application.application);
-                    app.canvasModule.removeLayer();
+                    m_app.canvasModule.removeLayer();
                     update();
                 } catch (e:Error) {
-                    Application.application.showAlert(e.message, title);
+                    m_app.showAlert(e.message, title);
                 }
             }
             
@@ -135,24 +132,21 @@
             {
                 try {
                     // should catch MergeLayersError here
-                    var app:IApplication = IApplication(Application.application);
-                    app.canvasModule.mergeLayers();
+                    m_app.canvasModule.mergeLayers();
                     update();
                 } catch (e:Error) {
-                    Application.application.showAlert(e.message, title);
+                    m_app.showAlert(e.message, title);
                 }
             }
             
             private function onChangeAlphaSlider(event:SliderEvent):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.layerAlpha = event.value;
+                m_app.canvasModule.layerAlpha = event.value;
             }
             
             private function onSelectBlendMode(event:ListEvent):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.layerBlendMode = String(event.currentTarget.value);
+                m_app.canvasModule.layerBlendMode = String(event.currentTarget.value);
             }
             
             private function onChangeUndo(event:UndoEvent):void
@@ -162,21 +156,19 @@
             
             private function onDragStart(event:DragEvent):void
             {
-                var app:IApplication = IApplication(Application.application);
-                m_selectedIndex = getSelectedIndex(app.layers);
+                m_selectedIndex = getSelectedIndex(m_app.layers);
             }
             
             private function onDragComplete(event:DragEvent):void
             {
-                var app:IApplication = IApplication(Application.application);
                 var a:Array = ArrayCollection(layerDataGrid.dataProvider).toArray().reverse();
                 var length:uint = a.length;
-                var layers:LayerList = app.layers;
+                var layers:LayerList = m_app.layers;
                 for (var i:uint = 0; i < length; i++) {
                     var from:uint = a[i].index;
                     var to:uint = layers.at(i).index;
                     if (from != to) {
-                        app.canvasModule.swapLayers(from, to);
+                        m_app.canvasModule.swapLayers(from, to);
                         return;
                     }
                 }
@@ -188,7 +180,7 @@
             private function onDataChange(event:CheckBoxEditorEvent):void
             {
                 if (event.column === "visible") {
-                    var module:ICanvasModule = IApplication(Application.application).canvasModule;
+                    var module:ICanvasModule = m_app.canvasModule;
                     var layer:ILayer = ILayer(event.data);
                     module.setLayerVisible(layer.index, layer.visible);
                 }
@@ -211,6 +203,7 @@
                 return layers.count - layers.currentIndex - 1;
             }
             
+            private var m_app:RootViewController;
             private var m_initPosition:Point;
             private var m_selectedIndex:uint;
         ]]>
@@ -231,6 +224,6 @@
     <mx:ComboBox id="blendModeComboBox" x="0" y="0" width="124" change="onSelectBlendMode(event)"></mx:ComboBox>
     <mx:Label x="5" y="23" text="透"/>
     <mx:HSlider id="alphaSlider" x="18" y="20" width="99" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="onChangeAlphaSlider(event)"/>
-    <mx:Button id="horizontalMirrorButton" label="全レイヤー左右反転" width="117" height="17" buttonDown="IApplication(Application.application).canvasModule.horizontalMirror(LayerList.ALL_LAYERS)" y="273" x="3" fontSize="8.5"/>
-    <mx:Button id="verticalMirrorButton" label="全レイヤー上下反転" width="117" height="17" buttonDown="IApplication(Application.application).canvasModule.verticalMirror(LayerList.ALL_LAYERS)" x="3" y="295" fontSize="8.5"/>
+    <mx:Button id="horizontalMirrorButton" label="全レイヤー左右反転" width="117" height="17" buttonDown="m_app.canvasModule.horizontalMirror(LayerList.ALL_LAYERS)" y="273" x="3" fontSize="8.5"/>
+    <mx:Button id="verticalMirrorButton" label="全レイヤー上下反転" width="117" height="17" buttonDown="m_app.canvasModule.verticalMirror(LayerList.ALL_LAYERS)" x="3" y="295" fontSize="8.5"/>
 </mx:TitleWindow>

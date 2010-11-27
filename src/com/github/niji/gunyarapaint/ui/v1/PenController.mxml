@@ -23,7 +23,6 @@
             import mx.core.IFlexDisplayObject;
             import mx.effects.easing.Bounce;
             import mx.events.CloseEvent;
-            import mx.events.FlexEvent;
             import mx.events.ListEvent;
             import mx.events.SliderEvent;
             import mx.events.StateChangeEvent;
@@ -45,14 +44,14 @@
                 pen.addEventListener(PenEvent.THICKNESS, onChangeThickness);
                 blendModeComboBox.dataProvider = app.supportedBlendModes;
                 drawPreview(pen.thickness, pen.color, pen.alpha);
+                m_app = app;
                 m_palette = gridItemPalette1;
                 m_initPosition = new Point(x, y);
             }
             
             public function load(data:Object):void
             {
-                var app:IApplication = IApplication(Application.application);
-                var pen:Pen = app.pen;
+                var pen:Pen = m_app.pen;
                 var point:Object = data.point;
                 move(point.x, point.y);
                 this.pen = data.state;
@@ -64,13 +63,12 @@
             
             public function save(data:Object):void
             {
-                var app:IApplication = IApplication(Application.application);
-                var pen:Pen = app.pen;
+                var pen:Pen = m_app.pen;
                 data.point = new Point(x, y);
                 data.alpha = pen.alpha;
                 data.color = pen.color;
                 data.thickness = pen.thickness;
-                data.state = app.canvasModule.name;
+                data.state = m_app.canvasModule.name;
                 data.palettes = palettes;
             }
             
@@ -102,7 +100,6 @@
             
             public function loadSelectedState():void
             {
-                var app:IApplication = IApplication(Application.application);
                 switch (m_state) {
                     case STATE_DROPPER:
                         pen = DropperModule.DROPPER;
@@ -118,7 +115,7 @@
                         break;
                     default:
                         pen = String(penModeComboBox.value);
-                        app.canvasModule.blendMode = String(blendModeComboBox.value);
+                        m_app.canvasModule.blendMode = String(blendModeComboBox.value);
                         break;
                 }
                 m_state = STATE_NONE;
@@ -132,16 +129,14 @@
                 handtoolButton.selected = false;
                 eraserButton.selected = false;
                 dotButton.selected = false;
-                var app:IApplication = IApplication(Application.application);
-                app.setCanvasModule(String(penModeComboBox.value));
+                m_app.setCanvasModule(String(penModeComboBox.value));
             }
             
             public function setEraser():void
             {
-                var app:IApplication = IApplication(Application.application);
                 pen = FreeHandModule.FREE_HAND;
                 currentState = "eraser";
-                app.canvasModule.blendMode = BlendMode.ERASE;
+                m_app.canvasModule.blendMode = BlendMode.ERASE;
             }
             
             public function get isEraser():Boolean
@@ -175,33 +170,29 @@
             
             public function set pen(mode:String):void
             {
-                var app:IApplication = IApplication(Application.application);
                 // The "eraser" state retains BlendMode.ERASE so change it forcely
                 currentState = mode.split(".").pop();
-                app.setCanvasModule(mode);
+                m_app.setCanvasModule(mode);
             }
             
             public function set currentColor(value:uint):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.color = value;
+                m_app.canvasModule.color = value;
             }
             
             public function set currentAlpha(value:Number):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.alpha = value;
+                m_app.canvasModule.alpha = value;
             }
             
             public function set currentThickness(value:uint):void
             {
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.thickness = value;
+                m_app.canvasModule.thickness = value;
             }
             
             private function onChangeAlpha(event:PenEvent):void
             {
-                var pen:Pen = IApplication(Application.application).pen;
+                var pen:Pen = m_app.pen;
                 var value:Number = pen.alpha;
                 alphaSlider.value = value;
                 drawPreview(pen.thickness, pen.color, value);
@@ -209,7 +200,7 @@
             
             private function onChangeColor(event:PenEvent):void
             {
-                var pen:Pen = IApplication(Application.application).pen;
+                var pen:Pen = m_app.pen;
                 var value:uint = pen.color;
                 m_palette.setStyle("backgroundColor", value);
                 drawPreview(pen.thickness, value, pen.alpha);
@@ -220,7 +211,7 @@
             
             private function onChangeThickness(event:PenEvent):void
             {
-                var pen:Pen = IApplication(Application.application).pen;
+                var pen:Pen = m_app.pen;
                 var value:uint = pen.thickness;
                 thicknessSlider.value = value;
                 drawPreview(value, pen.color, pen.alpha);
@@ -302,8 +293,7 @@
             private function onSelectBlendMode(event:ListEvent):void
             {
                 cancel();
-                var app:IApplication = IApplication(Application.application);
-                app.canvasModule.blendMode = String(event.currentTarget.value);
+                m_app.canvasModule.blendMode = String(event.currentTarget.value);
             }
             
             private function onChangeColorSlider(event:SliderEvent, mode:String):void
@@ -333,8 +323,7 @@
             {
                 // The "eraser" state retains BlendMode.ERASE so change it forcely
                 if (event.oldState == "eraser") {
-                    var app:IApplication = IApplication(Application.application);
-                    app.canvasModule.blendMode = String(blendModeComboBox.value);
+                    m_app.canvasModule.blendMode = String(blendModeComboBox.value);
                     currentThickness = m_brushThickness;
                 }
                 else if (event.newState == "eraser") {
@@ -379,6 +368,7 @@
             private const STATE_DOT:uint = 4;
             private const STATE_OTHER:uint = 5;
             
+            private var m_app:IApplication;
             private var m_initPosition:Point;
             private var m_state:uint = STATE_NONE;
             private var m_brushThickness:uint = Pen.DEFAULT_THICKNESS;
