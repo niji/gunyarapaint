@@ -159,6 +159,16 @@
                 return { "palettes": palettes };
             }
             
+            public override function get name():String
+            {
+                return "penViewController";
+            }
+            
+            public function get parentDisplayObject():DisplayObject
+            {
+                return this;
+            }
+            
             public function set palettes(value:Object):void
             {
                 for (var i:uint = 1; i <= MAX_PALETTE; i++) {

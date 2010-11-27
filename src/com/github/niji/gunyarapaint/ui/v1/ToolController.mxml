@@ -76,6 +76,16 @@
                 to.addEventListener(UndoEvent.PUSH, onChangeUndo);
             }
             
+            public override function get name():String
+            {
+                return "toolViewController";
+            }
+            
+            public function get parentDisplayObject():DisplayObject
+            {
+                return this;
+            }
+            
             private function onChangeUndo(event:UndoEvent):void
             {
                 var undoStack:UndoStack = UndoStack(event.target);

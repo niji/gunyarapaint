@@ -1,5 +1,6 @@
-package com.github.niji.gunyarapaint.ui.v1.data
+package com.github.niji.gunyarapaint.ui.v1.controllers
 {
+    
     import flash.net.SharedObject;
     import flash.net.SharedObjectFlushStatus;
     import flash.system.System;
@@ -18,14 +19,21 @@ package com.github.niji.gunyarapaint.ui.v1.data
             m_parent = IFlexDisplayObject(document);
         }
         
-        public function trySave(password:String):Boolean
+        public function trySave():Boolean
         {
-            var bytes:ByteArray = new ByteArray();
-            var so:SharedObject = null;
-            Application.application.save(bytes, password);
-            so = SharedObject.getLocal(Application.application.hashForSharedObject);
-            so.data.bytes = bytes;
-            return so.flush(so.size) == SharedObjectFlushStatus.FLUSHED;
+            var root:RootViewController = Application.application.controller;
+            try {
+                var bytes:ByteArray = new ByteArray();
+                var so:SharedObject = null;
+                root.save(bytes, generatedPassword);
+                so = SharedObject.getLocal(root.hashForSharedObject);
+                so.data.bytes = bytes;
+                return so.flush(so.size) == SharedObjectFlushStatus.FLUSHED;
+            }
+            catch (e:Error) {
+                root.showAlert(e.message, _(""));
+            }
+            return false;
         }
         
         public function handleOnClose():void

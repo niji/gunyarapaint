@@ -1,4 +1,4 @@
-package com.github.niji.gunyarapaint.ui.v1
+package com.github.niji.gunyarapaint.ui.v1.controllers
 {
     import com.adobe.images.PNGEncoder;
     import com.adobe.serialization.json.JSON;
@@ -9,6 +9,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.github.niji.framework.Recorder;
     import com.github.niji.framework.UndoStack;
     import com.github.niji.framework.events.CommandEvent;
+    import com.github.niji.framework.i18n.TranslatorRegistry;
     import com.github.niji.framework.modules.CanvasModuleContext;
     import com.github.niji.framework.modules.CircleModule;
     import com.github.niji.framework.modules.DropperModule;
@@ -19,20 +20,22 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.github.niji.framework.modules.PixelModule;
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
+    import com.github.niji.gunyarapaint.ui.errors.DecryptError;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
     import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
-    import com.github.niji.gunyarapaint.ui.v1.CopyrightView;
-    import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
     import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
+    import com.hurlant.crypto.Crypto;
+    import com.hurlant.crypto.symmetric.ICipher;
+    import com.hurlant.crypto.symmetric.IPad;
+    import com.hurlant.crypto.symmetric.IVMode;
+    import com.hurlant.crypto.symmetric.PKCS5;
     import com.rails2u.gettext.GetText;
-    import com.github.niji.framework.i18n.TranslatorRegistry;
     
     import flash.display.Bitmap;
     import flash.display.BitmapData;
     import flash.display.BlendMode;
     import flash.display.Loader;
     import flash.display.LoaderInfo;
-    import flash.errors.IOError;
     import flash.errors.IllegalOperationError;
     import flash.events.Event;
     import flash.events.EventDispatcher;
@@ -46,14 +49,15 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.utils.ByteArray;
     
     import mx.controls.Alert;
-    import mx.core.Application;
     import mx.core.IFlexDisplayObject;
     import mx.core.IMXMLObject;
     import mx.core.UITextField;
     import mx.events.CloseEvent;
-    import mx.events.FlexEvent;
     import mx.managers.PopUpManager;
     import mx.utils.SHA256;
+    import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
+    import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
+    import com.github.niji.gunyarapaint.ui.v1.PNGExporter;
     
     public class RootViewController implements IMXMLObject, IApplication
     {
@@ -135,34 +139,36 @@ package com.github.niji.gunyarapaint.ui.v1
             return new Marshal(m_recorder, m_windows, metadata);
         }
         
-        public function load(bytes:ByteArray):void
+        public function load(bytes:ByteArray, password:String):void
         {
+            var metadata:Object = {};
+            var cipher:ICipher = getCipherFromPassword(password);
+            if (cipher is IVMode) {
+                IVMode(cipher).IV = bytes.readObject();
+            }
+            var data:ByteArray = ByteArray(bytes.readObject());
             try {
-                var metadata:Object = {};
-                newMarshal(metadata).load(bytes, m_bytes);
-                // parameters.foo = metadata.foo;
-                // parameters.bar = metadata.bar;
-                m_module.reset();
+                cipher.decrypt(data);
+            } catch (e:Error) {
+                throw new DecryptError(e.message);
             }
-            catch (e:IOError) {
-                showAlert(_("Loaded file is invalid saved data"), m_title);
-            }
-            catch (e:Error) {
-                showAlert(e.message, m_title);
-            }
+            newMarshal(metadata).load(data, m_bytes);
+            cipher.dispose();
+            m_module.reset();
         }
         
         public function save(bytes:ByteArray, password:String):void
         {
-            try {
-                var keyBytes:ByteArray = new ByteArray();
-                keyBytes.writeUTF(password);
-                var metadata:Object = { };
-                newMarshal(metadata).save(bytes, m_bytes);
+            var metadata:Object = {};
+            var data:ByteArray = new ByteArray();
+            var cipher:ICipher = getCipherFromPassword(password);
+            newMarshal(metadata).save(data, m_bytes);
+            cipher.encrypt(data);
+            if (cipher is IVMode) {
+                bytes.writeObject(IVMode(cipher).IV);
             }
-            catch (e:Error) {
-                showAlert(e.message, m_title);
-            }
+            bytes.writeObject(data);
+            cipher.dispose();
         }
         
         public function fillParameters(param:Parameters):void
@@ -198,6 +204,11 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             m_lockHandlingKeyboard = true;
             Alert.show(message, title, Alert.OK, null, onClose);
+        }
+        
+        public function getParameter(key:String):String
+        {
+            return m_root.parameters[key];
         }
         
         public function handleApplicationComplete():void
@@ -403,12 +414,12 @@ package com.github.niji.gunyarapaint.ui.v1
             m_windows[1] = m_root.penController;
             m_windows[2] = m_root.layerController;
             m_windows[3] = m_root.toolController;
-            m_windows[4] = m_root.formController;
+            m_windows[4] = m_root.formView.controller;
             m_lockHandlingKeyboard = false;
             for (var i:String in m_windows) {
                 var controller:IController = m_windows[i];
                 controller.init(this);
-                PopUpManager.addPopUp(IFlexDisplayObject(controller), m_root);
+                PopUpManager.addPopUp(IFlexDisplayObject(controller.parentDisplayObject), m_root);
             }
             m_root.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
             m_root.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
@@ -431,6 +442,17 @@ package com.github.niji.gunyarapaint.ui.v1
             PopUpManager.removePopUp(m_root.loadingDialog);
             loader.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
             loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
+        }
+        
+        private function getCipherFromPassword(password:String):ICipher
+        {
+            var keyBytes:ByteArray = new ByteArray();
+            var pad:IPad = new PKCS5();
+            var cipher:ICipher = null;
+            keyBytes.writeUTF(hashForSharedObject);
+            keyBytes.writeUTF(password);
+            cipher = Crypto.getCipher("aes256-cbc", keyBytes, pad);
+            return cipher;
         }
         
         private function getBitmap():BitmapData
@@ -608,7 +630,7 @@ package com.github.niji.gunyarapaint.ui.v1
                 // FIXME: Should be removed?
                 var metadata:Object = {
                     "width": m_baseImage.width,
-                    "height": m_baseImage.height
+                        "height": m_baseImage.height
                 };
                 restoreCanvas(metadata);
             }

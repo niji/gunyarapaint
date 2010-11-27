@@ -9,6 +9,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.utils.ByteArray;
     
     import mx.core.Application;
+    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
 
     public final class FileDialog extends EventDispatcher
     {
@@ -43,7 +44,7 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var file:FileReference = FileReference(event.target);
             var bytes:ByteArray = file.data;
-            m_app.load(bytes);
+            // m_app.load(bytes);
             removeFileReference();
         }
         

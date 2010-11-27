@@ -7,7 +7,7 @@
     applicationComplete="controller.handleApplicationComplete()"
     borderStyle="solid" cornerRadius="0" borderColor="#333333"
     backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#cccccc, #cccccc]"
-    alpha="1.0" xmlns:net="com.github.niji.gunyarapaint.ui.v1.net.*">
+    alpha="1.0" xmlns:net="com.github.niji.gunyarapaint.ui.v1.net.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*" xmlns:views="com.github.niji.gunyarapaint.ui.v1.views.*">
     <mx:Script>
         <![CDATA[
             import com.github.niji.framework.Version;
@@ -28,9 +28,9 @@
             public var config:Class;
         ]]>
     </mx:Script>
-    <ui:RootViewController id="controller" />
-    <ui:DockMenuView id="dockMenu" />
-    <ui:FormController id="formController" title="書き込みフォーム"  x="10" y="44"/>
+    <controllers:RootViewController id="controller" />
+    <views:DockMenuView id="dockMenu" />
+    <views:FormView id="formView" title="書き込みフォーム"  x="10" y="44"/>
     <ui:ToolController id="toolController" left="504" y="44" title="補助ツール" />
     <ui:PenController id="penController" x="10" y="218" layout="absolute" title="ペンツール"/>
     <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />

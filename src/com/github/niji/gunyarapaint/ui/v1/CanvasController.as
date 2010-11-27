@@ -14,6 +14,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.oysteinwika.ui.SWFMouseWheel;
     
     import flash.display.BitmapData;
+    import flash.display.DisplayObject;
     import flash.display.Graphics;
     import flash.display.InteractiveObject;
     import flash.display.Shape;
@@ -38,6 +39,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
     import mx.managers.CursorManager;
+    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
     
     public class CanvasController extends TitleWindow implements IController
     {
@@ -220,6 +222,16 @@ package com.github.niji.gunyarapaint.ui.v1
         public function get enableAuxPixel():Boolean
         {
             return m_auxPixel.visible;
+        }
+        
+        public override function get name():String
+        {
+            return "canvasViewController";
+        }
+        
+        public function get parentDisplayObject():DisplayObject
+        {
+            return this;
         }
         
         public function set auxBoxVisible(value:Boolean):void

@@ -5,6 +5,7 @@
                 xmlns:ui="com.github.niji.gunyarapaint.ui.v1.*">
     <mx:Script>
         <![CDATA[
+            import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
             import com.github.niji.framework.BitmapLayer;
             import com.github.niji.framework.ILayer;
             import com.github.niji.framework.LayerList;
@@ -83,6 +84,16 @@
                 from.removeEventListener(UndoEvent.REDO, onChangeUndo);
                 to.addEventListener(UndoEvent.UNDO, onChangeUndo);
                 to.addEventListener(UndoEvent.REDO, onChangeUndo);
+            }
+            
+            public override function get name():String
+            {
+                return "layerViewController";
+            }
+            
+            public function get parentDisplayObject():DisplayObject
+            {
+                return this;
             }
             
             private function onClickLayer(event:ListEvent):void

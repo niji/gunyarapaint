@@ -1,17 +1,19 @@
-package com.github.niji.gunyarapaint.ui.v1
+package com.github.niji.gunyarapaint.ui.v1.controllers
 {
-    import com.github.niji.gunyarapaint.ui.v1.data.DataLoadView;
-    import com.github.niji.gunyarapaint.ui.v1.data.DataSaveView;
+    import com.github.niji.gunyarapaint.ui.v1.views.DataLoadView;
+    import com.github.niji.gunyarapaint.ui.v1.views.DataSaveView;
     
     import flash.display.DisplayObject;
     import flash.errors.IllegalOperationError;
     import flash.net.URLRequest;
     import flash.net.navigateToURL;
     
-    import mx.containers.TitleWindow;
     import mx.core.Application;
     import mx.core.IMXMLObject;
     import mx.managers.PopUpManager;
+    import com.github.niji.gunyarapaint.ui.v1.CanvasController;
+    import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
+    import com.github.niji.gunyarapaint.ui.v1.FileDialog;
 
     public class DockMenuViewController implements IMXMLObject
     {
@@ -35,8 +37,7 @@ package com.github.niji.gunyarapaint.ui.v1
                     break;
                 case "data.save":
                     var sview:DataSaveView = new DataSaveView();
-                    var password:String = sview.controller.generatedPassword;
-                    if (sview.controller.trySave(password))
+                    if (sview.controller.trySave())
                         PopUpManager.addPopUp(sview, DisplayObject(app), true);
                     break;
                 case "window.resetAll":

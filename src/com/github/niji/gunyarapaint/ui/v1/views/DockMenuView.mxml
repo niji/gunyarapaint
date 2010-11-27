@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:ApplicationControlBar xmlns:mx="http://www.adobe.com/2006/mxml" dock="true"
-                          xmlns:v1="com.github.niji.gunyarapaint.ui.v1.*">
-    <v1:DockMenuViewController id="controller" />
+                          xmlns:v1="com.github.niji.gunyarapaint.ui.v1.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <controllers:DockMenuViewController id="controller" />
     <mx:MenuBar labelField="@label" itemClick="controller.handleOnClick(XML(event.item))">
         <mx:XMLList>
             <menuitem label="ぐにゃらペイント">

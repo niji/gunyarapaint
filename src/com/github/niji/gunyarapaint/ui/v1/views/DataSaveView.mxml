@@ -2,14 +2,14 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
                 x="146" y="223" width="400" height="170" title="ふっかつのじゅもん"
                 showCloseButton="true" close="controller.handleOnClose()"
-                xmlns:data="com.github.niji.gunyarapaint.ui.v1.data.*">
+                xmlns:data="com.github.niji.gunyarapaint.ui.v1.data.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
     <mx:states>
         <mx:State name="pasted">
             <mx:SetProperty target="{caution}" name="text" value="ふっかつのじゅもんをコピーしました"/>
             <mx:SetProperty target="{caution}" name="x" value="102.5"/>
         </mx:State>
     </mx:states>
-    <data:DataSaveViewController id="controller" />
+    <controllers:DataSaveViewController id="controller" />
     <mx:TextArea id="password" text="{controller.generatedPassword}" x="10" y="10" width="360" height="55"/>
     <mx:Button x="127" y="98" label="じゅもんをコピーする" click="controller.handleOnClick(password.text);currentState='pasted'"/>
     <mx:Label x="2.5" y="73" text="上記じゅもんを必ずコピーしてメモしてください。忘れると復活出来なくなります" fontWeight="bold" id="caution"/>
