@@ -153,7 +153,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 throw new DecryptError(e.message);
             }
             newMarshal(metadata).load(data, m_bytes);
-            cipher.dispose();
             m_module.reset();
         }
         
@@ -168,7 +167,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 bytes.writeObject(IVMode(cipher).IV);
             }
             bytes.writeObject(data);
-            cipher.dispose();
         }
         
         public function fillParameters(param:Parameters):void
