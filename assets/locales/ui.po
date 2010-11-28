@@ -161,3 +161,9 @@ msgstr "直径:%s"
 
 msgid "Rectangle:(%s, %s)"
 msgstr "矩形:(%s, %s)"
+
+msgid "Do you want to overwrite previous data?"
+msgstr "以前のデータを上書き保存しますか？"
+
+msgid "Failed to save data. Please increase the size of your local storage and try again."
+msgstr "保存に失敗しました。ローカル記憶領域の大きさを増やして再度保存してください。"

@@ -236,5 +236,13 @@
       <msgid>Rectangle:(%s, %s)</msgid>
       <msgstr>矩形:(%s, %s)</msgstr>
     </message>
+    <message>
+      <msgid>Do you want to overwrite previous data?</msgid>
+      <msgstr>以前のデータを上書き保存しますか？</msgstr>
+    </message>
+    <message>
+      <msgid>Failed to save data. Please increase the size of your local storage and try again.</msgid>
+      <msgstr>保存に失敗しました。ローカル記憶領域の大きさを増やして再度保存してください。</msgstr>
+    </message>
   </lang>
 </langs>

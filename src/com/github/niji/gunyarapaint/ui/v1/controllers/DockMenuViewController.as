@@ -1,6 +1,5 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
-    import com.github.niji.gunyarapaint.ui.v1.CanvasController;
     import com.github.niji.gunyarapaint.ui.v1.FileDialog;
     import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
     import com.github.niji.gunyarapaint.ui.v1.views.DataLoadView;
@@ -13,7 +12,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     
     import mx.controls.Alert;
     import mx.core.Application;
-    import mx.core.IFlexDisplayObject;
     import mx.core.IMXMLObject;
     import mx.events.CloseEvent;
     import mx.managers.PopUpManager;
@@ -65,7 +63,9 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
         {
             if (event.detail == Alert.YES) {
                 if (m_saveView.controller.trySave())
-                    PopUpManager.addPopUp(m_saveView, m_parent, true)
+                    PopUpManager.addPopUp(m_saveView, m_parent, true);
+                else
+                    Alert.show(_("Failed to save data. Please increase the size of your local storage and try again."), m_saveView.title);
             }
         }
         

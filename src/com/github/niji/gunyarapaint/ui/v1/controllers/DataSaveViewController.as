@@ -37,7 +37,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
         public function confirm(callback:Function):void
         {
             if (m_so.size > 0) {
-                Alert.show(_("Are you sure to save previous data?"),
+                Alert.show(_("Do you want to overwrite previous data?"),
                     m_parent.title, Alert.YES | Alert.NO, Sprite(m_app.parentView),
                     callback, null, Alert.YES | Alert.NO);
             }
