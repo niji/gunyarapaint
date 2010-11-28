@@ -228,5 +228,13 @@
       <msgid>Loaded file is invalid saved data.</msgid>
       <msgstr>読み込まれたファイルは「ふっかつのじゅもん」形式ではありません</msgstr>
     </message>
+    <message>
+      <msgid>Diameter:%s</msgid>
+      <msgstr>直径:%s</msgstr>
+    </message>
+    <message>
+      <msgid>Rectangle:(%s, %s)</msgid>
+      <msgstr>矩形:(%s, %s)</msgstr>
+    </message>
   </lang>
 </langs>

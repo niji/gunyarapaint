@@ -5,8 +5,10 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.github.niji.framework.LayerList;
     import com.github.niji.framework.Pen;
     import com.github.niji.framework.TransparentBitmap;
+    import com.github.niji.framework.modules.CircleModule;
     import com.github.niji.framework.modules.DropperModule;
     import com.github.niji.framework.modules.ICanvasModule;
+    import com.github.niji.framework.modules.RectangleModule;
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
@@ -335,8 +337,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseDown(event:MouseEvent):void
         {
-            var app:RootViewController = Application.application.controller;
-            var layers:LayerList = app.layers;
+            var layers:LayerList = m_app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
@@ -355,11 +356,12 @@ package com.github.niji.gunyarapaint.ui.v1
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
-                app.canvasModule.start(x, y);
+                m_app.canvasModule.start(x, y);
                 m_widthLimit = m_contentContainer.width - m_vScrollBar.width;
                 m_heightLimit = m_contentContainer.height - m_hScrollBar.height;
                 m_mouseLock = true;
             } catch (e:Error) {
+                var app:RootViewController = RootViewController(m_app);
                 app.showAlert(e.message, app.canvasModuleName);
             }
         }
@@ -381,12 +383,12 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseMove2(event:MouseEvent):void
         {
-            var application:Object = Application.application;
             var layers:LayerList = m_app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
-            var color:uint = m_app.canvasModule.getPixel32(x, y);
+            var module:ICanvasModule = m_app.canvasModule;
+            var color:uint = module.getPixel32(x, y);
             var status:String = _(
                 "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)",
                 int(x),
@@ -396,7 +398,14 @@ package com.github.niji.gunyarapaint.ui.v1
                 ((color >> 8) & 0xff),
                 ((color >> 0) & 0xff)
             );
-            application.canvasController.statusText = status;
+            if (module is CircleModule) {
+                status += " " + _("Diameter:%s", int(CircleModule(module).radius) << 1);
+            }
+            if (module is RectangleModule) {
+                var rect:Rectangle = RectangleModule(module).getRectangle(x, y);
+                status += " " + _("Rectangle:(%s, %s)", rect.width, rect.height);
+            }
+            statusText = status;
         }
         
         private function onMouseUp(event:MouseEvent):void
@@ -429,7 +438,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseWheel(event:MouseEvent):void
         {
-            var module:MovableCanvasModule = MovableCanvasModule(Application.application.canvasModule);
+            var module:MovableCanvasModule = MovableCanvasModule(m_app.canvasModule);
             module.wheel(event.localX, event.localY, event.delta);
         }
         
