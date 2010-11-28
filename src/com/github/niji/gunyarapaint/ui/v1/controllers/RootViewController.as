@@ -310,6 +310,11 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             return m_recorder.undoStack;
         }
         
+        public function get parentView():IFlexDisplayObject
+        {
+            return m_root;
+        }
+        
         public function get canvasWidth():uint
         {
             return m_recorder.width;

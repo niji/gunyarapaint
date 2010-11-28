@@ -11,37 +11,39 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import flash.net.URLRequest;
     import flash.net.navigateToURL;
     
+    import mx.controls.Alert;
     import mx.core.Application;
+    import mx.core.IFlexDisplayObject;
     import mx.core.IMXMLObject;
+    import mx.events.CloseEvent;
     import mx.managers.PopUpManager;
-
+    
     public class DockMenuViewController implements IMXMLObject
     {
         public function initialized(document:Object, id:String):void
         {
+            m_parent = DisplayObject(document);
         }
         
         public function handleOnClick(item:XML):void
         {
             var selected:String = item.@data;
-            var app:Object = Application.application;
-            var cc:CanvasController = app.canvasController;
+            var controller:RootViewController = RootViewController(Application.application.controller);
             switch (selected) {
                 case "application.about":
-                    var cview:CopyrightView = new CopyrightView();
-                    PopUpManager.addPopUp(cview, DisplayObject(app), true);
+                    m_copyright = m_copyright || new CopyrightView();
+                    PopUpManager.addPopUp(m_copyright, m_parent, true);
                     break;
                 case "data.load":
-                    var lview:DataLoadView = new DataLoadView();
-                    PopUpManager.addPopUp(lview, DisplayObject(app), true);
+                    m_loadView = m_loadView || new DataLoadView();
+                    PopUpManager.addPopUp(m_loadView, m_parent, true);
                     break;
                 case "data.save":
-                    var sview:DataSaveView = new DataSaveView();
-                    if (sview.controller.trySave())
-                        PopUpManager.addPopUp(sview, DisplayObject(app), true);
+                    m_saveView = m_saveView || new DataSaveView();
+                    m_saveView.controller.confirm(confirmCallback);
                     break;
                 case "window.resetAll":
-                    app.controller.resetWindowsPosition();
+                    controller.resetWindowsPosition();
                     break;
                 case "help.article":
                     navigateToURL(new URLRequest("http://dic.nicovideo.jp/id/377406"));
@@ -50,7 +52,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                     navigateToURL(new URLRequest("http://nicodic.razil.jp/bugyobo/"));
                     break;
                 case "development.saveLog":
-                    var marshal:Marshal = app.controller.newMarshal({});
+                    var marshal:Marshal = controller.newMarshal({});
                     var dialog:FileDialog = new FileDialog(item.@label);
                     dialog.openToSave(marshal.newRecorderBytes());
                     break;
@@ -58,5 +60,18 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                     throw new IllegalOperationError("Invalid menu item selected");
             }
         }
+        
+        private function confirmCallback(event:CloseEvent):void
+        {
+            if (event.detail == Alert.YES) {
+                if (m_saveView.controller.trySave())
+                    PopUpManager.addPopUp(m_saveView, m_parent, true)
+            }
+        }
+        
+        private var m_parent:DisplayObject;
+        private var m_copyright:CopyrightView;
+        private var m_loadView:DataLoadView;
+        private var m_saveView:DataSaveView;
     }
 }
