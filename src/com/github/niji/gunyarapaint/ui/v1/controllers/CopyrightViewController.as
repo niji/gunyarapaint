@@ -1,6 +1,5 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
-    import mx.core.IFlexDisplayObject;
     import mx.core.IMXMLObject;
     import mx.managers.PopUpManager;
     

@@ -1,7 +1,5 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
-    import flash.events.MouseEvent;
-    
     import mx.controls.DataGrid;
     
     public class ExtendedDataGrid extends DataGrid

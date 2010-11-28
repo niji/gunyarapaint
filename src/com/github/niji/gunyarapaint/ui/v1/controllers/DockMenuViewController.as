@@ -1,5 +1,8 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
+    import com.github.niji.gunyarapaint.ui.v1.CanvasController;
+    import com.github.niji.gunyarapaint.ui.v1.FileDialog;
+    import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
     import com.github.niji.gunyarapaint.ui.v1.views.DataLoadView;
     import com.github.niji.gunyarapaint.ui.v1.views.DataSaveView;
     
@@ -11,9 +14,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import mx.core.Application;
     import mx.core.IMXMLObject;
     import mx.managers.PopUpManager;
-    import com.github.niji.gunyarapaint.ui.v1.CanvasController;
-    import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
-    import com.github.niji.gunyarapaint.ui.v1.FileDialog;
 
     public class DockMenuViewController implements IMXMLObject
     {

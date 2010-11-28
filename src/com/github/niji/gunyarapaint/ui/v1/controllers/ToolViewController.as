@@ -6,14 +6,13 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import com.github.niji.framework.modules.ICanvasModule;
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
+    import com.github.niji.gunyarapaint.ui.v1.views.ToolView;
     
     import flash.display.DisplayObject;
-    import flash.events.Event;
     import flash.geom.Point;
     
     import mx.core.Application;
     import mx.core.IMXMLObject;
-    import com.github.niji.gunyarapaint.ui.v1.views.ToolView;
     
     public class ToolViewController implements IMXMLObject, IController
     {

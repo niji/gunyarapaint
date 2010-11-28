@@ -3,6 +3,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
     import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
+    import com.github.niji.gunyarapaint.ui.v1.views.FormView;
     import com.github.niji.gunyarapaint.ui.v1.views.RequestWindowView;
     
     import flash.display.DisplayObject;
@@ -10,7 +11,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     
     import mx.core.IMXMLObject;
     import mx.managers.PopUpManager;
-    import com.github.niji.gunyarapaint.ui.v1.views.FormView;
     
     public class FormViewController implements IMXMLObject, IController
     {

@@ -1,6 +1,10 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
     
+    import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
+    import com.github.niji.gunyarapaint.ui.v1.net.Request;
+    import com.github.niji.gunyarapaint.ui.v1.views.RequestWindowView;
+    
     import flash.events.Event;
     import flash.events.IOErrorEvent;
     import flash.events.ProgressEvent;
@@ -10,9 +14,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     
     import mx.core.IMXMLObject;
     import mx.managers.PopUpManager;
-    import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
-    import com.github.niji.gunyarapaint.ui.v1.net.Request;
-    import com.github.niji.gunyarapaint.ui.v1.views.RequestWindowView;
     
     public class RequestWindowViewController implements IMXMLObject
     {

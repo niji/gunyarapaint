@@ -187,7 +187,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             var metadata:Object = {};
             layers.save(layerBitmap, metadata);
             metadata.log_count = commitCount;
-            metadata.pen_details = m_root.penController.dataForPost;
+            metadata.pen_details = m_root.penView.controller.dataForPost;
             metadata.undo_buffer_size = m_recorder.undoStack.size;
             param.cookie = parameters.cookie;
             param.magic = parameters.magic;
@@ -365,10 +365,10 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 m_recorder.load(m_baseImage, metadata);
                 var to:UndoStack = m_recorder.undoStack;
                 if (metadata.pen_details != null)
-                    m_root.penController.palettes = metadata.pen_details[0];
+                    m_root.penView.controller.palettes = metadata.pen_details[0];
                 m_root.toolView.controller.swapEventListener(from, to);
-                m_root.layerController.swapEventListener(from, to);
-                m_root.layerController.update();
+                m_root.layerView.controller.swapEventListener(from, to);
+                m_root.layerView.controller.update();
                 m_root.enabled = ready;
                 m_lockHandlingKeyboard = false;
             }
@@ -411,8 +411,8 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             m_exporter.addEventListener(Event.COMPLETE, onExportComplete);
             m_windows = new Vector.<IController>(5, true);
             m_windows[0] = m_root.canvasController;
-            m_windows[1] = m_root.penController;
-            m_windows[2] = m_root.layerController;
+            m_windows[1] = m_root.penView.controller;
+            m_windows[2] = m_root.layerView.controller;
             m_windows[3] = m_root.toolView.controller;
             m_windows[4] = m_root.formView.controller;
             m_lockHandlingKeyboard = false;
@@ -475,14 +475,15 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 return;
             var keyCode:uint = event.keyCode;
             var toolViewController:ToolViewController = m_root.toolView.controller;
+            var penViewController:PenViewController = m_root.penView.controller;
             switch (keyCode) {
                 case Keyboard.CONTROL:
-                    m_root.penController.saveSelectedState();
-                    m_root.penController.pen = DropperModule.DROPPER;
+                    penViewController.saveSelectedState();
+                    penViewController.pen = DropperModule.DROPPER;
                     break;
                 case Keyboard.SPACE:
-                    m_root.penController.saveSelectedState();
-                    m_root.penController.pen = MovableCanvasModule.MOVABLE_CANVAS;
+                    penViewController.saveSelectedState();
+                    penViewController.pen = MovableCanvasModule.MOVABLE_CANVAS;
                     break;
                 case 48: // 0
                 case 96: // ten-key 0
@@ -558,7 +559,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 case 57: // 9
                     // SHIFT + (NUM) is reserved
                     if (!event.shiftKey)
-                        m_root.penController.currentThickness = keyCode - 48;
+                        penViewController.currentThickness = keyCode - 48;
                     break;
                 case 97: // ten-key 1
                 case 98: // ten-key 2
@@ -569,7 +570,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                 case 103: // ten-key 7
                 case 104: // ten-key 8
                 case 105: // ten-key 9
-                    m_root.penController.currentThickness = keyCode - 96;
+                    penViewController.currentThickness = keyCode - 96;
                     break;
                 case 45: // INS
                     // INS + SHIFT is reserved
@@ -586,7 +587,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             switch (evt.keyCode) {
                 case Keyboard.CONTROL:
                 case Keyboard.SPACE:
-                    m_root.penController.loadSelectedState();
+                    m_root.penView.controller.loadSelectedState();
                     break;
                 case 65: // a (released)
                     m_module.shouldDrawCircleClockwise = false;

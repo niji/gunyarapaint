@@ -1,5 +1,7 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
+    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
+    
     import flash.events.ErrorEvent;
     import flash.events.Event;
     import flash.events.EventDispatcher;
@@ -9,7 +11,6 @@ package com.github.niji.gunyarapaint.ui.v1
     import flash.utils.ByteArray;
     
     import mx.core.Application;
-    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
 
     public final class FileDialog extends EventDispatcher
     {

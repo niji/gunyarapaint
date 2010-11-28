@@ -1,6 +1,5 @@
 package com.github.niji.gunyarapaint.ui.v1.controllers
 {
-    
     import com.github.niji.gunyarapaint.ui.v1.views.DataSaveView;
     
     import flash.net.SharedObject;
@@ -9,7 +8,6 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import flash.utils.ByteArray;
     
     import mx.core.Application;
-    import mx.core.IFlexDisplayObject;
     import mx.core.IMXMLObject;
     import mx.managers.PopUpManager;
     import mx.utils.SHA256;

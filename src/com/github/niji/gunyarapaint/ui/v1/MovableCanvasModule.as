@@ -1,10 +1,10 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
-    import flash.geom.Point;
-    
     import com.github.niji.framework.Recorder;
     import com.github.niji.framework.modules.CanvasModule;
     import com.github.niji.framework.modules.ICanvasModule;
+    
+    import flash.geom.Point;
     
     public final class MovableCanvasModule extends CanvasModule implements ICanvasModule
     {

@@ -32,9 +32,9 @@
     <views:DockMenuView id="dockMenu" />
     <views:FormView id="formView" title="書き込みフォーム"  x="10" y="44"/>
     <views:ToolView id="toolView" left="504" y="44" title="補助ツール" />
-    <ui:PenController id="penController" x="10" y="218" layout="absolute" title="ペンツール"/>
+    <views:PenView id="penView" x="10" y="218" layout="absolute" title="ペンツール"/>
     <ui:CanvasController id="canvasController" x="146" y="218" width="379" height="410" layout="absolute" title="キャンバス" />
-    <ui:LayerController x="533" y="218" layout="absolute" title="レイヤーツール" id="layerController" />
+    <views:LayerView x="533" y="218" layout="absolute" title="レイヤーツール" id="layerView" />
     <net:LoadingDialog id="loadingDialog" visible="false" />
     <mx:Label id="versionLabel" text="{Version.DATE_STRING}" right="10" bottom="10" alpha="0.5" click="controller.handleClickImage()"/>
 </mx:Application>

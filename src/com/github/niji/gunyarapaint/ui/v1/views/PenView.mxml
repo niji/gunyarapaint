@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="128" height="450"
+                xmlns:ns1="org.libspark.gunyarapaint.controls.*"
+                currentStateChange="controller.handleCurrentStateChange(event.oldState, event.newState)"
+                xmlns:v1="com.github.niji.gunyarapaint.ui.v1.*"
+                xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <mx:Script>
+        <![CDATA[
+            import com.github.niji.framework.modules.CircleModule;
+            import com.github.niji.framework.modules.FloodFillModule;
+            import com.github.niji.framework.modules.FreeHandModule;
+            import com.github.niji.framework.modules.LineModule;
+            import com.github.niji.framework.modules.RectangleModule;
+            import com.github.niji.framework.modules.TransparentFloodFill;
+            import com.github.niji.framework.modules.TransparentLineModule;
+            
+            import mx.core.Application;
+            import mx.effects.easing.Bounce;
+        ]]>
+    </mx:Script>
+    <controllers:PenViewController id="controller" />
+    <mx:states>
+        <mx:State name="dropper">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{alphaSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="true"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="floodFill">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="movableCanvas">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{alphaSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="true"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="none">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="pixel">
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="true"/>
+        </mx:State>
+        <mx:State name="freeHand">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="line">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="circle">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="rectangle">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="eraser">
+            <mx:SetProperty target="{penModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="true"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="transparentLine">
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="transparentFloodFill">
+            <mx:SetProperty target="{blendModeComboBox}" name="enabled" value="false"/>
+            <mx:SetProperty target="{paletteGrid}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton1}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton2}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton3}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton4}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessButton5}" name="enabled" value="false"/>
+            <mx:SetProperty target="{thicknessSlider}" name="enabled" value="false"/>
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+    </mx:states>
+    
+    <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="108" height="410">
+        
+        <!-- preview -->
+        <mx:Label x="3" y="10" text="ペンの状態" width="53.5"/>
+        <mx:Canvas x="64.5" y="1" width="30" height="30" id="previewCanvas" borderStyle="solid" borderThickness="1" borderColor="#000000">
+        </mx:Canvas>
+        
+        <!-- thickness -->
+        <mx:Label x="3" y="28" text="太"/>
+        <mx:HSlider x="16" y="28" width="87" minimum="1" maximum="30" snapInterval="1" height="12" value="3" id="thicknessSlider" change="controller.currentThickness = event.value"/>
+        <mx:Button x="2" y="47" label="極細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton1" click="controller.currentThickness = 1" fontSize="6"/>
+        <mx:Button x="23" y="47" label="細" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton2" click="controller.currentThickness = 3"/>
+        <mx:Button x="44" y="47" label="中" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton3" click="controller.currentThickness = 10"/>
+        <mx:Button x="65" y="47" label="太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton4" click="controller.currentThickness = 20"/>
+        <mx:Button x="86" y="47" label="極太" width="20" paddingLeft="0" paddingRight="0" id="thicknessButton5" click="controller.currentThickness = 30" fontSize="6"/>
+        
+        <!-- color palette -->
+        <mx:Grid id="paletteGrid" x="15" y="73" borderStyle="none" borderColor="#000000" borderThickness="1" horizontalGap="4" verticalGap="3">
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#000000" id="gridItemPalette1" click="controller.handleClickPalette(1);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#ffffff" id="gridItemPalette2" click="controller.handleClickPalette(2);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette3" click="controller.handleClickPalette(3);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#888888" id="gridItemPalette4" click="controller.handleClickPalette(4);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#b47575" id="gridItemPalette5" click="controller.handleClickPalette(5);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette6" click="controller.handleClickPalette(6);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#c096c0" id="gridItemPalette7" click="controller.handleClickPalette(7);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#fa9696" id="gridItemPalette8" click="controller.handleClickPalette(8);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette9" click="controller.handleClickPalette(9);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#8080ff" id="gridItemPalette10" click="controller.handleClickPalette(10);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#ffb6ff" id="gridItemPalette11" click="controller.handleClickPalette(11);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette12" click="controller.handleClickPalette(12);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#e7e58d" id="gridItemPalette13" click="controller.handleClickPalette(13);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#25c7c9" id="gridItemPalette14" click="controller.handleClickPalette(14);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette15" click="controller.handleClickPalette(15);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#99cb80" id="gridItemPalette16" click="controller.handleClickPalette(16);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#e7962d" id="gridItemPalette17" click="controller.handleClickPalette(17);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette18" click="controller.handleClickPalette(18);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow width="100%" height="100%">
+                <mx:GridItem width="24" height="20" backgroundColor="#f9ddcf" id="gridItemPalette19" click="controller.handleClickPalette(19);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#fcece2" id="gridItemPalette20" click="controller.handleClickPalette(20);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+                <mx:GridItem width="24" height="20" backgroundColor="#FFFFFF" id="gridItemPalette21" click="controller.handleClickPalette(21);" doubleClickEnabled="true" doubleClick="controller.createColorPicker()" borderStyle="solid" cornerRadius="5">
+                </mx:GridItem>
+            </mx:GridRow>
+        </mx:Grid>
+        
+        <!-- tools -->
+        <mx:Button id="colorPickerButton" x="21.5" y="235" label="色選択画面" width="65" paddingLeft="0" paddingRight="0" buttonDown="controller.createColorPicker()"/>
+        <mx:Button id="dropperButton" x="5" y="260" toggle="true" icon="{Application.application.dropperIcon}" width="22" paddingLeft="0" paddingRight="0" change="controller.handleSelectDropper(event.target.selected)"/>
+        <mx:Button id="handtoolButton" x="31" y="260" toggle="true" icon="{Application.application.handOpenIcon}" width="22" paddingLeft="0" paddingRight="0" change="controller.handleSelectHandTool(event.target.selected)"/>
+        <mx:Button id="eraserButton" x="56" y="260" toggle="true" label="消" width="22" paddingLeft="0" paddingRight="0" change="controller.handleSelectEraser(event.target.selected)"/>
+        <mx:Button id="dotButton" x="81" y="260" toggle="true" label="ド" width="22" paddingLeft="0" paddingRight="0" change="controller.handleSelectDot(event.target.selected)"/>
+        
+        <!-- alpha -->
+        <mx:Label x="3" y="285" text="透"/>
+        <mx:Label x="1" y="295" text="{alphaSlider.value}" width="28" enabled="false" fontSize="8"/>
+        <mx:HSlider id ="alphaSlider" x="20" y="282" width="87" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="controller.currentAlpha = event.value"/>
+        
+        <!-- rgb -->
+        <mx:Label x="3" y="304" text="R"/>
+        <mx:Label x="1" y="313" text="{colRSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
+        <mx:HSlider id ="colRSlider" x="20" y="301" width="87" minimum="0" maximum="255" snapInterval="1" change="controller.handleChangeColorSlider(event.value, 'red')" fillColors="#ff0000"/>
+        <mx:Label x="3" y="319" text="G"/>
+        <mx:Label x="1" y="328" text="{colGSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
+        <mx:HSlider id ="colGSlider" x="20" y="316" width="87" minimum="0" maximum="255" snapInterval="1" change="controller.handleChangeColorSlider(event.value, 'green')" fillColors="#00ff00"/>
+        <mx:Label x="3" y="334" text="B"/>
+        <mx:Label x="1" y="343" text="{colBSlider.value}" width="20" textAlign="right" enabled="false" fontSize="8"/>
+        <mx:HSlider id ="colBSlider" x="20" y="331" width="87" minimum="0" maximum="255" snapInterval="1" change="controller.handleChangeColorSlider(event.value, 'blue')" fillColors="#0000ff"/>
+        
+        <!-- line method/blend mode -->
+        <mx:ComboBox id="penModeComboBox" x="6" y="356" width="96" change="controller.handleSelectPen(String(event.target.value))">
+            <mx:ArrayCollection>
+                <mx:Object label="手書き" data="{FreeHandModule.FREE_HAND}" />
+                <mx:Object label="直線" data="{LineModule.LINE}" />
+                <mx:Object label="円" data="{CircleModule.CIRCLE}" />
+                <mx:Object label="四角" data="{RectangleModule.RECTANGLE}" />
+                <mx:Object label="塗りつぶし" data="{FloodFillModule.FLOOD_FILL}" />
+                <mx:Object label="透明直線" data="{TransparentLineModule.TRANSPARENT_LINE}" />
+                <mx:Object label="透明塗りつぶし" data="{TransparentFloodFill.TRANSPARENT_FLOOD_FILL}" />
+                <!--
+                <mx:Object label="楕円" data="" />
+                <mx:Object label="角丸つき四角" data="" />
+                -->
+            </mx:ArrayCollection>
+        </mx:ComboBox>
+        <mx:ComboBox id="blendModeComboBox" x="6" y="381" width="97" change="controller.handleSelectBlendMode(event.target.value)">
+        </mx:ComboBox>
+    </mx:Canvas>
+    <!-- palette select animation -->
+    <mx:Resize id="selectPaletteEffect" widthFrom="24" widthTo="24"
+               heightFrom="20" heightTo="20"
+               easingFunction="{Bounce.easeOut}" />
+</mx:TitleWindow>

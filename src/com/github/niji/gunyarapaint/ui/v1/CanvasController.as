@@ -11,6 +11,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.github.niji.framework.ui.IController;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
     import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
+    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
     import com.oysteinwika.ui.SWFMouseWheel;
     
     import flash.display.BitmapData;
@@ -39,7 +40,6 @@ package com.github.niji.gunyarapaint.ui.v1
     import mx.events.ResizeEvent;
     import mx.events.ScrollEvent;
     import mx.managers.CursorManager;
-    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
     
     public class CanvasController extends TitleWindow implements IController
     {
