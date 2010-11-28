@@ -166,7 +166,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
         
         public function handleClickPalette(index:uint):void
         {
-            var palette:GridItem = this["gridItemPalette" + index];
+            var palette:GridItem = m_parent["gridItemPalette" + index];
             m_palette.setStyle("borderThickness", 1);
             m_palette.setStyle("borderColor", 0xb7babc);
             palette.setStyle("borderThickness", 3);

@@ -41,7 +41,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                         PopUpManager.addPopUp(sview, DisplayObject(app), true);
                     break;
                 case "window.resetAll":
-                    Application.application.resetWindowsPosition();
+                    app.controller.resetWindowsPosition();
                     break;
                 case "help.article":
                     navigateToURL(new URLRequest("http://dic.nicovideo.jp/id/377406"));

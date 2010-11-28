@@ -1,5 +1,6 @@
 package com.github.niji.gunyarapaint.ui.utils
 {
+    import flash.events.MouseEvent;
     import flash.geom.Point;
     import flash.geom.Rectangle;
     
