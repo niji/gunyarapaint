@@ -18,12 +18,16 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import com.github.niji.framework.modules.ICanvasModule;
     import com.github.niji.framework.modules.LineModule;
     import com.github.niji.framework.modules.PixelModule;
+    import com.github.niji.framework.modules.RectangleModule;
+    import com.github.niji.framework.modules.TransparentFloodFill;
+    import com.github.niji.framework.modules.TransparentLineModule;
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
     import com.github.niji.gunyarapaint.ui.errors.DecryptError;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
     import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
-    import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
+    import com.github.niji.gunyarapaint.ui.module.MovableCanvasModule;
+    import com.github.niji.gunyarapaint.ui.module.SelectRectangleModule;
     import com.github.niji.gunyarapaint.ui.v1.PNGExporter;
     import com.github.niji.gunyarapaint.ui.v1.net.Parameters;
     import com.github.niji.gunyarapaint.ui.v1.views.CopyrightView;
@@ -283,8 +287,18 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
                     return _("Freehand (or Eraser) module");
                 case LineModule.LINE:
                     return _("Line module");
+                case MovableCanvasModule.MOVABLE_CANVAS:
+                    return _("Movable canvas module");
                 case PixelModule.PIXEL:
                     return _("Pixel module");
+                case RectangleModule.RECTANGLE:
+                    return _("Rectangle module");
+                case SelectRectangleModule.SELECT_RECTANGLE:
+                    return _("Select module");
+                case TransparentFloodFill.TRANSPARENT_FLOOD_FILL:
+                    return _("Transparent flood fill module");
+                case TransparentLineModule.TRANSPARENT_LINE:
+                    return _("Transparent line module");
                 default:
                     return _("Unknown module");
             }
@@ -410,6 +424,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             m_commit = 0;
             m_recorder.addEventListener(CommandEvent.COMMITTED, onCommit);
             m_context.registerModule(new MovableCanvasModule(m_recorder, m_root.canvasController));
+            m_context.registerModule(new SelectRectangleModule(m_recorder, m_root.canvasController));
             m_exporter = new PNGExporter();
             m_exporter.addEventListener(Event.COMPLETE, onExportComplete);
             m_windows = new Vector.<IController>(5, true);

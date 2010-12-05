@@ -7,7 +7,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
     import com.github.niji.framework.modules.PixelModule;
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
-    import com.github.niji.gunyarapaint.ui.v1.MovableCanvasModule;
+    import com.github.niji.gunyarapaint.ui.module.MovableCanvasModule;
     import com.github.niji.gunyarapaint.ui.v1.views.PenView;
     
     import flash.display.BlendMode;

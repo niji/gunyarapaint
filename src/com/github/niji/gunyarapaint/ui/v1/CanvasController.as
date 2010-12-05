@@ -18,6 +18,7 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.oysteinwika.ui.SWFMouseWheel;
     
     import flash.display.BitmapData;
+    import flash.display.DisplayObject;
     import flash.display.Graphics;
     import flash.display.InteractiveObject;
     import flash.display.Shape;

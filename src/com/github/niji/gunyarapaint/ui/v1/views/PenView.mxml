@@ -13,6 +13,7 @@
             import com.github.niji.framework.modules.RectangleModule;
             import com.github.niji.framework.modules.TransparentFloodFill;
             import com.github.niji.framework.modules.TransparentLineModule;
+            import com.github.niji.gunyarapaint.ui.module.SelectRectangleModule;
             
             import mx.core.Application;
             import mx.effects.easing.Bounce;
@@ -101,6 +102,12 @@
             <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
         </mx:State>
         <mx:State name="rectangle">
+            <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
+            <mx:SetProperty target="{dotButton}" name="selected" value="false"/>
+        </mx:State>
+        <mx:State name="selectRectangle">
             <mx:SetProperty target="{dropperButton}" name="selected" value="false"/>
             <mx:SetProperty target="{handtoolButton}" name="selected" value="false"/>
             <mx:SetProperty target="{eraserButton}" name="selected" value="false"/>
@@ -242,6 +249,7 @@
         <mx:ComboBox id="penModeComboBox" x="6" y="356" width="96" change="controller.handleSelectPen(String(event.target.value))">
             <mx:ArrayCollection>
                 <mx:Object label="手書き" data="{FreeHandModule.FREE_HAND}" />
+                <mx:Object label="選択(四角)" data="{SelectRectangleModule.SELECT_RECTANGLE}" />
                 <mx:Object label="直線" data="{LineModule.LINE}" />
                 <mx:Object label="円" data="{CircleModule.CIRCLE}" />
                 <mx:Object label="四角" data="{RectangleModule.RECTANGLE}" />

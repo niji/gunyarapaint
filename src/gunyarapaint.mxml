@@ -26,6 +26,7 @@
             
             [Bindable]
             [Embed(source="../assets/config.xml", mimeType="application/octet-stream")]
+            public var config:Class;
         ]]>
     </mx:Script>
     <controllers:RootViewController id="controller" />
