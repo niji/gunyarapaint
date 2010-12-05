@@ -1,5 +1,6 @@
 .fxpProperties
 assets/config.xml
+libs/framework.swc
 bin-debug
 bin-release
 obj

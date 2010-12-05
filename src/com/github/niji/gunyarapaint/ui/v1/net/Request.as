@@ -1,5 +1,8 @@
 package com.github.niji.gunyarapaint.ui.v1.net
 {
+    import com.github.niji.framework.net.IParameters;
+    import com.github.niji.framework.net.IRequest;
+    
     import flash.display.Loader;
     import flash.display.LoaderInfo;
     import flash.events.Event;
@@ -9,9 +12,6 @@ package com.github.niji.gunyarapaint.ui.v1.net
     import flash.net.URLRequest;
     import flash.net.URLRequestMethod;
     import flash.net.navigateToURL;
-    
-    import com.github.niji.framework.net.IParameters;
-    import com.github.niji.framework.net.IRequest;
     
     /**
      * ニコニコ大百科のお絵カキコで必要な通信をまとめたクラス

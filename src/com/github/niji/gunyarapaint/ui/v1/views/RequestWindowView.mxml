@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+                title="ニコニコ大百科通信班" x="168" y="86"
+                showCloseButton="false" width="288" height="104" backgroundColor="#FFFFFF"
+                layout="absolute" horizontalAlign="center"
+                xmlns:net="com.github.niji.gunyarapaint.ui.v1.net.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <controllers:RequestWindowViewController id="controller" />
+    <mx:ProgressBar id="progressBar" x="10" y="12" label="カキコ中…" labelPlacement="center" width="248"/>
+    <mx:Button id="cancelButton" x="95.5" y="36" label="キャンセル" buttonDown="controller.handleCancel()" />
+</mx:TitleWindow>

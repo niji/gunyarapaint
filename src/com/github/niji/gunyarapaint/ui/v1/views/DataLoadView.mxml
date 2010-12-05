@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+                x="146" y="223" width="400" height="150" title="ふっかつのじゅもん"
+                showCloseButton="true" close="controller.handleOnClose()"
+                xmlns:data="com.github.niji.gunyarapaint.ui.v1.data.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <controllers:DataLoadViewController id="controller" />
+    <mx:TextArea id="password" x="10" y="10" width="360" height="55"/>
+    <mx:Button x="167" y="73" label="復活" click="controller.handleOnClick(password.text)"/>
+</mx:TitleWindow>

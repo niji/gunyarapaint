@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+                width="144" height="360"
+                xmlns:ui="com.github.niji.gunyarapaint.ui.v1.*"
+                xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <controllers:LayerViewController id="controller" />
+    <ui:ExtendedDataGrid id="layerDataGrid" x="0" y="43" width="124" height="200" editable="true" sortableColumns="false" dragMoveEnabled="true" dragEnabled="true" dropEnabled="true"
+                         itemClick="controller.handleSelectLayer(event.currentTarget.selectedItem)" dragStart="controller.handleDragStart()" dragComplete="controller.handleDragComplete()">
+        <ui:columns>
+            <mx:DataGridColumn editable="false" headerText="目" dataField="visible" itemRenderer="com.github.niji.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <mx:DataGridColumn editable="false" headerText="ロ" dataField="locked" itemRenderer="com.github.niji.gunyarapaint.ui.v1.CheckBoxEditor" rendererIsEditor="true" width="20"/>
+            <!--mx:DataGridColumn headerText="マ" dataField="maskCheck" itemRenderer="org.libspark.gunyarapaint.controls.CheckBoxEditor" rendererIsEditor="true" width="20"/-->
+            <mx:DataGridColumn editable="true" headerText="レイヤ名" dataField="name"/>
+        </ui:columns>
+    </ui:ExtendedDataGrid>
+    <mx:Button x="6" y="246" id="newLayerButton" label="新" width="22" paddingLeft="0" paddingRight="0" buttonDown="controller.handleCreateLayer()"/>
+    <mx:Button x="36" y="246" id="copyLayerButton" label="複" width="22" paddingLeft="0" paddingRight="0" buttonDown="controller.handleCopyLayer()"/>
+    <mx:Button x="66" y="246" id="deleteLayerButton" label="削" width="22" paddingLeft="0" paddingRight="0" buttonDown="controller.handleRemoveLayer()"/>
+    <mx:Button x="96" y="246" id="mergeLayerButton" label="統" width="22" paddingLeft="0" paddingRight="0" buttonDown="controller.handleMergeLayers()"/>
+    <mx:ComboBox id="blendModeComboBox" x="0" y="0" width="124" change="controller.handleSelectBlendMode(String(event.currentTarget.value))"></mx:ComboBox>
+    <mx:Label x="5" y="23" text="透"/>
+    <mx:HSlider id="alphaSlider" x="18" y="20" width="99" minimum="0.05" maximum="1" snapInterval="0.05" value="1" change="controller.handleChangeAlphaSlider(event.value)"/>
+    <mx:Button id="horizontalMirrorButton" label="全レイヤー左右反転" width="117" height="17" buttonDown="controller.handleMirrorAllLayersHorizontally()" y="273" x="3" fontSize="8.5"/>
+    <mx:Button id="verticalMirrorButton" label="全レイヤー上下反転" width="117" height="17" buttonDown="controller.handleMirrorAllLayersVertically()" x="3" y="295" fontSize="8.5"/>
+</mx:TitleWindow>

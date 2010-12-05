@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="298" height="166"
+                xmlns:v1="com.github.niji.gunyarapaint.ui.v1.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <controllers:ToolViewController id="controller" />
+    <mx:TabNavigator width="100%" height="100%" x="0" y="0">
+        <mx:Canvas width="100%" height="100%" label="補助ツール">
+            <mx:Label y="0" text="補助線" x="0"/>
+            <mx:NumericStepper id="additionalNumberStepper" value="4" minimum="2" maximum="16" stepSize="1" x="32" height="18" fontSize="8" change="controller.handleChangeAuxDivideCount(event.value)" y="0"/>
+            <mx:ComboBox y="0" id="additionalTypeComboBox" width="70" fontSize="8" height="18" selectedIndex="0" change="controller.handleChangeAuxType(event.currentTarget.value)" x="95">
+                <mx:ArrayCollection id="auxTypes">
+                    <mx:Object label="分割" data="0" />
+                    <mx:Object label="ピクセル単位" data="1" />
+                </mx:ArrayCollection>
+            </mx:ComboBox>
+            <mx:CheckBox id="additionalBoxCheckBox" label="縦横" fontSize="9" height="18" change="controller.handleChangeAuxBoxVisible(event.target.selected)" x="175" y="0"/>
+            <mx:CheckBox id="additionalSkewCheckBox" label="斜め" fontSize="9" height="18" change="controller.handleChangeAuxSkewVisible(event.target.selected)" x="225" y="0"/>
+            <mx:Button id="undoButton" y="24" label="アンドゥ" enabled="false" buttonDown="controller.handleUndo()" x="10"/>
+            <mx:Button id="redoButton" y="24" label="リドゥ" enabled="false" buttonDown="controller.handleRedo()" x="110"/>
+            <mx:Button id="rotateResetButton" y="52" label="角度" width="50" height="17" buttonDown="controller.setRotate(0)" x="11"/>
+            <mx:Button id="zoomResetButton" label="拡大" width="50" height="17" buttonDown="controller.setZoom(1)" x="11" y="73"/>
+            <mx:HSlider id="canvasRotate" y="52" width="152" minimum="-180" maximum="180" snapInterval="5" value="0" showDataTip="false" change="controller.setRotate(event.value)" thumbDrag="controller.setRotate(event.value)" x="64"/>
+            <mx:HSlider id="canvasZoom" y="73" width="152" minimum="-4" maximum="32" snapInterval="0.5" value="1" showDataTip="false" change="controller.setZoom(event.value)" thumbDrag="controller.setZoom(event.value)" x="64"/>
+            <mx:TextInput id="canvasRotateValue" y="52" width="32" height="17" right="28" fontSize="8" textAlign="right" text="0" restrict="0-9" maxChars="4" enter="controller.setRotate(Number(canvasRotateValue.text))"/>
+            <mx:Label y="52" text="°" right="10"/>
+            <mx:TextInput id="canvasZoomValue" y="73" width="32" height="17" right="28" fontSize="8" textAlign="right" text="100" restrict="0-9" maxChars="6" enter="controller.handleChangeCanvasZoom(Number(canvasZoomValue.text))"/>
+            <mx:Label y="73" text="%" right="10"/>
+        </mx:Canvas>
+        <mx:Canvas width="100%" height="100%" label="互換性設定">
+            <mx:CheckBox id="enableUndoLayerCheckBox" label="レイヤー選択をアンドゥに含めない" fontSize="9" height="18" change="controller.handleChangeEnableUndoLayer(event.target.selected)" x="10" y="10"/>
+            <mx:CheckBox id="enablePixelInfo" label="現在の座標から不透明度と色の情報を表示する" fontSize="9" height="18" change="controller.handleChangeEnablePixelInfo(event.target.selected)" x="10" y="36" selected="true" />
+            <!--
+            <mx:CheckBox id="enableBigPixelCheckBox" label="太さに合わせたドット打ちを使えるようにする" fontSize="9" height="18" change="controller.handleChangeEnableBigPixel(event.target.selected)" x="10" y="36" selected="true"/>
+            -->
+        </mx:Canvas>
+    </mx:TabNavigator>
+</mx:TitleWindow>

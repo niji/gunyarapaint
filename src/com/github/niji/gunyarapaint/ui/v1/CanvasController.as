@@ -5,13 +5,16 @@ package com.github.niji.gunyarapaint.ui.v1
     import com.github.niji.framework.LayerList;
     import com.github.niji.framework.Pen;
     import com.github.niji.framework.TransparentBitmap;
+    import com.github.niji.framework.modules.CircleModule;
     import com.github.niji.framework.modules.DropperModule;
     import com.github.niji.framework.modules.ICanvasModule;
+    import com.github.niji.framework.modules.RectangleModule;
     import com.github.niji.framework.ui.IApplication;
     import com.github.niji.framework.ui.IController;
     import com.github.niji.gunyarapaint.ui.events.CanvasModuleEvent;
     import com.github.niji.gunyarapaint.ui.module.MovableCanvasModule;
     import com.github.niji.gunyarapaint.ui.utils.ComponentResizer;
+    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
     import com.oysteinwika.ui.SWFMouseWheel;
     
     import flash.display.BitmapData;
@@ -78,6 +81,7 @@ package com.github.niji.gunyarapaint.ui.v1
             verticalScrollPolicy = "off";
             addChild(m_contentContainer);
             validateNow(); // percentWidth/Height -> width/heightに更新
+            m_app = app;
             m_canvasContainer.width = m_contentContainer.width - m_vScrollBar.width;
             m_canvasContainer.height = m_contentContainer.height - m_hScrollBar.height;
             m_canvasWidth = app.canvasWidth;
@@ -227,6 +231,16 @@ package com.github.niji.gunyarapaint.ui.v1
             return m_auxPixel.visible;
         }
         
+        public override function get name():String
+        {
+            return "canvasViewController";
+        }
+        
+        public function get parentDisplayObject():DisplayObject
+        {
+            return this;
+        }
+        
         public function set auxBoxVisible(value:Boolean):void
         {
             m_auxLine.boxVisible = m_auxPixel.boxVisible = value;
@@ -312,8 +326,7 @@ package com.github.niji.gunyarapaint.ui.v1
         private function onModuleChangeAfter(event:CanvasModuleEvent):void
         {
             var application:Object = Application.application;
-            var app:IApplication = IApplication(application);
-            var module:ICanvasModule = app.canvasModule;
+            var module:ICanvasModule = m_app.canvasModule;
             if (module is MovableCanvasModule)
                 addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
             CursorManager.removeCursor(CursorManager.currentCursorID);
@@ -329,14 +342,13 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onMouseDown(event:MouseEvent):void
         {
-            var app:gunyarapaint = gunyarapaint(Application.application);
-            var layers:LayerList = app.layers;
+            var layers:LayerList = m_app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
             var target:Object = event.target;
             if (event.eventPhase == EventPhase.AT_TARGET && event.shiftKey) {
-                var pen:Pen = IApplication(Application.application).pen;
+                var pen:Pen = m_app.pen;
                 setStyle("backgroundColor", pen.color);
                 auxLineColor = pen.color;
                 auxLineAlpha = pen.alpha;
@@ -349,12 +361,13 @@ package com.github.niji.gunyarapaint.ui.v1
             try {
                 // 例えば非表示あるいはロック状態のあるレイヤーに対して描写を行うと例外が送出されるので、
                 // 必ず try/catch で囲む必要がある
-                app.canvasModule.start(x, y);
+                m_app.canvasModule.start(x, y);
                 m_widthLimit = m_contentContainer.width - m_vScrollBar.width;
                 m_heightLimit = m_contentContainer.height - m_hScrollBar.height;
                 m_mouseLock = true;
             } catch (e:Error) {
-                Application.application.showAlert(e.message, app.canvasModuleName);
+                var app:RootViewController = RootViewController(m_app);
+                app.showAlert(e.message, app.canvasModuleName);
             }
         }
         
@@ -365,24 +378,22 @@ package com.github.niji.gunyarapaint.ui.v1
             if (m_mouseLock && event.target is ScrollThumb == false &&
                 m_contentContainer.mouseX < m_widthLimit &&
                 m_contentContainer.mouseY < m_heightLimit) {
-                var app:IApplication = IApplication(Application.application);
-                var layers:LayerList = app.layers;
+                var layers:LayerList = m_app.layers;
                 var view:Sprite = layers.view;
                 var x:Number = view.mouseX;
                 var y:Number = view.mouseY;
-                app.canvasModule.move(x, y);
+                m_app.canvasModule.move(x, y);
             }
         }
         
         private function onMouseMove2(event:MouseEvent):void
         {
-            var application:Object = Application.application;
-            var app:IApplication = IApplication(application);
-            var layers:LayerList = app.layers;
+            var layers:LayerList = m_app.layers;
             var view:Sprite = layers.view;
             var x:Number = view.mouseX;
             var y:Number = view.mouseY;
-            var color:uint = app.canvasModule.getPixel32(x, y);
+            var module:ICanvasModule = m_app.canvasModule;
+            var color:uint = module.getPixel32(x, y);
             var status:String = _(
                 "Coordinates:(%s, %s) Opacity:%s Color:(%s,%s,%s)",
                 int(x),
@@ -392,19 +403,25 @@ package com.github.niji.gunyarapaint.ui.v1
                 ((color >> 8) & 0xff),
                 ((color >> 0) & 0xff)
             );
-            application.canvasController.statusText = status;
+            if (module is CircleModule) {
+                status += " " + _("Diameter:%s", int(CircleModule(module).radius) << 1);
+            }
+            if (module is RectangleModule) {
+                var rect:Rectangle = RectangleModule(module).getRectangle(x, y);
+                status += " " + _("Rectangle:(%s, %s)", rect.width, rect.height);
+            }
+            statusText = status;
         }
         
         private function onMouseUp(event:MouseEvent):void
         {
             if (m_mouseLock) {
-                var app:IApplication = IApplication(Application.application);
-                var layers:LayerList = app.layers;
+                var layers:LayerList = m_app.layers;
                 var view:Sprite = layers.view;
                 var x:Number = view.mouseX;
                 var y:Number = view.mouseY;
                 m_mouseLock = false;
-                app.canvasModule.stop(x, y);
+                m_app.canvasModule.stop(x, y);
             }
         }
         
@@ -415,19 +432,18 @@ package com.github.niji.gunyarapaint.ui.v1
             // これはキャンバスウィンドウ以外でもこのイベントが発動することから
             var ro:InteractiveObject = event.relatedObject;
             if (m_mouseLock && (this == ro || !this.contains(ro))) {
-                var app:IApplication = IApplication(Application.application);
-                var layers:LayerList = app.layers;
+                var layers:LayerList = m_app.layers;
                 var view:Sprite = layers.view;
                 var x:Number = view.mouseX;
                 var y:Number = view.mouseY;
                 m_mouseLock = false;
-                app.canvasModule.interrupt(x, y);
+                m_app.canvasModule.interrupt(x, y);
             }
         }
         
         private function onMouseWheel(event:MouseEvent):void
         {
-            var module:MovableCanvasModule = MovableCanvasModule(Application.application.canvasModule);
+            var module:MovableCanvasModule = MovableCanvasModule(m_app.canvasModule);
             module.wheel(event.localX, event.localY, event.delta);
         }
         
@@ -537,6 +553,7 @@ package com.github.niji.gunyarapaint.ui.v1
             );
         }
         
+        private var m_app:IApplication;
         private var m_statusDefault:String;
         private var m_canvas:UIComponent; // Canvas本体
         private var m_canvasContainer:Container; // Canvasを格納する間接的なコンテナ

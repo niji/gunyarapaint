@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="340" height="268" title="{_('The information of copyrights')}"
-                showCloseButton="true" close="onClose()" x="146" y="223">
-    <mx:Script>
-        <![CDATA[
-            import mx.core.Application;
-            import mx.events.FlexEvent;
-            import mx.managers.PopUpManager;
-            private function onClose():void
-            {
-                PopUpManager.removePopUp(this);
-            }
-        ]]>
-    </mx:Script>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="340" height="268"
+                title="{_('The information of copyrights')}"
+                showCloseButton="true" close="controller.handleOnClose()" x="146" y="223"
+                xmlns:v1="com.github.niji.gunyarapaint.ui.v1.*" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
+    <controllers:CopyrightViewController id="controller" />
     <mx:Text width="300" height="208" x="10" y="10" selectable="false">
         <mx:htmlText>
 <![CDATA[2008-2010 Tasuku Suenaga, @haku2, @hikarincl2

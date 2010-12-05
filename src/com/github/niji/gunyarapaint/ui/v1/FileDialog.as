@@ -1,5 +1,7 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
+    import com.github.niji.gunyarapaint.ui.v1.controllers.RootViewController;
+    
     import flash.events.ErrorEvent;
     import flash.events.Event;
     import flash.events.EventDispatcher;
@@ -14,6 +16,7 @@ package com.github.niji.gunyarapaint.ui.v1
     {
         public function FileDialog(title:String)
         {
+            m_app = Application.application.controller;
             m_title = title;
         }
         
@@ -42,13 +45,13 @@ package com.github.niji.gunyarapaint.ui.v1
         {
             var file:FileReference = FileReference(event.target);
             var bytes:ByteArray = file.data;
-            Application.application.load(bytes);
+            // m_app.load(bytes);
             removeFileReference();
         }
         
         private function onSaveComplete(event:Event):void
         {
-            Application.application.showAlert(_("Saving data to the file has been completed."), m_title);
+            m_app.showAlert(_("Saving data to the file has been completed."), m_title);
             removeFileReference();
         }
         
@@ -59,7 +62,7 @@ package com.github.niji.gunyarapaint.ui.v1
         
         private function onError(event:ErrorEvent):void
         {
-            Application.application.showAlert(event.text, m_title);
+            m_app.showAlert(event.text, m_title);
             removeFileReference();
         }
         
@@ -84,6 +87,7 @@ package com.github.niji.gunyarapaint.ui.v1
                 dispatchEvent(new Event(Event.COMPLETE));
         }
         
+        private var m_app:RootViewController;
         private var m_title:String;
         // FileReferenceの参照を確実に持つ必要があるため、クラス属性として定義している
         // そうしないとダイアログを開いた後 Event.COMPLETEのイベントが呼ばれなくなる

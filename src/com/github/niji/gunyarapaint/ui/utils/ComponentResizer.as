@@ -1,13 +1,11 @@
 package com.github.niji.gunyarapaint.ui.utils
 {
-    
     import flash.events.MouseEvent;
     import flash.geom.Point;
     import flash.geom.Rectangle;
     
     import mx.core.Application;
     import mx.core.UIComponent;
-    import mx.managers.CursorManager;
     
     public class ComponentResizer {
         /*
