@@ -4,282 +4,22 @@
                 layout="absolute" width="420" height="349"
                 backgroundGradientAlphas="[1.0, 1.0]"
                 backgroundGradientColors="[#FFFFFF, #FFFFFF]"
-                preinitialize="onPreinitialize()"
-                creationComplete="onCreationComplete()"
-                enabled="false">
+                preinitialize="controller.handlePreinitialize()"
+                creationComplete="controller.handleCreationComplete()"
+                enabled="false" xmlns:controllers="com.github.niji.gunyarapaint.ui.v1.controllers.*">
     <mx:Script>
         <![CDATA[
-            import com.adobe.serialization.json.JSON;
-            import com.github.niji.framework.Painter;
-            import com.github.niji.framework.Player;
             import com.github.niji.framework.Version;
-            import com.github.niji.framework.events.CommandEvent;
-            import com.github.niji.framework.events.PlayerErrorEvent;
-            import com.github.niji.framework.events.PlayerEvent;
-            import com.github.niji.framework.i18n.TranslatorRegistry;
-            import com.github.niji.gunyarapaint.ui.i18n.GetTextTranslator;
-            import com.github.niji.gunyarapaint.ui.v1.net.Request;
-            import com.rails2u.gettext.GetText;
-            
-            import mx.controls.Alert;
-            import mx.core.UIComponent;
-            import mx.events.SliderEvent;
-            import mx.managers.PopUpManager;
-            
             [Bindable]
             [Embed(source="../assets/langs.xml", mimeType="application/octet-stream")]
-            private var languages:Class;
+            public var languages:Class;
             
             [Bindable]
             [Embed(source="../assets/config.xml", mimeType="application/octet-stream")]
-            private var config:Class;
-            
-            private function onPreinitialize():void
-            {
-                var configXml:XML = new XML(new config());
-                if (configXml.@stage != "production") {
-                    for each (var item:XML in configXml.children()) {
-                        parameters[item.name()] = item.toString();
-                    }
-                    m_development = true;
-                }
-                GetText.locale = parameters["language"] || "ja_jp";
-                GetText.initLangFile(new XML(new languages()));
-                TranslatorRegistry.install(new GetTextTranslator());
-            }
-            
-            private function onCreationComplete():void
-            {
-                var url:String = parameters["oelogUrl"];
-                m_finished = true;
-                m_continue = false;
-                if (url) {
-                    m_request = new Request();
-                    showLoadingDialog(m_request, _("Loading the log..."));
-                    setHandler(m_request, onResponseLog);
-                    m_request.get(url);
-                    currentState = "loading";
-                }
-                else {
-                    // should not be here
-                    Alert.show("The value of oelogUrl is empty");
-                }
-            }
-            
-            private function onResponseLog(event:Event):void
-            {
-                var urlLoader:URLLoader = URLLoader(event.target);
-                removeHandler(urlLoader, onResponseLog);
-                hideLoadingDialog();
-                m_log = urlLoader.data;
-                m_log.uncompress();
-                var url:String = parameters["baseImgUrl"];
-                if (url) {
-                    var loader:Loader = new Loader();
-                    m_request.loader = loader.contentLoaderInfo;
-                    showLoadingDialog(m_request, _("Loading the image layers..."));
-                    setHandler(m_request, onResponseLayerImage);
-                    m_request.load(url);
-                }
-                else {
-                    // It's now continued
-                    play();
-                }
-            }
-            
-            private function onResponseLayerImage(event:Event):void
-            {
-                var loader:LoaderInfo = LoaderInfo(event.target);
-                removeHandler(loader, onResponseLayerImage);
-                hideLoadingDialog();
-                m_layerImage = Bitmap(loader.content).bitmapData;
-                var url:String = parameters["baseImgInfoUrl"];
-                if (url) {
-                    m_request.loader = new URLLoader();
-                    showLoadingDialog(m_request, _("Loading the image metadata..."));
-                    setHandler(m_request, onResponseMetadata);
-                    m_request.get(url);
-                }
-                else {
-                    // It seems older version
-                    play();
-                }
-            }
-            
-            private function onResponseMetadata(event:Event):void
-            {
-                var loader:URLLoader = URLLoader(event.target);
-                removeHandler(loader, onResponseMetadata);
-                hideLoadingDialog();
-                m_metadata = JSON.decode(String(loader.data));
-                m_continue = true;
-                play();
-            }
-            
-            private function onChangePlayerSpeed(evt:SliderEvent):void
-            {
-                m_player.speed = playSpeedHSlider.value;
-            }
-            
-            private function onClickPlay(evt:Event):void
-            {
-                play();
-            }
-            
-            private function onClickStop(evt:Event):void
-            {
-                m_player.stop();
-                currentState = "stopping";
-            }
-            
-            private function onPlayFinished(event:PlayerEvent):void
-            {
-                setFinished();
-            }
-            
-            private function onPlayError(event:PlayerErrorEvent):void
-            {
-                setFinished();
-                Alert.show(event.cause.message);
-            }
-            
-            private function onError(event:ErrorEvent):void
-            {
-                hideLoadingDialog();
-                removeHandler(m_request, onResponseLog);
-                removeHandler(m_request, onResponseLayerImage);
-                removeHandler(m_request, onResponseMetadata);
-                Alert.show(event.text, event.type);
-            }
-            
-            private function onParse(event:CommandEvent):void
-            {
-                //trace(event.command);
-            }
-            
-            private function setHandler(target:IEventDispatcher, handler:Function):void
-            {
-                target.addEventListener(Event.COMPLETE, handler);
-                target.addEventListener(IOErrorEvent.IO_ERROR, onError);
-                target.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onError);
-                target.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
-            }
-            
-            private function removeHandler(target:IEventDispatcher, handler:Function):void
-            {
-                target.removeEventListener(Event.COMPLETE, handler);
-                target.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-                target.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onError);
-                target.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
-            }
-            
-            private function play():void
-            {
-                if (m_finished) {
-                    createPlayer();
-                    measureWindow();
-                    callExternal();
-                    m_finished = false;
-                }
-                currentState = "playing";
-                m_player.speed = playSpeedHSlider.value;
-                m_player.addEventListener(PlayerEvent.FINISHED, onPlayFinished);
-                m_player.addEventListener(PlayerErrorEvent.ERROR, onPlayError);
-                if (m_development)
-                    m_player.addEventListener(CommandEvent.PARSE, onParse);
-                m_player.start();
-            }
-            
-            private function createPlayer():void
-            {
-                if (m_layerImage && !m_metadata) {
-                    // It's seems older version
-                    m_metadata = {
-                        "width": m_layerImage.width,
-                        "height": m_layerImage.height,
-                        "undoBufferSize": 16
-                    };
-                    m_continue = true;
-                }
-                if (m_player != null) {
-                    // prevent memory leaks caused Event.
-                    m_player.removeEventListener(CommandEvent.PARSE, onParse);
-                    m_player.removeEventListener(PlayerEvent.FINISHED, onPlayFinished);
-                    m_player.removeEventListener(PlayerErrorEvent.ERROR, onPlayError);
-                }
-                m_log.position = 0;
-                m_player = Player.create(m_log);
-                if (m_continue)
-                    m_player.layers.load(m_layerImage, m_metadata);
-                canvas.removeAllChildren();
-                var temp:UIComponent = new UIComponent();
-                var mask:Shape = new Shape();
-                var g:Graphics = mask.graphics;
-                g.beginFill(0x0);
-                g.drawRect(0, 0, m_player.width, m_player.height);
-                g.endFill();
-                temp.mask = mask;
-                temp.addChild(mask);
-                temp.addChild(m_player.layers.view);
-                canvas.addChild(temp);
-            }
-            
-            private function measureWindow():void
-            {
-                var w:uint = m_player.width;
-                var h:uint = m_player.height;
-                canvas.width = w + 2;
-                canvas.height = h + 2;
-                width = w + 20;
-                width = w < 420 ? 420 : width;
-                height = h + canvas.y + 20;
-                // for express install
-                height = height < 137 ? 137 : height;
-            }
-            
-            private function setFinished():void
-            {
-                currentState = "stopping";
-                m_finished = true;
-            }
-            
-            private function callExternal():void
-            {
-                if (ExternalInterface.available) {
-                    try {
-                        ExternalInterface.call("changeGPLogPlayerRect", width, height);
-                    }
-                    catch (e:Error) {
-                        Alert.show(e.message);
-                    }
-                }
-            }
-            
-            private function hideLoadingDialog():void
-            {
-                loadingDialog.visible = false;
-                PopUpManager.removePopUp(loadingDialog);
-            }
-            
-            private function showLoadingDialog(request:Request, title:String):void
-            {
-                loadingDialog.centerize(this);
-                loadingDialog.setProgressSource(request.loader);
-                loadingDialog.visible = true;
-                loadingDialog.title = title;
-                PopUpManager.addPopUp(loadingDialog, this);
-            }
-            
-            private var m_log:ByteArray;
-            private var m_layerImage:BitmapData;
-            private var m_metadata:Object;
-            private var m_player:Player;
-            private var m_request:Request;
-            private var m_continue:Boolean;
-            private var m_finished:Boolean;
-            private var m_development:Boolean;
+            public var config:Class;
         ]]>
     </mx:Script>
+    <controllers:PlayerViewController id="controller" />
     <mx:states>
         <mx:State name="loading">
             <mx:SetProperty name="enabled" value="true"/>
@@ -294,10 +34,10 @@
             <mx:SetProperty target="{playButton}" name="enabled" value="true"/>
         </mx:State>
     </mx:states>
-    <mx:Button id="playButton" x="10" y="9" label="再生" enabled="false" buttonDown="onClickPlay(event)"/>
-    <mx:Button id="stopButton" x="66" y="9" label="停止" enabled="false" buttonDown="onClickStop(event)"/>
+    <mx:Button id="playButton" x="10" y="9" label="再生" enabled="false" buttonDown="controller.handlePlay()"/>
+    <mx:Button id="stopButton" x="66" y="9" label="停止" enabled="false" buttonDown="controller.handleStop()"/>
     <mx:Label x="122" y="11" text="再生スピード"/>
-    <mx:HSlider id="playSpeedHSlider" x="175" y="8" minimum="1" maximum="501" snapInterval="20" value="21" width="107" change="onChangePlayerSpeed(event)"/>
+    <mx:HSlider id="playSpeedHSlider" x="175" y="8" minimum="1" maximum="501" snapInterval="20" value="21" width="107" change="controller.handleChangePlayerSpeed(event.value)"/>
     <mx:Canvas id="canvas" x="10" width="400" height="300" y="39" borderStyle="solid"/>
     <mx:Label x="313" y="11" text="{Version.DATE_STRING}"/>
     <net:LoadingDialog id="loadingDialog" visible="false"/>
