@@ -222,7 +222,7 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             m_log.position = 0;
             m_player = Player.create(m_log);
             if (m_continue)
-                m_player.layers.load(m_layerImage, m_metadata);
+                m_player.load(m_layerImage, m_metadata);
             m_root.canvas.removeAllChildren();
             var temp:UIComponent = new UIComponent();
             var mask:Shape = new Shape();
