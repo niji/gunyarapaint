@@ -1,10 +1,10 @@
 package com.github.niji.gunyarapaint.ui.v1
 {
-    import com.github.niji.framework.AuxLineView;
-    import com.github.niji.framework.AuxPixelView;
+    import com.github.niji.framework.aux.AuxLineView;
+    import com.github.niji.framework.aux.AuxPixelView;
     import com.github.niji.framework.LayerList;
     import com.github.niji.framework.Pen;
-    import com.github.niji.framework.TransparentBitmap;
+    import com.github.niji.framework.aux.TransparentBitmap;
     import com.github.niji.framework.modules.CircleModule;
     import com.github.niji.framework.modules.DropperModule;
     import com.github.niji.framework.modules.ICanvasModule;
