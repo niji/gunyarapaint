@@ -14,6 +14,7 @@ cat << CONFIG > build-config.xml
     <library-path append="true">
       <path-element>./libs/colorpicker.swc</path-element>
       <path-element>./libs/framework.swc</path-element>
+      <path-element>./libs/as3crypto.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
@@ -41,6 +42,7 @@ cat << CONFIG > build-config.xml
     <library-path append="true">
       <path-element>./libs/colorpicker.swc</path-element>
       <path-element>./libs/framework.swc</path-element>
+      <path-element>./libs/as3crypto.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
