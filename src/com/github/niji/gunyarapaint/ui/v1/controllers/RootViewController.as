@@ -674,8 +674,8 @@ package com.github.niji.gunyarapaint.ui.v1.controllers
             return m_root.stage.focus is mx.core.UITextField;
         }
         
-        private const MAX_CANVAS_WIDTH:uint = 500;
-        private const MAX_CANVAS_HEIGHT:uint = 500;
+        private const MAX_CANVAS_WIDTH:uint = 600;
+        private const MAX_CANVAS_HEIGHT:uint = 600;
         private const MIN_CANVAS_WIDTH:uint = 8;
         private const MIN_CANVAS_HEIGHT:uint = 8;
         
